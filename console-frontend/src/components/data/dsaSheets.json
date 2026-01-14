@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "title": "Striver A2Z DSA",
+    "description": "Comprehensive DSA sheet covering all concepts from basic to advanced, perfect for interview preparation.",
+    "icon": "Brain",
+    "href": "https://takeuforward.org/strivers-a2z-dsa-course/strivers-a2z-dsa-course-sheet-2/",
+    "button": "Start Learning",
+    "gradient": "from-[#FF3C5F] to-[#FF7A30]",
+    "hoverBorder": "hover:border-[#FF3C5F]/50",
+    "overlay": "from-[#FF3C5F]/5 to-[#FF7A30]/5"
+  },
+  {
+    "id": 2,
+    "title": "Love Babbar Sheet",
+    "description": "450+ carefully selected problems covering all DSA topics, designed by Amazon SDE Love Babbar.",
+    "icon": "Zap",
+    "href": "https://www.geeksforgeeks.org/dsa/dsa-sheet-by-love-babbar/#bit-manipulation",
+    "button": "Explore Problems",
+    "gradient": "from-[#FF7A30] to-[#FFC22D]",
+    "hoverBorder": "hover:border-[#FF7A30]/50",
+    "overlay": "from-[#FF7A30]/5 to-[#FFC22D]/5"
+  },
+  {
+    "id": 3,
+    "title": "LeetCode 150",
+    "description": "Top interview questions curated by LeetCode, covering essential algorithms and data structures.",
+    "icon": "Trophy",
+    "href": "https://leetcode.com/explore/featured/card/top-interview-questions-easy/",
+    "button": "Practice Now",
+    "gradient": "from-[#FFC22D] to-[#FF3C5F]",
+    "hoverBorder": "hover:border-[#FFC22D]/50",
+    "overlay": "from-[#FFC22D]/5 to-[#FF3C5F]/5"
+  },
+  {
+    "id": 4,
+    "title": "NeetCode 150",
+    "description": "Hand-picked problems by NeetCode, focusing on the most important concepts for technical interviews.",
+    "icon": "Globe",
+    "href": "https://neetcode.io/practice?tab=neetcode150",
+    "button": "Get Started",
+    "gradient": "from-[#FFC22D] to-[#FF3C5F]",
+    "hoverBorder": "hover:border-[#FFC22D]/50",
+    "overlay": "from-[#FFC22D]/5 to-[#FF3C5F]/5"
+  }
+]
