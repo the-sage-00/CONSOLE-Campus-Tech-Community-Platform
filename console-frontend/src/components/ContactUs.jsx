@@ -38,25 +38,25 @@ const ContactUs = () => {
   const contactInfo = [];
 
   const contacts = [
-    { name: 'Bhavya', branch: 'CSE', email: 'bhav8175@gmail.com', instagram: 'mindfullbhav', linkedin: 'https://www.linkedin.com/in/bhavya-singhal-20ba6232b/', discord: 'bhav8175' },
-    { name: 'Parth Gandhi', branch: 'CSE', email: 'parthgandhi625@gmail.com', instagram: 'parthgandhi_22', linkedin: 'https://www.linkedin.com/in/parth-gandhi-641320324/', discord: 'parthgandhi_22' },
-    { name: 'Raghunandan', branch: 'CSE', email: 'raghunandanjhawar1234@gmail.com', instagram: 'its_me_raghunandan', linkedin: 'http://linkedin.com/in/raghunandan-jhanwar-555137329', discord: '' },
-    { name: 'Shivam pareek', branch: 'CSE', email: 'shivamvdn2005@gmail.com', instagram: 'pareeks01', linkedin: 'https://www.linkedin.com/in/shivam-pareek-047819346', discord: 'ShibbuDaDon' },
-    { name: 'Sujal Maurya', branch: 'CSE', email: 'sujalmaurya08@gmail.com', instagram: 'maurya_925', linkedin: 'https://www.linkedin.com/in/sujal-maurya/', discord: 'sujal25' },
-    { name: 'Shivam jat', branch: 'CSE', email: 'shivamjat531@gmail.com', instagram: 'shivamjat.07', linkedin: 'shivamjat', discord: 'Shivamjat07' },
-    { name: 'Yuvraj', branch: 'Civil', email: 'work.yuvrajsv@gmail.com', instagram: 'l.yu.v', linkedin: 'https://linkedin.com/in/yuvraj-singh-verma', discord: '' },
-    { name: 'Neel Shah', branch: 'AIDE', email: 'neelsshah2006@gmail.com', instagram: 'neelsshah2006', linkedin: 'neelsshah2006', discord: 'neelshah4806' },
-    { name: 'Shubham', branch: 'Mech', email: 'shubhamsinghstrides@gmail.com', instagram: 'the.odd.shub', linkedin: 'https://www.linkedin.com/in/shubham-singh-bb9146316/', discord: 'knight.shub' },
-    { name: 'Amit kumar', branch: 'CSE', email: '6217amitkumar@gmail.com', instagram: 'amit_.6217', linkedin: 'https://www.linkedin.com/in/amit6217', discord: 'amit_6217' },
-    { name: 'Mahek Patel', branch: 'CSE', email: 'pjmahek2006@gmail.com', instagram: 'mahek.fr_', linkedin: 'https://www.linkedin.com/in/mahek-patel-580404307', discord: 'mahek19patel' },
-    { name: 'Rishi kataria', branch: 'CSE', email: 'sainirishi2023@gmial.com', instagram: '_the_sage_00', linkedin: '', discord: '' },
-    { name: 'Rashi Jangid', branch: 'Civil', email: 'rashiarvind10@gmail.com', instagram: 'jangidrashi10', linkedin: 'https://www.linkedin.com/in/rashi-jangid-47849a221', discord: 'rashi_jangid_' },
-    { name: 'Mridul', branch: 'Civil', email: 'mridultrivedi318@gmail.com', instagram: '', linkedin: 'https://www.linkedin.com/in/mridul-trivedi-129b4337a/', discord: 'mridul_t_3' },
-    { name: 'Prashant', branch: 'ECE', email: 'prashantchaudhary7353@gmail.com', instagram: '', linkedin: 'https://www.linkedin.com/in/prashant-chaudhary-147912320/', discord: 'prashantchaudhary8090' },
-    { name: 'krrish sharma', branch: 'meta', email: 'krish56b1@gmail.com', instagram: '', linkedin: 'https://www.linkedin.com/in/krish-sharma1165', discord: 'krish_sharma1165' },
-    { name: 'Ritesh Singh', branch: 'Chemical', email: 'ummeshchandrasingh1998@gmail.com', instagram: 'riteshrks16', linkedin: 'https://www.linkedin.com/in/ritesh-kumar-singh-188b9a255', discord: 'ritehrks' },
-    { name: 'Abhinav Singh', branch: 'CSE', email: 'abhinav.6111q@gmail.com', instagram: 'abh19av_s', linkedin: 'https://www.linkedin.com/in/abhinav-singh-3a0863322', discord: '' },
-    { name: 'Siddhi Agarwal', branch: 'CSE', email: 'siddhinonuagarwal@gmail.com', instagram: 'siddhii.agarwal', linkedin: '', discord: '' },
+    { name: 'Bhavya', role: 'Lead Developer', branch: 'CSE', email: 'bhav8175@gmail.com', instagram: 'mindfullbhav', linkedin: 'https://www.linkedin.com/in/bhavya-singhal-20ba6232b/', discord: 'bhav8175' },
+    { name: 'Parth Gandhi', role: 'Core Team', branch: 'CSE', email: 'parthgandhi625@gmail.com', instagram: 'parthgandhi_22', linkedin: 'https://www.linkedin.com/in/parth-gandhi-641320324/', discord: 'parthgandhi_22' },
+    { name: 'Rishi Kataria', role: 'Full Stack Developer', branch: 'CSE', email: 'sainirishi2023@gmail.com', instagram: '_the_sage_00', linkedin: 'https://www.linkedin.com/in/rishi-kataria', discord: 'the_sage_00' },
+    { name: 'Raghunandan', role: 'Core Team', branch: 'CSE', email: 'raghunandanjhawar1234@gmail.com', instagram: 'its_me_raghunandan', linkedin: 'http://linkedin.com/in/raghunandan-jhanwar-555137329', discord: '' },
+    { name: 'Shivam Pareek', role: 'Core Team', branch: 'CSE', email: 'shivamvdn2005@gmail.com', instagram: 'pareeks01', linkedin: 'https://www.linkedin.com/in/shivam-pareek-047819346', discord: 'ShibbuDaDon' },
+    { name: 'Sujal Maurya', role: 'Core Team', branch: 'CSE', email: 'sujalmaurya08@gmail.com', instagram: 'maurya_925', linkedin: 'https://www.linkedin.com/in/sujal-maurya/', discord: 'sujal25' },
+    { name: 'Shivam Jat', role: 'Team Member', branch: 'CSE', email: 'shivamjat531@gmail.com', instagram: 'shivamjat.07', linkedin: 'shivamjat', discord: 'Shivamjat07' },
+    { name: 'Yuvraj', role: 'Team Member', branch: 'Civil', email: 'work.yuvrajsv@gmail.com', instagram: 'l.yu.v', linkedin: 'https://linkedin.com/in/yuvraj-singh-verma', discord: '' },
+    { name: 'Neel Shah', role: 'Team Member', branch: 'AIDE', email: 'neelsshah2006@gmail.com', instagram: 'neelsshah2006', linkedin: 'neelsshah2006', discord: 'neelshah4806' },
+    { name: 'Shubham', role: 'Team Member', branch: 'Mech', email: 'shubhamsinghstrides@gmail.com', instagram: 'the.odd.shub', linkedin: 'https://www.linkedin.com/in/shubham-singh-bb9146316/', discord: 'knight.shub' },
+    { name: 'Amit Kumar', role: 'Team Member', branch: 'CSE', email: '6217amitkumar@gmail.com', instagram: 'amit_.6217', linkedin: 'https://www.linkedin.com/in/amit6217', discord: 'amit_6217' },
+    { name: 'Mahek Patel', role: 'Team Member', branch: 'CSE', email: 'pjmahek2006@gmail.com', instagram: 'mahek.fr_', linkedin: 'https://www.linkedin.com/in/mahek-patel-580404307', discord: 'mahek19patel' },
+    { name: 'Rashi Jangid', role: 'Team Member', branch: 'Civil', email: 'rashiarvind10@gmail.com', instagram: 'jangidrashi10', linkedin: 'https://www.linkedin.com/in/rashi-jangid-47849a221', discord: 'rashi_jangid_' },
+    { name: 'Mridul', role: 'Team Member', branch: 'Civil', email: 'mridultrivedi318@gmail.com', instagram: '', linkedin: 'https://www.linkedin.com/in/mridul-trivedi-129b4337a/', discord: 'mridul_t_3' },
+    { name: 'Prashant', role: 'Team Member', branch: 'ECE', email: 'prashantchaudhary7353@gmail.com', instagram: '', linkedin: 'https://www.linkedin.com/in/prashant-chaudhary-147912320/', discord: 'prashantchaudhary8090' },
+    { name: 'Krrish Sharma', role: 'Team Member', branch: 'Meta', email: 'krish56b1@gmail.com', instagram: '', linkedin: 'https://www.linkedin.com/in/krish-sharma1165', discord: 'krish_sharma1165' },
+    { name: 'Ritesh Singh', role: 'Team Member', branch: 'Chemical', email: 'ummeshchandrasingh1998@gmail.com', instagram: 'riteshrks16', linkedin: 'https://www.linkedin.com/in/ritesh-kumar-singh-188b9a255', discord: 'ritehrks' },
+    { name: 'Abhinav Singh', role: 'Team Member', branch: 'CSE', email: 'abhinav.6111q@gmail.com', instagram: 'abh19av_s', linkedin: 'https://www.linkedin.com/in/abhinav-singh-3a0863322', discord: '' },
+    { name: 'Siddhi Agarwal', role: 'Team Member', branch: 'CSE', email: 'siddhinonuagarwal@gmail.com', instagram: 'siddhii.agarwal', linkedin: '', discord: '' },
   ];
 
   const buildLinkedIn = (value) => {
@@ -93,45 +93,100 @@ const ContactUs = () => {
         </div>
       </div>
 
-      {/* Contacts Simple List */}
+      {/* Contacts Grid */}
       <section className="py-10 sm:py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-10 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 bg-gradient-to-r from-[#FF3C5F] to-[#FFC22D] bg-clip-text text-transparent">
-              Contact Team console
+              Meet Team Console
             </h2>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+              Passionate developers and tech enthusiasts building the future
+            </p>
           </div>
 
-          <div className="divide-y divide-gray-800 rounded-2xl border border-gray-800 overflow-hidden">
-            {contacts.map((m, idx) => (
-              <div
-                key={idx}
-                className="group grid grid-cols-1 md:grid-cols-3 items-start md:items-center gap-4 p-4 sm:p-6 bg-black/60 hover:bg-black/70 transition-all duration-300 hover:translate-y-[-1px]"
-              >
-                {/* Name + Branch */}
-                <div className="flex flex-col text-center md:text-left">
-                  <div className="text-white font-bold text-lg">{m.name}</div>
-                  <div className="text-gray-500 text-xs uppercase tracking-wide">
-                    {m.branch}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {contacts.map((m, idx) => {
+              // Special styling for top 3
+              const isTop3 = idx < 3;
+              const borderGradient = idx === 0
+                ? 'from-yellow-400 via-yellow-500 to-yellow-600'
+                : idx === 1
+                  ? 'from-gray-300 via-gray-400 to-gray-500'
+                  : idx === 2
+                    ? 'from-orange-400 via-orange-500 to-orange-600'
+                    : 'from-gray-700 to-gray-800';
+
+              const bgGradient = idx === 0
+                ? 'from-yellow-900/20 to-yellow-800/10'
+                : idx === 1
+                  ? 'from-gray-800/20 to-gray-700/10'
+                  : idx === 2
+                    ? 'from-orange-900/20 to-orange-800/10'
+                    : 'from-gray-900/40 to-black/40';
+
+              return (
+                <div
+                  key={idx}
+                  className={`group relative bg-gradient-to-br ${bgGradient} backdrop-blur-md rounded-2xl p-6 border-2 transition-all duration-500 hover:scale-105 hover:shadow-2xl ${isTop3 ? `border-transparent bg-gradient-to-br ${bgGradient}` : 'border-gray-800 hover:border-gray-700'
+                    }`}
+                  style={isTop3 ? {
+                    background: `linear-gradient(135deg, ${idx === 0 ? 'rgba(234, 179, 8, 0.1)' : idx === 1 ? 'rgba(156, 163, 175, 0.1)' : 'rgba(249, 115, 22, 0.1)'
+                      }, rgba(0, 0, 0, 0.4))`,
+                    borderImage: `linear-gradient(135deg, ${idx === 0 ? '#fbbf24, #f59e0b' : idx === 1 ? '#d1d5db, #9ca3af' : '#fb923c, #f97316'
+                      }) 1`
+                  } : {}}
+                >
+                  {/* Top 3 Badge */}
+                  {isTop3 && (
+                    <div className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-gradient-to-br from-black to-gray-900 border-2 flex items-center justify-center shadow-lg"
+                      style={{
+                        borderColor: idx === 0 ? '#fbbf24' : idx === 1 ? '#d1d5db' : '#fb923c'
+                      }}
+                    >
+                      <span className="text-2xl">
+                        {idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Name & Role */}
+                  <div className="mb-4">
+                    <h3 className="text-xl font-bold text-white mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#FF3C5F] group-hover:to-[#FFC22D] transition-all duration-300">
+                      {m.name}
+                    </h3>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${m.role === 'Lead Developer' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                          : m.role === 'Full Stack Developer' ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
+                            : m.role === 'Core Team' ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
+                              : 'bg-gray-700 text-gray-300'
+                        }`}>
+                        {m.role}
+                      </span>
+                      <span className="text-gray-500 text-xs uppercase tracking-wide">
+                        {m.branch}
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Mobile: Icons under name */}
-                  <div className="mt-3 flex md:hidden justify-center gap-3 flex-wrap">
-                    {/* Mail */}
-                    <a
-                      href={`mailto:${m.email}`}
-                      className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 border border-gray-700 transition-colors"
-                    >
-                      <Mail className="w-5 h-5" />
-                    </a>
+                  {/* Email */}
+                  <a
+                    href={`mailto:${m.email}`}
+                    className="block text-sm text-gray-400 hover:text-white transition-colors mb-4 truncate"
+                  >
+                    {m.email}
+                  </a>
 
+                  {/* Social Links */}
+                  <div className="flex items-center gap-3 flex-wrap">
                     {/* LinkedIn */}
                     {buildLinkedIn(m.linkedin) && (
                       <a
                         href={buildLinkedIn(m.linkedin)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 border border-gray-700 transition-colors"
+                        className="p-2.5 rounded-lg bg-gray-800/50 hover:bg-blue-600 border border-gray-700 hover:border-blue-500 transition-all duration-300 hover:scale-110"
+                        title="LinkedIn"
                       >
                         <Linkedin className="w-5 h-5" />
                       </a>
@@ -143,7 +198,8 @@ const ContactUs = () => {
                         href={buildInstagram(m.instagram)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 border border-gray-700 transition-colors"
+                        className="p-2.5 rounded-lg bg-gray-800/50 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 border border-gray-700 hover:border-pink-500 transition-all duration-300 hover:scale-110"
+                        title="Instagram"
                       >
                         <Instagram className="w-5 h-5" />
                       </a>
@@ -151,61 +207,18 @@ const ContactUs = () => {
 
                     {/* Discord */}
                     {m.discord && (
-                      <a
-                        href={`https://discord.com/users/${m.discord}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 border border-gray-700 transition-colors"
+                      <div
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800/50 border border-gray-700 text-xs text-gray-300 group-hover:border-indigo-500 transition-all duration-300"
+                        title={m.discord}
                       >
-                        <SiDiscord className="w-5 h-5" />
-                      </a>
+                        <SiDiscord className="w-4 h-4 text-indigo-400" />
+                        <span className="truncate max-w-[120px]">{m.discord}</span>
+                      </div>
                     )}
                   </div>
                 </div>
-
-                {/* Desktop: Email in middle */}
-                <div className="hidden md:block text-center break-words">
-                  <a
-                    href={`mailto:${m.email}`}
-                    className="text-gray-300 hover:text-white transition-colors font-medium"
-                  >
-                    {m.email}
-                  </a>
-                </div>
-
-                {/* Desktop: Icons on right */}
-                <div className="hidden md:flex items-center justify-end gap-3">
-                  {buildLinkedIn(m.linkedin) && (
-                    <a
-                      href={buildLinkedIn(m.linkedin)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 border border-gray-700 transition-colors"
-                    >
-                      <Linkedin className="w-5 h-5" />
-                    </a>
-                  )}
-                  {buildInstagram(m.instagram) && (
-                    <a
-                      href={buildInstagram(m.instagram)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 border border-gray-700 transition-colors"
-                    >
-                      <Instagram className="w-5 h-5" />
-                    </a>
-                  )}
-                  {m.discord && (
-                    <span
-                      title={m.discord}
-                      className="px-3 py-1 rounded-full bg-gray-800 border border-gray-700 text-xs text-gray-300 flex items-center gap-2 group-hover:border-gray-500 transition-colors break-all"
-                    >
-                      <SiDiscord className="w-4 h-4" /> {m.discord}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
