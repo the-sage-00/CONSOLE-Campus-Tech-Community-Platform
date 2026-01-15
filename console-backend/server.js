@@ -165,6 +165,12 @@ app.get('/ping', (req, res) => {
   res.send('pong');
 });
 
+// Keep-alive endpoint (also available at /api/ping for compatibility)
+app.get('/api/ping', (req, res) => {
+  res.status(200).send('pong');
+});
+
+
 // Error handling middleware (must be last)
 app.use(notFoundHandler);
 app.use(globalErrorHandler);
