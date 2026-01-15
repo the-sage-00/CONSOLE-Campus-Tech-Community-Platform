@@ -11,9 +11,13 @@ function keepAlive() {
   setInterval(async () => {
     try {
       const res = await fetch(`${url}/ping`);
-      console.log("4d61646520427920416d6974", res.status);
+      if (res.ok) {
+        console.log("✅ Keep-alive ping successful");
+      } else {
+        console.log("⚠️ Keep-alive ping returned:", res.status);
+      }
     } catch (err) {
-      console.error("❌ Ping failed:", err.message);
+      console.error("❌ Keep-alive ping failed:", err.message);
     }
   }, 10 * 60 * 1000); // every 10 minutes
 }
