@@ -103,7 +103,7 @@ const ContestPage = () => {
     try {
       setLoadingUpcoming(true);
       const response = await fetch('https://competeapi.vercel.app/contests/upcoming/');
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch upcoming contests');
       }
@@ -139,7 +139,7 @@ const ContestPage = () => {
           // Handle different date formats
           const startTime = contest.start_time || contest.startTime || contest.start || contest.start_time_iso || null;
           const endTime = contest.end_time || contest.endTime || contest.end || contest.end_time_iso || null;
-          
+
           // Handle duration (could be in seconds or ISO format)
           let duration = null;
           if (contest.duration) {
@@ -205,20 +205,20 @@ const ContestPage = () => {
       const response = await fetch(url);
       if (response.ok) {
         const responseData = await response.json();
-        
+
         setRecentContestInfo(responseData);
-        
+
         // For contest view, users are the participants of the recent contest
         // The API returns participants array with user populated
         const participants = responseData.participants || [];
-        
+
         // Map participants to user format for display
         const mappedUsers = participants.map((p, index) => ({
           _id: p.userId || p.user?._id,
           name: p.name || p.user?.name || 'Unknown',
           branch: p.branch || p.user?.branch || 'N/A',
-          handle: p.handle || (platform === 'leetcode' 
-            ? p.user?.platformVerification?.leetcode?.handle 
+          handle: p.handle || (platform === 'leetcode'
+            ? p.user?.platformVerification?.leetcode?.handle
             : p.user?.platformVerification?.codeforces?.handle) || 'N/A',
           // Contest-specific fields
           rating: p.rating,
@@ -231,7 +231,7 @@ const ContestPage = () => {
           platforms: p.user?.platforms || p.platforms || {},
           platformVerification: p.user?.platformVerification || p.platformVerification || {}
         }));
-        
+
         // Sort by ranking (ascending - lower rank is better)
         mappedUsers.sort((a, b) => {
           if (a.ranking === 'N/A' || a.ranking === null) return 1;
@@ -304,7 +304,7 @@ const ContestPage = () => {
 
   const formatDuration = (duration) => {
     if (!duration) return 'N/A';
-    
+
     // If duration is a number, assume it's in seconds
     if (typeof duration === 'number') {
       const hours = Math.floor(duration / 3600);
@@ -314,7 +314,7 @@ const ContestPage = () => {
       }
       return `${minutes}m`;
     }
-    
+
     // If duration is a string, try to parse it
     if (typeof duration === 'string') {
       // Check if it's ISO 8601 duration format (e.g., "PT2H30M")
@@ -328,7 +328,7 @@ const ContestPage = () => {
         }
         return `${minutes}m`;
       }
-      
+
       // Try to parse as number string
       const numDuration = parseFloat(duration);
       if (!isNaN(numDuration)) {
@@ -340,7 +340,7 @@ const ContestPage = () => {
         return `${minutes}m`;
       }
     }
-    
+
     return duration; // Return as-is if can't parse
   };
 
@@ -348,11 +348,10 @@ const ContestPage = () => {
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Simple Background */}
       <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900"></div>
-      <div className={`absolute inset-0 ${
-        platform === 'leetcode'
+      <div className={`absolute inset-0 ${platform === 'leetcode'
           ? 'bg-[radial-gradient(circle_at_50%_50%,rgba(76,175,80,0.1),transparent_50%)]'
           : 'bg-[radial-gradient(circle_at_50%_50%,rgba(60,92,255,0.1),transparent_50%)]'
-      }`}></div>
+        }`}></div>
 
       <SidebarNavbar />
       <ScrollToTop />
@@ -418,9 +417,8 @@ const ContestPage = () => {
           <div className="bg-gradient-to-r from-gray-900/80 to-gray-800/80 p-4 md:p-6 border-b border-gray-700/50">
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center space-x-2 md:space-x-3">
-                <Zap className={`w-6 h-6 md:w-8 md:h-8 ${
-                  platform === 'leetcode' ? 'text-[#4CAF50]' : 'text-[#3C5CFF]'
-                }`} />
+                <Zap className={`w-6 h-6 md:w-8 md:h-8 ${platform === 'leetcode' ? 'text-[#4CAF50]' : 'text-[#3C5CFF]'
+                  }`} />
                 <h2 className="text-xl md:text-2xl lg:text-3xl font-black text-white">
                   Upcoming Contests
                 </h2>
@@ -447,13 +445,13 @@ const ContestPage = () => {
                   const startDate = contest.startTime ? new Date(contest.startTime) : null;
                   const endDate = contest.endTime ? new Date(contest.endTime) : null;
                   const isLeetCode = contest.platform === 'leetcode';
-                  
+
                   // Calculate time until contest
                   const timeUntil = startDate ? startDate - new Date() : null;
                   const daysUntil = timeUntil ? Math.floor(timeUntil / (1000 * 60 * 60 * 24)) : null;
                   const hoursUntil = timeUntil ? Math.floor((timeUntil % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) : null;
                   const minutesUntil = timeUntil ? Math.floor((timeUntil % (1000 * 60 * 60)) / (1000 * 60)) : null;
-                  
+
                   // Calculate duration from start and end time if available
                   let durationDisplay = 'N/A';
                   if (startDate && endDate) {
@@ -481,25 +479,23 @@ const ContestPage = () => {
                       durationDisplay = formatDuration(contest.duration);
                     }
                   }
-                  
+
                   return (
                     <div
                       key={index}
-                      className={`group relative bg-gradient-to-r backdrop-blur-xl rounded-xl p-3 md:p-4 border-2 transition-all duration-300 hover:shadow-xl overflow-hidden ${
-                        isLeetCode
+                      className={`group relative bg-gradient-to-r backdrop-blur-xl rounded-xl p-3 md:p-4 border-2 transition-all duration-300 hover:shadow-xl overflow-hidden ${isLeetCode
                           ? 'from-[#4CAF50]/10 to-[#2196F3]/10 border-[#4CAF50]/30 hover:border-[#4CAF50]'
                           : 'from-[#3C5CFF]/10 to-[#3CFFB7]/10 border-[#3C5CFF]/30 hover:border-[#3C5CFF]'
-                      }`}
+                        }`}
                     >
                       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0">
                         {/* Left side: Contest info */}
                         <div className="flex items-center space-x-2 md:space-x-4 flex-1 min-w-0 w-full md:w-auto">
                           {/* Platform Logo - Enlarged, no text */}
-                          <div className={`flex items-center justify-center px-2 py-1.5 md:px-3 md:py-2 rounded-lg flex-shrink-0 ${
-                            isLeetCode
+                          <div className={`flex items-center justify-center px-2 py-1.5 md:px-3 md:py-2 rounded-lg flex-shrink-0 ${isLeetCode
                               ? 'bg-[#4CAF50]/30'
                               : 'bg-[#3C5CFF]/30'
-                          }`}>
+                            }`}>
                             {isLeetCode ? (
                               <img src="/LeetCode_Logo.png" className="w-6 h-6 md:w-8 md:h-8" alt="leetcode" />
                             ) : (
@@ -517,20 +513,19 @@ const ContestPage = () => {
                           {/* Date and Time - Desktop only */}
                           {startDate && (
                             <div className="hidden md:flex items-center space-x-2 text-sm text-gray-300 flex-shrink-0">
-                              <Calendar className={`w-4 h-4 ${
-                                isLeetCode ? 'text-[#4CAF50]' : 'text-[#3C5CFF]'
-                              }`} />
+                              <Calendar className={`w-4 h-4 ${isLeetCode ? 'text-[#4CAF50]' : 'text-[#3C5CFF]'
+                                }`} />
                               <span>
-                                {startDate.toLocaleDateString('en-US', { 
-                                  month: 'short', 
+                                {startDate.toLocaleDateString('en-US', {
+                                  month: 'short',
                                   day: 'numeric',
                                   year: 'numeric'
                                 })}
                               </span>
                               <span className="text-gray-500">
-                                {startDate.toLocaleTimeString('en-US', { 
-                                  hour: '2-digit', 
-                                  minute: '2-digit' 
+                                {startDate.toLocaleTimeString('en-US', {
+                                  hour: '2-digit',
+                                  minute: '2-digit'
                                 })}
                               </span>
                             </div>
@@ -541,9 +536,9 @@ const ContestPage = () => {
                             <div className="hidden md:flex items-center space-x-1 text-xs text-gray-400 flex-shrink-0">
                               <Clock className="w-3 h-3" />
                               <span>
-                                {daysUntil > 0 
-                                  ? `${daysUntil}d ${hoursUntil}h` 
-                                  : hoursUntil > 0 
+                                {daysUntil > 0
+                                  ? `${daysUntil}d ${hoursUntil}h`
+                                  : hoursUntil > 0
                                     ? `${hoursUntil}h ${minutesUntil}m`
                                     : minutesUntil > 0
                                       ? `${minutesUntil}m`
@@ -559,11 +554,10 @@ const ContestPage = () => {
                             href={contest.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`inline-flex items-center space-x-2 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-bold transition-all transform hover:scale-105 ${
-                              isLeetCode
+                            className={`inline-flex items-center space-x-2 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-bold transition-all transform hover:scale-105 ${isLeetCode
                                 ? 'bg-gradient-to-r from-[#4CAF50] to-[#2196F3] text-white hover:shadow-lg hover:shadow-[#4CAF50]/50'
                                 : 'bg-gradient-to-r from-[#3C5CFF] to-[#3CFFB7] text-white hover:shadow-lg hover:shadow-[#3C5CFF]/50'
-                            }`}
+                              }`}
                           >
                             <span>View</span>
                             <ExternalLink className="w-3 h-3 md:w-4 md:h-4" />
@@ -575,20 +569,19 @@ const ContestPage = () => {
                       <div className="md:hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mt-3 pt-3 border-t border-gray-700/50">
                         {startDate && (
                           <div className="flex items-center space-x-2 text-xs text-gray-300">
-                            <Calendar className={`w-3 h-3 ${
-                              isLeetCode ? 'text-[#4CAF50]' : 'text-[#3C5CFF]'
-                            }`} />
+                            <Calendar className={`w-3 h-3 ${isLeetCode ? 'text-[#4CAF50]' : 'text-[#3C5CFF]'
+                              }`} />
                             <span>
-                              {startDate.toLocaleDateString('en-US', { 
-                                month: 'short', 
+                              {startDate.toLocaleDateString('en-US', {
+                                month: 'short',
                                 day: 'numeric',
                                 year: 'numeric'
                               })}
                             </span>
                             <span className="text-gray-500">
-                              {startDate.toLocaleTimeString('en-US', { 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
+                              {startDate.toLocaleTimeString('en-US', {
+                                hour: '2-digit',
+                                minute: '2-digit'
                               })}
                             </span>
                           </div>
@@ -598,9 +591,9 @@ const ContestPage = () => {
                           <div className="flex items-center space-x-1 text-xs text-gray-400">
                             <Clock className="w-3 h-3" />
                             <span>
-                              {daysUntil > 0 
-                                ? `${daysUntil}d ${hoursUntil}h` 
-                                : hoursUntil > 0 
+                              {daysUntil > 0
+                                ? `${daysUntil}d ${hoursUntil}h`
+                                : hoursUntil > 0
                                   ? `${hoursUntil}h ${minutesUntil}m`
                                   : minutesUntil > 0
                                     ? `${minutesUntil}m`
@@ -623,11 +616,10 @@ const ContestPage = () => {
         <div className="flex justify-center gap-2 md:gap-4">
           <button
             onClick={() => setPlatform('leetcode')}
-            className={`px-4 py-2.5 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-black text-sm md:text-lg transition-all duration-500 transform hover:scale-105 ${
-              platform === 'leetcode'
+            className={`px-4 py-2.5 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-black text-sm md:text-lg transition-all duration-500 transform hover:scale-105 ${platform === 'leetcode'
                 ? 'bg-gradient-to-r from-[#FF7A30] to-[#FFC22D] text-white shadow-2xl scale-105'
                 : 'bg-gray-900/60 text-gray-300 hover:bg-gray-800/80 border border-gray-700 hover:border-gray-600'
-            }`}
+              }`}
           >
             <div className="flex items-center space-x-2 md:space-x-3">
               <img src="/LeetCode_Logo.png" className="w-5 h-5 md:w-6 md:h-6" alt="leetcode logo" />
@@ -636,11 +628,10 @@ const ContestPage = () => {
           </button>
           <button
             onClick={() => setPlatform('codeforces')}
-            className={`px-4 py-2.5 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-black text-sm md:text-lg transition-all duration-500 transform hover:scale-105 ${
-              platform === 'codeforces'
+            className={`px-4 py-2.5 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-black text-sm md:text-lg transition-all duration-500 transform hover:scale-105 ${platform === 'codeforces'
                 ? 'bg-gradient-to-r from-[#3C5CFF] to-[#3CFFB7] text-white shadow-2xl scale-105'
                 : 'bg-gray-900/60 text-gray-300 hover:bg-gray-800/80 border border-gray-700 hover:border-gray-600'
-            }`}
+              }`}
           >
             <div className="flex items-center space-x-2 md:space-x-3">
               <img src="/codeforces_logo.png" className="w-5 h-5 md:w-6 md:h-6" alt="codeforces logo" />
@@ -652,9 +643,8 @@ const ContestPage = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className={`group bg-black/60 backdrop-blur-md rounded-3xl border border-gray-800/50 shadow-2xl overflow-hidden transition-all duration-500 ${
-          platform === 'leetcode' ? 'hover:border-[#4CAF50]/30' : 'hover:border-[#3C5CFF]/30'
-        }`}>
+        <div className={`group bg-black/60 backdrop-blur-md rounded-3xl border border-gray-800/50 shadow-2xl overflow-hidden transition-all duration-500 ${platform === 'leetcode' ? 'hover:border-[#4CAF50]/30' : 'hover:border-[#3C5CFF]/30'
+          }`}>
           {/* Content Header */}
           <div className="bg-gradient-to-r from-gray-900/80 to-gray-800/80 p-2 md:px-10 md:py-8 border-b border-gray-700/50">
             <div className="flex justify-between items-center">
@@ -678,12 +668,10 @@ const ContestPage = () => {
               </div>
               <div className="flex items-center space-x-3 text-gray-400">
                 <div className="relative">
-                  <TrendingUp className={`w-6 h-6 group-hover:scale-110 transition-all duration-300 ${
-                    platform === 'leetcode' ? 'group-hover:text-[#4CAF50]' : 'group-hover:text-[#3C5CFF]'
-                  }`} />
-                  <div className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${
-                    platform === 'leetcode' ? 'bg-green-400' : 'bg-blue-400'
-                  }`}></div>
+                  <TrendingUp className={`w-6 h-6 group-hover:scale-110 transition-all duration-300 ${platform === 'leetcode' ? 'group-hover:text-[#4CAF50]' : 'group-hover:text-[#3C5CFF]'
+                    }`} />
+                  <div className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${platform === 'leetcode' ? 'bg-green-400' : 'bg-blue-400'
+                    }`}></div>
                 </div>
                 <span className="text-sm md:text-lg font-semibold group-hover:text-white transition-all duration-300">Live Updates</span>
               </div>
@@ -712,27 +700,23 @@ const ContestPage = () => {
             ) : (
               <>
                 {/* Contest Information */}
-                <div className={`relative backdrop-blur-xl rounded-3xl p-4 md:p-8 border-2 mb-10 text-center shadow-2xl overflow-hidden ${
-                  platform === 'leetcode' 
+                <div className={`relative backdrop-blur-xl rounded-3xl p-4 md:p-8 border-2 mb-10 text-center shadow-2xl overflow-hidden ${platform === 'leetcode'
                     ? 'bg-gradient-to-r from-[#4CAF50]/20 via-[#2196F3]/20 to-[#9C27B0]/20 border-[#4CAF50]/40'
                     : 'bg-gradient-to-r from-[#3C5CFF]/20 via-[#3CFFB7]/20 to-[#9C27B0]/20 border-[#3C5CFF]/40'
-                }`}>
-                  <div className={`absolute inset-0 pointer-events-none ${
-                    platform === 'leetcode'
+                  }`}>
+                  <div className={`absolute inset-0 pointer-events-none ${platform === 'leetcode'
                       ? 'bg-[radial-gradient(circle_at_center,rgba(76,175,80,0.1),transparent_70%)]'
                       : 'bg-[radial-gradient(circle_at_center,rgba(60,92,255,0.1),transparent_70%)]'
-                  }`} />
+                    }`} />
                   {recentContestInfo && recentContestInfo.contestName ? (
                     <div className="relative">
                       <div className="flex flex-col md:flex-row items-center justify-center mb-4 space-y-2 md:space-y-0">
-                        <Medal className={`w-8 h-8 md:w-10 md:h-10 mr-2 md:mr-3 ${
-                          platform === 'leetcode' ? 'text-[#4CAF50]' : 'text-[#3C5CFF]'
-                        }`} />
-                        <h3 className={`text-xl md:text-3xl font-black text-transparent bg-clip-text ${
-                          platform === 'leetcode'
+                        <Medal className={`w-8 h-8 md:w-10 md:h-10 mr-2 md:mr-3 ${platform === 'leetcode' ? 'text-[#4CAF50]' : 'text-[#3C5CFF]'
+                          }`} />
+                        <h3 className={`text-xl md:text-3xl font-black text-transparent bg-clip-text ${platform === 'leetcode'
                             ? 'bg-gradient-to-r from-[#4CAF50] to-[#2196F3]'
                             : 'bg-gradient-to-r from-[#3C5CFF] to-[#3CFFB7]'
-                        }`}>
+                          }`}>
                           {recentContestInfo.contestName}
                         </h3>
                       </div>
@@ -747,9 +731,8 @@ const ContestPage = () => {
                         <div className="flex items-center">
                           <Users className="w-4 h-4 md:w-5 md:h-5 text-gray-400 mr-2" />
                           <span className="text-gray-400 text-xs md:text-sm font-semibold mr-2">Participants:</span>
-                          <span className={`text-lg md:text-xl font-black ${
-                            platform === 'leetcode' ? 'text-[#4CAF50]' : 'text-[#3C5CFF]'
-                          }`}>{totalUsers}</span>
+                          <span className={`text-lg md:text-xl font-black ${platform === 'leetcode' ? 'text-[#4CAF50]' : 'text-[#3C5CFF]'
+                            }`}>{totalUsers}</span>
                         </div>
                       </div>
                     </div>
@@ -770,11 +753,10 @@ const ContestPage = () => {
 
                 {/* Leaderboard Table */}
                 <div className="relative bg-black/40 backdrop-blur-xl rounded-3xl border-2 border-gray-700/50 p-8 shadow-2xl overflow-hidden">
-                  <div className={`absolute inset-0 pointer-events-none ${
-                    platform === 'leetcode'
+                  <div className={`absolute inset-0 pointer-events-none ${platform === 'leetcode'
                       ? 'bg-gradient-to-br from-[#4CAF50]/5 via-transparent to-[#2196F3]/5'
                       : 'bg-gradient-to-br from-[#3C5CFF]/5 via-transparent to-[#3CFFB7]/5'
-                  }`} />
+                    }`} />
                   {users.length === 0 ? (
                     <div className="text-center py-16">
                       <div className="text-gray-400 text-2xl mb-6 flex items-center justify-center">
@@ -792,11 +774,10 @@ const ContestPage = () => {
                         <thead className="bg-gray-900/50 sticky top-0 z-10">
                           <tr className="text-left text-xs md:text-sm font-black text-gray-300 uppercase tracking-wider">
                             <th className="px-4 py-5 w-[10%]">Rank</th>
-                            <th className="px-4 py-5 w-[25%]">Participant</th>
-                            <th className="hidden md:table-cell px-4 py-5 w-[15%]">{platform === 'codeforces' ? 'Problems Solved' : 'Rating'}</th>
-                            <th className="hidden md:table-cell px-4 py-5 w-[15%]">Ranking</th>
+                            <th className="px-4 py-5 w-[30%]">Participant</th>
+                            <th className="hidden md:table-cell px-4 py-5 w-[20%]">Ranking</th>
                             {platform === 'codeforces' && (
-                              <th className="hidden md:table-cell px-4 py-5 w-[15%]">Rating Change</th>
+                              <th className="hidden md:table-cell px-4 py-5 w-[20%]">Rating Change</th>
                             )}
                           </tr>
                         </thead>
@@ -837,22 +818,15 @@ const ContestPage = () => {
                                         {platform === 'codeforces' ? (
                                           <>
                                             <span className="text-xs text-gray-400">
-                                              Solved: <span className="text-white font-bold">{problemsSolved}</span>
-                                            </span>
-                                            <span className="text-xs text-gray-400">
                                               Rank: <span className="text-white font-bold">{contestRanking}</span>
                                             </span>
-                                            <span className={`text-xs ${
-                                              ratingChange > 0 ? 'text-green-400' : ratingChange < 0 ? 'text-red-400' : 'text-gray-400'
-                                            }`}>
+                                            <span className={`text-xs ${ratingChange > 0 ? 'text-green-400' : ratingChange < 0 ? 'text-red-400' : 'text-gray-400'
+                                              }`}>
                                               {ratingChange > 0 ? '+' : ''}{ratingChange}
                                             </span>
                                           </>
                                         ) : (
                                           <>
-                                            <span className="text-xs text-gray-400">
-                                              Rating: <span className={getScoreColor(contestRating)}>{contestRating}</span>
-                                            </span>
                                             <span className="text-xs text-gray-400">
                                               Rank: <span className="text-white font-bold">{contestRanking}</span>
                                             </span>
@@ -863,23 +837,7 @@ const ContestPage = () => {
                                   </div>
                                 </td>
 
-                                {/* Contest Rating / Problems Solved - Only shown on desktop */}
-                                <td className="hidden md:table-cell px-4 py-4 whitespace-nowrap">
-                                  <div className="flex items-center">
-                                    {platform === 'codeforces' ? (
-                                      <div className="flex items-center space-x-2">
-                                        <Code className="w-4 h-4 text-[#3C5CFF]" />
-                                        <div className="font-semibold text-white text-sm md:text-base">
-                                          {problemsSolved}
-                                        </div>
-                                      </div>
-                                    ) : (
-                                      <div className={`font-semibold ${getScoreColor(contestRating)} text-sm md:text-base`}>
-                                        {contestRating}
-                                      </div>
-                                    )}
-                                  </div>
-                                </td>
+
 
                                 {/* Contest Ranking - Only shown on desktop */}
                                 <td className="hidden md:table-cell px-4 py-4 whitespace-nowrap">
@@ -894,9 +852,8 @@ const ContestPage = () => {
                                 {platform === 'codeforces' && (
                                   <td className="hidden md:table-cell px-4 py-4 whitespace-nowrap">
                                     <div className="flex items-center">
-                                      <div className={`font-semibold text-sm md:text-base ${
-                                        ratingChange > 0 ? 'text-green-400' : ratingChange < 0 ? 'text-red-400' : 'text-gray-400'
-                                      }`}>
+                                      <div className={`font-semibold text-sm md:text-base ${ratingChange > 0 ? 'text-green-400' : ratingChange < 0 ? 'text-red-400' : 'text-gray-400'
+                                        }`}>
                                         {ratingChange > 0 ? '+' : ''}{ratingChange}
                                       </div>
                                       <span className="text-gray-500 text-xs ml-2">
