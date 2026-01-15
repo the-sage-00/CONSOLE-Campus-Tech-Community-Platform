@@ -30,15 +30,38 @@ import keepAlive from './utils/keepalive.js';
 const app = express();
 
 // CORS configuration - MUST come before security middleware
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+  process.env.FRONTEND_URL, // Netlify production URL
+];
+
+// Add Netlify preview deployments (e.g., deploy-preview-123--your-site.netlify.app)
+if (process.env.NODE_ENV === 'production') {
+  allowedOrigins.push(/\.netlify\.app$/); // Allow all Netlify deployments
+}
+
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'http://127.0.0.1:5173',
-    'https://console.net.in',
-    'https://localhost7000.netlify.app',
-    'https://test-console.netlify.app'
-  ],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    // Check if origin is in allowed list or matches regex pattern
+    const isAllowed = allowedOrigins.some(allowed => {
+      if (allowed instanceof RegExp) {
+        return allowed.test(origin);
+      }
+      return allowed === origin;
+    });
+
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      console.warn(`⚠️ CORS blocked origin: ${origin}`);
+      callback(null, false);
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
@@ -47,7 +70,7 @@ app.use(cors({
 // Cross-Origin headers for Google OAuth compatibility
 app.use((req, res, next) => {
   // Allow Google Sign-In popup to communicate with parent window
-  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
   res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
   next();
 });
