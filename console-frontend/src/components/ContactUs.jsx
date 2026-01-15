@@ -38,25 +38,25 @@ const ContactUs = () => {
   const contactInfo = [];
 
   const contacts = [
-    { name: 'Bhavya', role: 'Lead Developer', branch: 'CSE', email: 'bhav8175@gmail.com', instagram: 'mindfullbhav', linkedin: 'https://www.linkedin.com/in/bhavya-singhal-20ba6232b/', discord: 'bhav8175' },
-    { name: 'Parth Gandhi', role: 'Core Team', branch: 'CSE', email: 'parthgandhi625@gmail.com', instagram: 'parthgandhi_22', linkedin: 'https://www.linkedin.com/in/parth-gandhi-641320324/', discord: 'parthgandhi_22' },
-    { name: 'Rishi Kataria', role: 'Full Stack Developer', branch: 'CSE', email: 'sainirishi2023@gmail.com', instagram: '_the_sage_00', linkedin: 'https://www.linkedin.com/in/rishi-kataria', discord: 'the_sage_00' },
-    { name: 'Raghunandan', role: 'Core Team', branch: 'CSE', email: 'raghunandanjhawar1234@gmail.com', instagram: 'its_me_raghunandan', linkedin: 'http://linkedin.com/in/raghunandan-jhanwar-555137329', discord: '' },
-    { name: 'Shivam Pareek', role: 'Core Team', branch: 'CSE', email: 'shivamvdn2005@gmail.com', instagram: 'pareeks01', linkedin: 'https://www.linkedin.com/in/shivam-pareek-047819346', discord: 'ShibbuDaDon' },
-    { name: 'Sujal Maurya', role: 'Core Team', branch: 'CSE', email: 'sujalmaurya08@gmail.com', instagram: 'maurya_925', linkedin: 'https://www.linkedin.com/in/sujal-maurya/', discord: 'sujal25' },
-    { name: 'Shivam Jat', role: 'Team Member', branch: 'CSE', email: 'shivamjat531@gmail.com', instagram: 'shivamjat.07', linkedin: 'shivamjat', discord: 'Shivamjat07' },
-    { name: 'Yuvraj', role: 'Team Member', branch: 'Civil', email: 'work.yuvrajsv@gmail.com', instagram: 'l.yu.v', linkedin: 'https://linkedin.com/in/yuvraj-singh-verma', discord: '' },
-    { name: 'Neel Shah', role: 'Team Member', branch: 'AIDE', email: 'neelsshah2006@gmail.com', instagram: 'neelsshah2006', linkedin: 'neelsshah2006', discord: 'neelshah4806' },
-    { name: 'Shubham', role: 'Team Member', branch: 'Mech', email: 'shubhamsinghstrides@gmail.com', instagram: 'the.odd.shub', linkedin: 'https://www.linkedin.com/in/shubham-singh-bb9146316/', discord: 'knight.shub' },
-    { name: 'Amit Kumar', role: 'Team Member', branch: 'CSE', email: '6217amitkumar@gmail.com', instagram: 'amit_.6217', linkedin: 'https://www.linkedin.com/in/amit6217', discord: 'amit_6217' },
-    { name: 'Mahek Patel', role: 'Team Member', branch: 'CSE', email: 'pjmahek2006@gmail.com', instagram: 'mahek.fr_', linkedin: 'https://www.linkedin.com/in/mahek-patel-580404307', discord: 'mahek19patel' },
-    { name: 'Rashi Jangid', role: 'Team Member', branch: 'Civil', email: 'rashiarvind10@gmail.com', instagram: 'jangidrashi10', linkedin: 'https://www.linkedin.com/in/rashi-jangid-47849a221', discord: 'rashi_jangid_' },
-    { name: 'Mridul', role: 'Team Member', branch: 'Civil', email: 'mridultrivedi318@gmail.com', instagram: '', linkedin: 'https://www.linkedin.com/in/mridul-trivedi-129b4337a/', discord: 'mridul_t_3' },
-    { name: 'Prashant', role: 'Team Member', branch: 'ECE', email: 'prashantchaudhary7353@gmail.com', instagram: '', linkedin: 'https://www.linkedin.com/in/prashant-chaudhary-147912320/', discord: 'prashantchaudhary8090' },
-    { name: 'Krrish Sharma', role: 'Team Member', branch: 'Meta', email: 'krish56b1@gmail.com', instagram: '', linkedin: 'https://www.linkedin.com/in/krish-sharma1165', discord: 'krish_sharma1165' },
-    { name: 'Ritesh Singh', role: 'Team Member', branch: 'Chemical', email: 'ummeshchandrasingh1998@gmail.com', instagram: 'riteshrks16', linkedin: 'https://www.linkedin.com/in/ritesh-kumar-singh-188b9a255', discord: 'ritehrks' },
-    { name: 'Abhinav Singh', role: 'Team Member', branch: 'CSE', email: 'abhinav.6111q@gmail.com', instagram: 'abh19av_s', linkedin: 'https://www.linkedin.com/in/abhinav-singh-3a0863322', discord: '' },
-    { name: 'Siddhi Agarwal', role: 'Team Member', branch: 'CSE', email: 'siddhinonuagarwal@gmail.com', instagram: 'siddhii.agarwal', linkedin: '', discord: '' },
+    { name: 'Bhavya', branch: 'CSE', email: 'bhav8175@gmail.com', instagram: 'mindfullbhav', linkedin: 'https://www.linkedin.com/in/bhavya-singhal-20ba6232b/', discord: 'bhav8175' },
+    { name: 'Parth Gandhi', branch: 'CSE', email: 'parthgandhi625@gmail.com', instagram: 'parthgandhi_22', linkedin: 'https://www.linkedin.com/in/parth-gandhi-641320324/', discord: 'parthgandhi_22' },
+    { name: 'Rishi Kataria', branch: 'CSE', email: 'sainirishi2023@gmail.com', instagram: '_the_sage_00', linkedin: 'https://www.linkedin.com/in/rishi-kataria', discord: 'the_sage_00' },
+    { name: 'Raghunandan', branch: 'CSE', email: 'raghunandanjhawar1234@gmail.com', instagram: 'its_me_raghunandan', linkedin: 'http://linkedin.com/in/raghunandan-jhanwar-555137329', discord: '' },
+    { name: 'Shivam Pareek', branch: 'CSE', email: 'shivamvdn2005@gmail.com', instagram: 'pareeks01', linkedin: 'https://www.linkedin.com/in/shivam-pareek-047819346', discord: 'ShibbuDaDon' },
+    { name: 'Sujal Maurya', branch: 'CSE', email: 'sujalmaurya08@gmail.com', instagram: 'maurya_925', linkedin: 'https://www.linkedin.com/in/sujal-maurya/', discord: 'sujal25' },
+    { name: 'Shivam Jat', branch: 'CSE', email: 'shivamjat531@gmail.com', instagram: 'shivamjat.07', linkedin: 'shivamjat', discord: 'Shivamjat07' },
+    { name: 'Yuvraj', branch: 'Civil', email: 'work.yuvrajsv@gmail.com', instagram: 'l.yu.v', linkedin: 'https://linkedin.com/in/yuvraj-singh-verma', discord: '' },
+    { name: 'Neel Shah', branch: 'AIDE', email: 'neelsshah2006@gmail.com', instagram: 'neelsshah2006', linkedin: 'neelsshah2006', discord: 'neelshah4806' },
+    { name: 'Shubham', branch: 'Mech', email: 'shubhamsinghstrides@gmail.com', instagram: 'the.odd.shub', linkedin: 'https://www.linkedin.com/in/shubham-singh-bb9146316/', discord: 'knight.shub' },
+    { name: 'Amit Kumar', branch: 'CSE', email: '6217amitkumar@gmail.com', instagram: 'amit_.6217', linkedin: 'https://www.linkedin.com/in/amit6217', discord: 'amit_6217' },
+    { name: 'Mahek Patel', branch: 'CSE', email: 'pjmahek2006@gmail.com', instagram: 'mahek.fr_', linkedin: 'https://www.linkedin.com/in/mahek-patel-580404307', discord: 'mahek19patel' },
+    { name: 'Rashi Jangid', branch: 'Civil', email: 'rashiarvind10@gmail.com', instagram: 'jangidrashi10', linkedin: 'https://www.linkedin.com/in/rashi-jangid-47849a221', discord: 'rashi_jangid_' },
+    { name: 'Mridul', branch: 'Civil', email: 'mridultrivedi318@gmail.com', instagram: '', linkedin: 'https://www.linkedin.com/in/mridul-trivedi-129b4337a/', discord: 'mridul_t_3' },
+    { name: 'Prashant', branch: 'ECE', email: 'prashantchaudhary7353@gmail.com', instagram: '', linkedin: 'https://www.linkedin.com/in/prashant-chaudhary-147912320/', discord: 'prashantchaudhary8090' },
+    { name: 'Krrish Sharma', branch: 'Meta', email: 'krish56b1@gmail.com', instagram: '', linkedin: 'https://www.linkedin.com/in/krish-sharma1165', discord: 'krish_sharma1165' },
+    { name: 'Ritesh Singh', branch: 'Chemical', email: 'ummeshchandrasingh1998@gmail.com', instagram: 'riteshrks16', linkedin: 'https://www.linkedin.com/in/ritesh-kumar-singh-188b9a255', discord: 'ritehrks' },
+    { name: 'Abhinav Singh', branch: 'CSE', email: 'abhinav.6111q@gmail.com', instagram: 'abh19av_s', linkedin: 'https://www.linkedin.com/in/abhinav-singh-3a0863322', discord: '' },
+    { name: 'Siddhi Agarwal', branch: 'CSE', email: 'siddhinonuagarwal@gmail.com', instagram: 'siddhii.agarwal', linkedin: '', discord: '' },
   ];
 
   const buildLinkedIn = (value) => {
@@ -150,23 +150,14 @@ const ContactUs = () => {
                     </div>
                   )}
 
-                  {/* Name & Role */}
+                  {/* Name & Branch */}
                   <div className="mb-4">
-                    <h3 className="text-xl font-bold text-white mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#FF3C5F] group-hover:to-[#FFC22D] transition-all duration-300">
+                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#FF3C5F] group-hover:to-[#FFC22D] transition-all duration-300">
                       {m.name}
                     </h3>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${m.role === 'Lead Developer' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                          : m.role === 'Full Stack Developer' ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
-                            : m.role === 'Core Team' ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
-                              : 'bg-gray-700 text-gray-300'
-                        }`}>
-                        {m.role}
-                      </span>
-                      <span className="text-gray-500 text-xs uppercase tracking-wide">
-                        {m.branch}
-                      </span>
-                    </div>
+                    <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gray-700/50 text-gray-300 border border-gray-600">
+                      {m.branch}
+                    </span>
                   </div>
 
                   {/* Email */}
