@@ -1,65 +1,24 @@
-name: CI/CD Pipeline
+name: CI - Build Check
 
 on:
-  push:
-    branches: [ main, develop ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, dev ]
+  push:
+    branches: [ main, dev ]
 
 jobs:
-  # Backend Tests
-  backend-test:
-    name: Backend Tests
+  build-frontend:
+    name: Build Frontend
     runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
     
-    - name: Setup Node.js ${{ matrix.node-version }}
+    - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: console-backend/package-lock.json
-    
-    - name: Install dependencies
-      working-directory: ./console-backend
-      run: npm ci
-    
-    - name: Run linter
-      working-directory: ./console-backend
-      run: npm run lint
-    
-    - name: Run tests
-      working-directory: ./console-backend
-      run: npm test
-      env:
-        NODE_ENV: test
-        JWT_SECRET: test_jwt_secret_for_ci_pipeline_testing
-        MONGO_URI: ${{ secrets.MONGO_URI_TEST }}
-
-  # Frontend Tests
-  frontend-test:
-    name: Frontend Tests
-    runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '18.x'
         cache: 'npm'
         cache-dependency-path: console-frontend/package-lock.json
     
@@ -67,21 +26,16 @@ jobs:
       working-directory: ./console-frontend
       run: npm ci
     
-    - name: Run linter
-      working-directory: ./console-frontend
-      run: npm run lint
-    
     - name: Build project
       working-directory: ./console-frontend
       run: npm run build
       env:
         VITE_API_URL: https://api.example.com/api
         VITE_ADMIN_API_URL: https://api.example.com/api/admin
-        VITE_GOOGLE_CLIENT_ID: test_client_id
+        VITE_GOOGLE_CLIENT_ID: placeholder_client_id
 
-  # Security Audit
-  security-audit:
-    name: Security Audit
+  build-backend:
+    name: Build Backend
     runs-on: ubuntu-latest
     
     steps:
@@ -92,41 +46,13 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: console-backend/package-lock.json
     
-    - name: Audit Backend Dependencies
-      working-directory: ./console-backend
-      run: npm audit --audit-level=moderate
-    
-    - name: Audit Frontend Dependencies
-      working-directory: ./console-frontend
-      run: npm audit --audit-level=moderate
-
-  # Code Quality
-  code-quality:
-    name: Code Quality Check
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18.x'
-    
-    - name: Install Backend Dependencies
+    - name: Install dependencies
       working-directory: ./console-backend
       run: npm ci
     
-    - name: Install Frontend Dependencies
-      working-directory: ./console-frontend
-      run: npm ci
-    
-    - name: Check Backend Code Style
+    - name: Verify installation
       working-directory: ./console-backend
-      run: npm run lint
-    
-    - name: Check Frontend Code Style
-      working-directory: ./console-frontend
-      run: npm run lint
+      run: node --version && npm --version

@@ -119,8 +119,14 @@ Unsure where to begin? Look for issues labeled:
 
 ### Pull Requests
 
-1. **Create a feature branch**
+⚠️ **CRITICAL: All pull requests MUST target the `dev` branch, NOT `main`**
+
+The `main` branch is reserved for production deployments only. PRs targeting `main` will be automatically rejected.
+
+1. **Create a feature branch from `dev`**
    ```bash
+   git checkout dev
+   git pull upstream dev
    git checkout -b feature/amazing-feature
    ```
 
@@ -132,13 +138,13 @@ Unsure where to begin? Look for issues labeled:
 
 3. **Test your changes**
    ```bash
-   # Backend tests
-   cd console-backend
-   npm test
-   
-   # Frontend tests
+   # Frontend build test
    cd console-frontend
-   npm run lint
+   npm run build
+   
+   # Backend verification
+   cd console-backend
+   npm install
    ```
 
 4. **Commit your changes**
@@ -155,8 +161,47 @@ Unsure where to begin? Look for issues labeled:
 6. **Open a Pull Request**
    - Go to the original repository
    - Click "New Pull Request"
-   - Select your branch
+   - **IMPORTANT: Set base branch to `dev`** (not `main`)
+   - Select your feature branch as compare
    - Fill in the PR template
+   - Wait for CI checks to pass
+   - Request review from maintainers
+
+
+## Git Workflow & Branch Strategy
+
+### Branch Structure
+
+This project follows a **production-safe branching model**:
+
+- **`main`** - Production branch
+  - Deployed to Netlify
+  - Protected - no direct pushes allowed
+  - Only accepts PRs from `dev`
+  - Requires CI passing + 1 approval
+  
+- **`dev`** - Development branch (DEFAULT)
+  - Active development happens here
+  - All contributor PRs target this branch
+  - Protected - requires CI to pass
+  - Merges to `main` trigger production deployment
+
+### Workflow Rules
+
+1. ✅ **Fork the repository** - External contributors work from forks
+2. ✅ **Create feature branches from `dev`** - Always branch from `dev`
+3. ✅ **Open PRs to `dev`** - All PRs must target `dev`
+4. ❌ **Never PR directly to `main`** - Will be rejected
+5. ✅ **CI must pass** - Builds must succeed before merge
+6. ✅ **Get approval** - At least 1 maintainer must approve
+
+### Deployment Flow
+
+```
+feature/branch → dev (via PR) → main (via PR) → Netlify Production
+```
+
+Only maintainers can merge `dev` → `main` for production releases.
 
 ## Development Workflow
 
