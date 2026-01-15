@@ -107,49 +107,11 @@ const ContactUs = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {contacts.map((m, idx) => {
-              // Special styling for top 3
-              const isTop3 = idx < 3;
-              const borderGradient = idx === 0
-                ? 'from-yellow-400 via-yellow-500 to-yellow-600'
-                : idx === 1
-                  ? 'from-gray-300 via-gray-400 to-gray-500'
-                  : idx === 2
-                    ? 'from-orange-400 via-orange-500 to-orange-600'
-                    : 'from-gray-700 to-gray-800';
-
-              const bgGradient = idx === 0
-                ? 'from-yellow-900/20 to-yellow-800/10'
-                : idx === 1
-                  ? 'from-gray-800/20 to-gray-700/10'
-                  : idx === 2
-                    ? 'from-orange-900/20 to-orange-800/10'
-                    : 'from-gray-900/40 to-black/40';
-
               return (
                 <div
                   key={idx}
-                  className={`group relative bg-gradient-to-br ${bgGradient} backdrop-blur-md rounded-2xl p-6 border-2 transition-all duration-500 hover:scale-105 hover:shadow-2xl ${isTop3 ? `border-transparent bg-gradient-to-br ${bgGradient}` : 'border-gray-800 hover:border-gray-700'
-                    }`}
-                  style={isTop3 ? {
-                    background: `linear-gradient(135deg, ${idx === 0 ? 'rgba(234, 179, 8, 0.1)' : idx === 1 ? 'rgba(156, 163, 175, 0.1)' : 'rgba(249, 115, 22, 0.1)'
-                      }, rgba(0, 0, 0, 0.4))`,
-                    borderImage: `linear-gradient(135deg, ${idx === 0 ? '#fbbf24, #f59e0b' : idx === 1 ? '#d1d5db, #9ca3af' : '#fb923c, #f97316'
-                      }) 1`
-                  } : {}}
+                  className="group relative bg-gradient-to-br from-gray-900/40 to-black/40 backdrop-blur-md rounded-2xl p-6 border-2 border-gray-800 hover:border-gray-700 transition-all duration-500 hover:scale-105 hover:shadow-2xl"
                 >
-                  {/* Top 3 Badge */}
-                  {isTop3 && (
-                    <div className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-gradient-to-br from-black to-gray-900 border-2 flex items-center justify-center shadow-lg"
-                      style={{
-                        borderColor: idx === 0 ? '#fbbf24' : idx === 1 ? '#d1d5db' : '#fb923c'
-                      }}
-                    >
-                      <span className="text-2xl">
-                        {idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}
-                      </span>
-                    </div>
-                  )}
-
                   {/* Name & Branch */}
                   <div className="mb-4">
                     <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#FF3C5F] group-hover:to-[#FFC22D] transition-all duration-300">
