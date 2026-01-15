@@ -70,6 +70,16 @@ export const apiFetch = async (url, options = {}) => {
 // API endpoints
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+// Debug logging for API configuration (only in development or first load)
+if (import.meta.env.DEV || !window.__API_CONFIG_LOGGED__) {
+  console.log('🔧 API Configuration:');
+  console.log('  VITE_API_URL:', import.meta.env.VITE_API_URL);
+  console.log('  API_BASE_URL:', API_BASE_URL);
+  console.log('  MODE:', import.meta.env.MODE);
+  console.log('  PROD:', import.meta.env.PROD);
+  window.__API_CONFIG_LOGGED__ = true;
+}
+
 export const API_ENDPOINTS = {
   BASE_URL: API_BASE_URL,
 
