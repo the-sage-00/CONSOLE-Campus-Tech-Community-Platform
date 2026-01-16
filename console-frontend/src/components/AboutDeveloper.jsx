@@ -30,9 +30,9 @@ const AboutDeveloper = () => {
     },
     {
       id: 2,
-      name: "amit kumar",
+      name: "Amit Kumar",
       role: "Full Stack Developer & DevOps Expert",
-      avatar: "/team/amit.webp",
+      avatar: "/team/amit.jpg",
       instagram: "https://www.instagram.com/amit_.6217",
       linkedin: "https://linkedin.com/in/amit6217",
       theme: {
@@ -46,7 +46,7 @@ const AboutDeveloper = () => {
       id: 3,
       name: "Shivam pareek",
       role: "Backend Developer & API Expert",
-      avatar: "/team/shivam.jpg",
+      avatar: "/team/shivam1.jpg",
       instagram: "https://www.instagram.com/pareek01",
       linkedin: "https://www.linkedin.com/in/shivam-pareek-047819346",
       theme: {
