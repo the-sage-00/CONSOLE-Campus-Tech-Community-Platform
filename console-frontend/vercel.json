@@ -1,8 +1,12 @@
 {
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "/console-backend/server.js" 
+    },
+    {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/console-frontend/index.html"
     }
   ],
   "headers": [
