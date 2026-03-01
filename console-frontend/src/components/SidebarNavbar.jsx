@@ -42,7 +42,7 @@ const SidebarNavbar = () => {
     { name: "Contest", path: "/contest", icon: <Medal className="w-5 h-5" /> },
     { name: "Tech Guide", path: "/tech-guide", icon: <BookOpen className="w-5 h-5" /> },
     { name: "Resources", path: "/resources", icon: <FileText className="w-5 h-5" /> },
-    { name: "BuildVerse", path: "/buildverse", icon: <Rocket className="w-5 h-5" /> },
+    { name: "Projects", path: "/buildverse", icon: <Rocket className="w-5 h-5" /> },
     { name: "Contact", path: "/contact", icon: <Mail className="w-5 h-5" /> },
   ];
 

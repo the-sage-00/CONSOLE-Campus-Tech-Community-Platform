@@ -68,7 +68,7 @@ const Header = () => {
     { name: 'Leaderboard', path: '/leaderboard', icon: <Trophy className="w-4 h-4" /> },
     { name: 'Resources', path: '/resources', icon: <BookOpen className="w-4 h-4" /> },
     { name: 'Tech Guide', path: '/tech-guide', icon: <GraduationCap className="w-4 h-4" /> },
-    { name: 'BuildVerse', path: '/buildverse', icon: <Rocket className="w-4 h-4" /> },
+    { name: 'Projects', path: '/buildverse', icon: <Rocket className="w-4 h-4" /> },
     { name: 'Contact', path: '/contact', icon: <Phone className="w-4 h-4" /> },
     { name: 'Admin Panel', path: '/admin/login', icon: <Shield className="w-4 h-4" /> },
   ];

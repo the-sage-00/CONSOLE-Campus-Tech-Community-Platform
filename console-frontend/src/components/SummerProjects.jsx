@@ -386,7 +386,7 @@ const SummerProjects = () => {
                         className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-5 leading-[0.95]"
                     >
                         <span className="bg-gradient-to-r from-[#FF3C5F] via-[#FF7A30] to-[#FFC22D] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
-                            BuildVerse
+                            Project Phase A
                         </span>
                     </motion.h1>
 
