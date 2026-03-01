@@ -29,6 +29,7 @@ import { AuthProvider } from './context/AuthProvider';
 import ProfileProtected from './components/ProfileProtected';
 import LeaderboardProtected from './components/LeaderboardProtected';
 import ContestPage from './components/ContestPage';
+import SummerProjects from './components/SummerProjects';
 import MobileExperienceModal from './components/ui/MobileExperienceModal';
 
 function App() {
@@ -62,6 +63,7 @@ function App() {
               <Route path="/leaderboard-analytics" element={<LeaderboardAnalytics />} />
               <Route path="/tech-guide" element={<TechGuide />} />
               <Route path="/resources" element={<ResourcesPage />} />
+              <Route path="/buildverse" element={<SummerProjects />} />
               <Route path="/about-developers" element={<AboutDeveloper />} />
 
               {/* Resource Detail Routes */}

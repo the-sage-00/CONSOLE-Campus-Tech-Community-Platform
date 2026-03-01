@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Trophy, BookOpen, GraduationCap, Phone, Shield, Facebook, Linkedin, Instagram, Youtube, Twitter } from 'lucide-react';
+import { Home, Trophy, BookOpen, GraduationCap, Phone, Shield, Rocket, Facebook, Linkedin, Instagram, Youtube, Twitter } from 'lucide-react';
 import { logger } from '../utils/logger';
 
 const Header = () => {
@@ -68,6 +68,7 @@ const Header = () => {
     { name: 'Leaderboard', path: '/leaderboard', icon: <Trophy className="w-4 h-4" /> },
     { name: 'Resources', path: '/resources', icon: <BookOpen className="w-4 h-4" /> },
     { name: 'Tech Guide', path: '/tech-guide', icon: <GraduationCap className="w-4 h-4" /> },
+    { name: 'BuildVerse', path: '/buildverse', icon: <Rocket className="w-4 h-4" /> },
     { name: 'Contact', path: '/contact', icon: <Phone className="w-4 h-4" /> },
     { name: 'Admin Panel', path: '/admin/login', icon: <Shield className="w-4 h-4" /> },
   ];
@@ -104,8 +105,8 @@ const Header = () => {
     <>
       {/* Sticky Header */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-          ? 'bg-black/95 backdrop-blur-md shadow-lg'
-          : 'bg-transparent'
+        ? 'bg-black/95 backdrop-blur-md shadow-lg'
+        : 'bg-transparent'
         }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">

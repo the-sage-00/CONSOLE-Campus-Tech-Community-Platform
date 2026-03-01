@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, Trophy, BookOpen, FileText, Mail, User, LogOut, LogIn, UserPlus, Medal } from 'lucide-react';
+import { Home, Trophy, BookOpen, FileText, Mail, User, LogOut, LogIn, UserPlus, Medal, Rocket } from 'lucide-react';
 import TextType from "./ui/text/TextType";
 import SplashCursor from "./ui/SplashCursor";
 
@@ -42,6 +42,7 @@ const SidebarNavbar = () => {
     { name: "Contest", path: "/contest", icon: <Medal className="w-5 h-5" /> },
     { name: "Tech Guide", path: "/tech-guide", icon: <BookOpen className="w-5 h-5" /> },
     { name: "Resources", path: "/resources", icon: <FileText className="w-5 h-5" /> },
+    { name: "BuildVerse", path: "/buildverse", icon: <Rocket className="w-5 h-5" /> },
     { name: "Contact", path: "/contact", icon: <Mail className="w-5 h-5" /> },
   ];
 
