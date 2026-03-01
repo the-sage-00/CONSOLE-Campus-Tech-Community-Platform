@@ -285,9 +285,7 @@ const ProjectCard = ({ project, index }) => {
                 {/* Download Button */}
                 <a
                     href={project.pdfPath}
-                    download
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    download="BuildVerse_Phase_A.pdf"
                     className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r ${project.gradient} text-white font-bold text-sm shadow-lg hover:shadow-xl hover:scale-[1.03] transition-all duration-300`}
                 >
                     <Download className="w-4 h-4" />
@@ -562,9 +560,7 @@ const SummerProjects = () => {
                             {/* Download approach PDF */}
                             <a
                                 href="/projects/BuildVerse_Approach_Phase_A.pdf"
-                                download
-                                target="_blank"
-                                rel="noopener noreferrer"
+                                download="BuildVerse_Approach_Phase_A.pdf"
                                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#10B981] to-[#06B6D4] text-white font-bold text-sm shadow-lg hover:shadow-xl hover:scale-[1.03] transition-all duration-300"
                             >
                                 <Download className="w-4 h-4" />
@@ -597,9 +593,7 @@ const SummerProjects = () => {
 
                         <a
                             href={PHASE_A_PDF}
-                            download
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            download="BuildVerse_Phase_A.pdf"
                             className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-[#FF3C5F] via-[#FF7A30] to-[#FFC22D] text-white font-bold text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
                         >
                             <FileDown className="w-5 h-5" />
