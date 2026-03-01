@@ -63,7 +63,7 @@ function App() {
               <Route path="/leaderboard-analytics" element={<LeaderboardAnalytics />} />
               <Route path="/tech-guide" element={<TechGuide />} />
               <Route path="/resources" element={<ResourcesPage />} />
-              <Route path="/buildverse" element={<SummerProjects />} />
+              <Route path="/projects" element={<SummerProjects />} />
               <Route path="/about-developers" element={<AboutDeveloper />} />
 
               {/* Resource Detail Routes */}
