@@ -129,25 +129,6 @@ const LeaderboardPage = () => {
     )
   ).length;
 
-  const getPlatformScore = (user, platformKey) => {
-    const platformData = user.platforms?.[platformKey];
-    if (!platformData || Object.keys(platformData).length === 0) return 0;
-
-    if (platformKey === 'codeforces' && platformData.rating) {
-      return platformData.rating || 0;
-    }
-
-    if (platformKey === 'leetcode') {
-      const easy = platformData.easySolved || 0;
-      const medium = platformData.mediumSolved || 0;
-      const hard = platformData.hardSolved || 0;
-
-      const leetcodePoints = easy * 1 + medium * 2.5 + hard * 4;
-      return Math.sqrt(leetcodePoints) * 25 + 700;
-    }
-
-    return 0;
-  };
   const stats = [
     {
       label: 'Total Users',
@@ -172,28 +153,6 @@ const LeaderboardPage = () => {
       color: 'text-yellow-400',
       bgColor: 'bg-yellow-500/10',
       borderColor: 'border-yellow-500/20',
-    },
-    // {
-    //   label: 'Avg Rating',
-    //   value:
-    //     filteredUsers.length > 0
-    //       ? Math.round(
-    //           filteredUsers.reduce((sum, u) => {
-    //             // Use totalScore if available (from API), otherwise calculate it
-    //             if (u.totalScore !== undefined && u.totalScore !== null) {
-    //               return sum + u.totalScore;
-    //             }
-    //             const cfRating = getPlatformScore(u, 'codeforces');
-    //             const lcRating = getPlatformScore(u, 'leetcode');
-    //             return sum + Math.max(cfRating, lcRating);
-    //           }, 0) / filteredUsers.length
-    //         )
-    //       : 'N/A',
-    //   icon: <Star className="w-7 h-7" />,
-    //   color: 'text-purple-400',
-    //   bgColor: 'bg-purple-500/10',
-    //   borderColor: 'border-purple-500/20',
-    // },
   ];
 
   // Year filter options
