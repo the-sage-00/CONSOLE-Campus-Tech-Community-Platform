@@ -12,7 +12,7 @@
 
 **A campus competitive programming platform — track your LeetCode and Codeforces progress, compete on a real-time leaderboard, and grow together.**
 
-[🌐 Live Platform](https://console.net.in) · [🐛 Report a Bug](https://github.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/issues) · [✨ Suggest a Feature](https://github.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/issues) · [💡 Contribution Ideas](CONTRIBUTING_IDEAS.md)
+[🌐 Live Platform](https://console.net.in) · [🐛 Report a Bug](https://github.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/issues) · [💡 50+ Feature Ideas](CONTRIBUTING_IDEAS.md) · [🗳️ Vote & Discuss](https://github.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/discussions)
 
 </div>
 
@@ -35,6 +35,8 @@ Now it is open source — not because it is finished, but because the best featu
 ## 📋 Table of Contents
 
 - [Features](#-features)
+- [Start Here — Pick Your Level](#-start-here--pick-your-level)
+- [Vote on What Gets Built Next](#-vote-on-what-gets-built-next)
 - [Architecture](#-architecture)
 - [How the Leaderboard Works](#-how-the-leaderboard-works)
 - [Quick Start](#-quick-start)
@@ -62,6 +64,82 @@ Now it is open source — not because it is finished, but because the best featu
 | 👨‍💼 **Admin Panel** | User management, contest sync, participation stats |
 | ⚡ **Caching** | In-memory caching for fast leaderboard loads |
 | 🔄 **Auto Sync** | Weekly cron job syncs contest data automatically |
+
+---
+
+## 🚀 Start Here — Pick Your Level
+
+You don't need to know everything. You just need to pick a level and start.
+
+### 🟢 Never contributed to open source before?
+
+**Start here — this will teach you the full workflow:**
+
+| Step | Resource |
+|------|----------|
+| 1. Learn Git basics | [▶ Git & GitHub for Beginners — freeCodeCamp (1 hr)](https://www.youtube.com/watch?v=RGOj5yH7evk) |
+| 2. Learn how to fork & PR | [▶ Your First Pull Request — Fireship (7 min)](https://www.youtube.com/watch?v=8lGpZkjnkt4) |
+| 3. Learn how to read a codebase | [▶ How to Read Code You Didn't Write — Fireship (9 min)](https://www.youtube.com/watch?v=jM4wGDEO4o8) |
+| 4. Set up and run CONSOLE locally | Follow the [Quick Start](#-quick-start) guide below |
+| 5. Pick a **Tier 1** issue from [CONTRIBUTING_IDEAS.md](CONTRIBUTING_IDEAS.md) | These are good first issues — UI improvements, small features |
+
+**Your first PR can be as small as fixing a typo or improving the mobile layout.** That counts.
+
+---
+
+### 🟡 Know React / Node.js but never worked on a real codebase?
+
+1. Clone the repo, run it locally, click around the actual platform
+2. Read how the leaderboard works (below) — it's the core of the app
+3. Read `console-frontend/src/App.jsx` to understand all the routes
+4. Read `console-backend/server.js` to understand all the APIs
+5. Pick a **Tier 2** feature from [CONTRIBUTING_IDEAS.md](CONTRIBUTING_IDEAS.md)
+
+Good starting points:
+- Add a search bar to the leaderboard
+- Add a graphical chart view to the leaderboard
+- Build the interview experience board (full stack — schema + API + UI)
+
+---
+
+### 🔴 Comfortable with full-stack and want to do something ambitious?
+
+These are the features that have never been built on any campus platform anywhere:
+
+- 🤖 **AI Mock Interviewer** — a conversational agent that conducts a real technical interview round by round, scores you, gives feedback
+- 🎮 **CP Quest Mode** — RPG-style gamified learning where your actual CF/LC submissions complete quests
+- 📄 **Resume Builder** — auto-fills your CP stats from CONSOLE profile, exports a clean PDF
+- 🔴 **Real-Time Leaderboard** — WebSocket-powered, ratings update live as users sync their platforms
+- 🏛️ **Multi-Campus Support** — make the platform config-driven so any college can deploy their own CONSOLE
+
+Pick one. Open an issue. Build it. **No one at your college has built this before.**
+
+---
+
+## 🗳️ Vote on What Gets Built Next
+
+We use **GitHub Discussions** to vote on which features the community wants most.
+
+→ **[Open Discussions — Vote & Suggest](https://github.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/discussions)**
+
+**How to vote:**
+- Go to Discussions → find a feature proposal → react with 👍
+- The features with the most 👍 votes get prioritized
+- Don't see your idea? Open a new Discussion and propose it
+- The maintainers review top-voted ideas monthly and open them as official issues
+
+**Current open polls** (vote now):
+
+| Feature | Vote |
+|---------|------|
+| AI Mock Interview Agent | [👍 Vote](https://github.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/discussions) |
+| Real-Time WebSocket Leaderboard | [👍 Vote](https://github.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/discussions) |
+| Interview Experience Board | [👍 Vote](https://github.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/discussions) |
+| Resume Builder with CP Stats | [👍 Vote](https://github.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/discussions) |
+| GitHub Activity on Profile | [👍 Vote](https://github.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/discussions) |
+| CP Quest / RPG Mode | [👍 Vote](https://github.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/discussions) |
+
+> All 50+ ideas are listed in [CONTRIBUTING_IDEAS.md](CONTRIBUTING_IDEAS.md) — anyone can propose a new one.
 
 ---
 
@@ -354,7 +432,7 @@ Built from scratch by:
 |------|--------|
 | **Rishi Kataria** | [@the-sage-00](https://github.com/the-sage-00) |
 | **Amit Kumar** | [@Amit6217](https://github.com/Amit6217) |
-| **Shivam Parekh** | — |
+| **Shivam Parekh** | [@2005-Shiv](https://github.com/2005-Shiv) |
 
 Started: **Summer 2024** · Launched: **September 2024**
 
