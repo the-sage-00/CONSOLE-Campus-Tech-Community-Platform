@@ -1,144 +1,94 @@
-# Changelog
+﻿# Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to CONSOLE are documented here.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
-
-### Planned Features
-- Real-time notifications system
-- Social features (comments, likes, shares)
-- Mobile app (React Native)
-- Discord bot integration
-- Advanced analytics dashboard
-- More platform integrations (HackerRank, CodeChef)
+Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [2.0.0] - 2026-01-14
+## [Unreleased] — Open Source Launch
 
 ### Added
-- **Google OAuth Authentication** - Secure login with institutional emails
-- **Contest Management System** - Create and manage coding contests
-- **Admin Dashboard** - Comprehensive admin panel with analytics
-- **User Profiles** - Personalized dashboards with performance tracking
-- **Real-time Leaderboards** - Live rankings from CodeForces and LeetCode
-- **Learning Resources** - Interactive roadmaps for various tech domains
-- **Mobile Responsive Design** - Optimized for all device sizes
-- **Dark/Light Mode** - Theme switching capability
-- **Keep-Alive System** - Prevents server sleep on free tier hosting
-- **Email Verification** - Secure email verification flow
-- **Password Reset** - Forgot password functionality
-- **Rate Limiting** - API rate limiting for security
-- **CORS Configuration** - Proper cross-origin resource sharing
-- **Error Handling** - Global error handling middleware
-- **Logging System** - Request/response logging
-- **Caching** - Node-Cache for improved performance
-- **Scheduled Jobs** - Contest synchronization cron jobs
+- `CONTRIBUTING_IDEAS.md` — 50+ feature ideas for contributors (AI agents, resume tools, campus life features, developer extensions)
+- `CONTRIBUTING.md` — Full contributor guide with beginner video links and PR workflow
+- Open source public release
+
+### Planned by Community
+See [CONTRIBUTING_IDEAS.md](CONTRIBUTING_IDEAS.md) for the full roadmap.
+
+---
+
+## [2.1.0] — July 2026 · Open Source Cleanup
+
+### Removed (Dead Code)
+- `authControllerNew.js` — legacy OTP/password registration controller
+- `authControllerV2.js` — legacy auth iteration
+- `routes/authRoutes.js`, `routes/authRoutesV2.js` — dead routes (never imported)
+- `models/PendingUser.js` — OTP-based temp user model
+- `models/PasswordReset.js` — password reset token model
+- `services/emailService.js` — SendGrid OTP email service
+- `utils/scoreCalculator.js` — dead scoring formula (frontend never used it)
+- `Register.jsx`, `OTPVerification.jsx`, `ForgotPassword.jsx` — dead auth UI
+- `LeaderboardTable.jsx`, `LeaderboardAnalytics.jsx` — old leaderboard pages
+- `ScoreCalculationDropdown.jsx`, `AddUserForm.jsx`, `AddMultiUserForm.jsx` — unused components
+- All migration and debug scripts (`migrate-*.js`, `check-mongo.js`, etc.)
+- All internal dev fix docs (`REGISTRATION_FLOW_UPDATE.md`, `SESSION_MANAGEMENT_FIX.md`, etc.)
+- Committed `.env` file (contained real secrets — removed from git history)
+
+### Added
+- `.github/workflows/ci.yml` — GitHub Actions CI (lint backend, build frontend, run tests)
+- `.github/ISSUE_TEMPLATE/` — Bug report and feature request templates
+- `.github/PULL_REQUEST_TEMPLATE.md` — PR checklist template
+- `.eslintrc.cjs` — ESLint configuration for ES modules
 
 ### Changed
-- Migrated from email/password to Google OAuth only
-- Improved UI/UX with modern design patterns
-- Enhanced security with Helmet.js
-- Optimized database queries
-- Refactored authentication flow
-- Updated API documentation
-
-### Fixed
-- Cross-session attendance bug
-- 401 authentication errors
-- Logout button functionality
-- Mobile experience modal improvements
-- Pending approval page issues
-- Session management fixes
-- Verification redirect bugs
-
-### Security
-- Implemented JWT with proper expiration
-- Added input validation on all endpoints
-- Configured security headers with Helmet
-- Implemented rate limiting
-- Added CSRF protection
-- Secure password hashing with bcrypt
+- `LeaderboardProtected.jsx` — removed mandatory platform verification gate (login only now required to view leaderboard)
+- `authController.js` — removed dead `register`, `login`, `verifyEmail`, `resendVerificationEmail` functions and legacy imports
+- `User.js` — removed `password`, `bcrypt`, `platforms` legacy fields and dead methods (`comparePassword`, `calculateTotalScore`, `getBestPlatform`, `getNormalizedScores`)
+- `leaderboardController.js` — removed dead formula aggregation (frontend sorts client-side with raw data)
+- `package.json` (backend) — removed `@sendgrid/mail`, `bcrypt`, `nodemailer`, `readline-sync`
+- `README.md` — complete rewrite with real team info, architecture diagrams, leaderboard explanation
 
 ---
 
-## [1.0.0] - 2025-12-30
+## [2.0.0] — December 2024 · Platform Launch
 
 ### Added
-- Initial release
-- Basic leaderboard functionality
-- User registration and login
-- CodeForces and LeetCode integration
-- Admin panel
-- Tech resources section
+- **Google OAuth** — institutional email login, replaces all password-based auth
+- **Platform Verification** — unique code challenge to verify CF and LC handles
+- **Unified Leaderboard** — three views: CF rating, LC contest rating, total problems solved
+- **Year-wise filtering** — filter leaderboard by batch year (parsed from email)
+- **Contest Tracker** — LeetCode and Codeforces weekly contest sync
+- **Admin Dashboard** — user management, contest sync triggers, participation stats
+- **DSA Sheet** — structured problem tracker with per-user progress
+- **Tech Roadmaps** — paths for DSA, Web Dev, ML, CP, InfoSec, Web3, C++, Python
+- **User Profile** — personal stats dashboard with verified platform data
+- **Keep-alive system** — prevents server sleep on free-tier hosting
+- **In-memory caching** — node-cache for leaderboard performance
+- **Weekly cron job** — auto-syncs contest data every Sunday
+
+### Changed
+- Migrated fully from email/password to Google OAuth
+- Leaderboard redesigned around raw platform ratings (no formula)
 
 ---
 
-## Version History
+## [1.0.0] — Summer 2024 · Prototype
 
-### Version 2.0.0 - Major Overhaul
-- Complete authentication system redesign
-- New admin features
-- Enhanced UI/UX
-- Performance improvements
-- Security enhancements
-
-### Version 1.0.0 - Initial Release
-- Core functionality
-- Basic features
-- MVP launch
-
----
-
-## Migration Guides
-
-### Migrating from v1.x to v2.x
-
-#### Breaking Changes
-1. **Authentication System**
-   - Email/password login removed
-   - Google OAuth is now the only authentication method
-   - Users need to re-register with institutional emails
-
-2. **API Endpoints**
-   - `/api/auth/register` - Removed
-   - `/api/auth/login` - Removed
-   - `/api/auth/google-login` - New endpoint
-
-3. **Environment Variables**
-   - `GOOGLE_CLIENT_ID` - Now required
-   - Email service variables - Now optional
-
-#### Migration Steps
-1. Update environment variables
-2. Configure Google OAuth
-3. Update frontend authentication flow
-4. Test login/logout functionality
-5. Verify user data migration
+### Added
+- Initial concept and architecture design
+- Basic leaderboard with manual data entry
+- LeetCode and Codeforces API integration proof-of-concept
+- Core Express backend + React frontend scaffolding
 
 ---
 
 ## Contributors
 
-Thank you to all the contributors who have helped make this project better!
+| Name | GitHub |
+|------|--------|
+| Rishi Kataria | [@the-sage-00](https://github.com/the-sage-00) |
+| Amit Kumar | [@Amit6217](https://github.com/Amit6217) |
+| Shivam Parekh | — |
 
-- **Lead Developer**: [Your Name]
-- **Contributors**: See [GitHub Contributors](https://github.com/yourusername/myconsole/graphs/contributors)
-
----
-
-## Support
-
-For questions or issues, please:
-- Check the [documentation](README.md)
-- Search [existing issues](https://github.com/yourusername/myconsole/issues)
-- Open a [new issue](https://github.com/yourusername/myconsole/issues/new)
-
----
-
-[Unreleased]: https://github.com/yourusername/myconsole/compare/v2.0.0...HEAD
-[2.0.0]: https://github.com/yourusername/myconsole/compare/v1.0.0...v2.0.0
-[1.0.0]: https://github.com/yourusername/myconsole/releases/tag/v1.0.0
+[View all contributors](https://github.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/graphs/contributors)

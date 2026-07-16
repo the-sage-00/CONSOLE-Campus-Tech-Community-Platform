@@ -1,83 +1,174 @@
-# 🎯 Console - Tech Community Platform
+﻿<div align="center">
 
-<div align="center">
+<img src="https://raw.githubusercontent.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/dev/console-frontend/public/console_logo_withText.png" alt="CONSOLE Logo" width="320"/>
 
-![Console Banner](https://img.shields.io/badge/Console-Tech_Community-orange?style=for-the-badge)
+<br/>
+
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](CONTRIBUTING.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg?style=for-the-badge)](CONTRIBUTING.md)
+[![Node.js](https://img.shields.io/badge/Node.js-20+-339933?style=for-the-badge&logo=node.js)](https://nodejs.org)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react)](https://reactjs.org)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb)](https://mongodb.com)
 
-**A modern, full-stack platform for competitive programming enthusiasts featuring real-time leaderboards, contests, and comprehensive tech learning resources.**
+**A campus competitive programming platform — track your LeetCode and Codeforces progress, compete on a real-time leaderboard, and grow together.**
 
-[🚀 Live Demo](#) • [📖 Documentation](#documentation) • [🐛 Report Bug](https://github.com/yourusername/myconsole/issues) • [✨ Request Feature](https://github.com/yourusername/myconsole/issues)
+[🌐 Live Platform](https://console.net.in) · [🐛 Report a Bug](https://github.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/issues) · [✨ Suggest a Feature](https://github.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/issues) · [💡 Contribution Ideas](CONTRIBUTING_IDEAS.md)
 
 </div>
 
 ---
 
+## 📖 The Story
+
+In **summer 2024**, Rishi and his teammates looked around and saw something missing — there was no single place where students could track each other's competitive programming journey, discover resources, and actually feel part of a tech community together.
+
+So they built one from scratch.
+
+By **December 2024**, CONSOLE was live — a platform where students verify their LeetCode and Codeforces accounts, appear on a real leaderboard ranked by actual platform ratings, track weekly contests, follow tech roadmaps, and work through a DSA sheet.
+
+It was built by students, for students. No vendor. No budget. Just code.
+
+Now it is open source — not because it is finished, but because the best features haven't been built yet. **Come build them.**
+
+---
+
 ## 📋 Table of Contents
 
-- [✨ Features](#-features)
-- [🏗️ Architecture](#️-architecture)
-- [🚀 Quick Start](#-quick-start)
-- [📦 Installation](#-installation)
-- [⚙️ Configuration](#️-configuration)
-- [🎮 Usage](#-usage)
-- [🌐 Deployment](#-deployment)
-- [🛠️ Tech Stack](#️-tech-stack)
-- [📚 API Documentation](#-api-documentation)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
+- [Features](#-features)
+- [Architecture](#-architecture)
+- [How the Leaderboard Works](#-how-the-leaderboard-works)
+- [Quick Start](#-quick-start)
+- [Configuration](#-configuration)
+- [Deployment](#-deployment)
+- [API Reference](#-api-reference)
+- [Contributing](#-contributing)
+- [Feature Ideas](#-feature-ideas)
+- [Team](#-team)
+- [License](#-license)
 
 ---
 
 ## ✨ Features
 
-### 🏆 Core Features
-- **📊 Real-time Leaderboards** - Track competitive programming rankings from CodeForces and LeetCode
-- **🎯 Contest Management** - Create, manage, and participate in coding contests
-- **👤 User Profiles** - Personalized dashboards with performance analytics
-- **🔐 Google OAuth** - Secure authentication with institutional email support
-- **👨‍💼 Admin Dashboard** - Comprehensive admin panel for user and contest management
-
-### 📚 Learning Resources
-- **🗺️ Interactive Roadmaps** - Step-by-step guides for:
-  - Web Development
-  - Competitive Programming
-  - Machine Learning & AI
-  - Information Security
-  - Web3 & Blockchain
-  - C++ & Python Programming
-- **📖 Tech Guides** - Curated resources and tutorials
-- **💡 Best Practices** - Industry-standard coding practices
-
-### 🎨 User Experience
-- **🌓 Dark/Light Mode** - Eye-friendly themes
-- **📱 Responsive Design** - Seamless experience across all devices
-- **⚡ Fast Performance** - Optimized for speed with caching
-- **🎭 Modern UI** - Beautiful gradients and smooth animations
+| Feature | Description |
+|---------|-------------|
+| 🏆 **Leaderboard** | Live rankings — Codeforces rating, LeetCode contest rating, total problems solved |
+| ✅ **Platform Verification** | Verify your CF and LC handles with a unique code challenge |
+| 📅 **Contest Tracker** | Auto-synced weekly LeetCode and Codeforces contests |
+| 👤 **User Profiles** | Personal dashboard with verified platform stats |
+| 🗺️ **Tech Roadmaps** | Curated paths for DSA, Web Dev, ML, CP, InfoSec, Web3, C++, Python |
+| 📚 **DSA Sheet** | Structured problem tracker with progress |
+| 🔐 **Google OAuth** | Institutional email login only |
+| 👨‍💼 **Admin Panel** | User management, contest sync, participation stats |
+| ⚡ **Caching** | In-memory caching for fast leaderboard loads |
+| 🔄 **Auto Sync** | Weekly cron job syncs contest data automatically |
 
 ---
 
 ## 🏗️ Architecture
 
+```mermaid
+graph TB
+    subgraph Client["🌐 Frontend (React + Vite)"]
+        UI["Components"]
+        Auth["AuthProvider Context"]
+        Admin["Admin Panel"]
+    end
+
+    subgraph Server["⚙️ Backend (Node.js + Express)"]
+        GAuth["Google Auth Controller"]
+        AuthCtrl["Auth Controller\n(Platform Verification)"]
+        LB["Leaderboard Controller"]
+        Contest["Contest Controller"]
+        AdminCtrl["Admin Controller"]
+        Cache["Cache Service"]
+        Cron["Contest Cron (weekly)"]
+    end
+
+    subgraph DB["🗄️ MongoDB Atlas"]
+        Users[("Users")]
+        Contests[("Contests")]
+        DSA[("DSA Sheet")]
+    end
+
+    subgraph External["🌍 External APIs"]
+        Google["Google Identity Services"]
+        CF["Codeforces REST API"]
+        LC["LeetCode GraphQL API"]
+    end
+
+    UI -->|"JWT Bearer"| Server
+    Auth -->|"POST /api/auth/callback"| GAuth
+    GAuth -->|"verify credential"| Google
+    GAuth -->|"find/create user"| Users
+    AuthCtrl -->|"verify handle"| CF
+    AuthCtrl -->|"verify handle"| LC
+    LB -->|"aggregation"| Users
+    LB --> Cache
+    Contest -->|"sync"| CF
+    Contest -->|"sync"| LC
+    Contest --> Contests
+    Cron -->|"weekly trigger"| Contest
+    AdminCtrl --> Users
+    AdminCtrl --> Contests
 ```
-myconsole/
-├── console-backend/          # Node.js + Express API
-│   ├── controller/          # Business logic
-│   ├── models/              # MongoDB schemas
-│   ├── routes/              # API endpoints
-│   ├── middleware/          # Auth, security, validation
-│   ├── services/            # External API integrations
-│   ├── utils/               # Helper functions
-│   └── schedulers/          # Cron jobs for contests
+
+### Directory Structure
+
+```
+CONSOLE-Campus-Tech-Community-Platform/
+├── console-backend/
+│   ├── controller/          # Route handlers
+│   │   ├── googleAuthController.js   # Google OAuth
+│   │   ├── authController.js         # Platform verification
+│   │   ├── leaderboardController.js  # Rankings
+│   │   ├── contestController.js      # Contest sync
+│   │   └── adminController.js        # Admin operations
+│   ├── models/              # Mongoose schemas (User, Contest, DSA)
+│   ├── routes/              # Express routers
+│   ├── middleware/          # userAuth, adminAuth, security
+│   ├── services/            # verificationService, platformService, cacheService
+│   ├── utils/               # errorHandler, identity, keepalive
+│   └── schedulers/          # contestCron.js
 │
-└── console-frontend/         # React + Vite SPA
-    ├── src/
-    │   ├── components/      # React components
-    │   ├── admin/           # Admin panel
-    │   ├── context/         # React context (Auth)
-    │   └── utils/           # Frontend utilities
-    └── public/              # Static assets
+└── console-frontend/
+    └── src/
+        ├── components/      # All UI components
+        ├── admin/           # Admin panel pages
+        ├── context/         # AuthProvider
+        └── utils/           # api.js, logger.js
+```
+
+---
+
+## 📊 How the Leaderboard Works
+
+The leaderboard has **3 views**, all using **raw platform data** — no artificial scoring formula.
+
+```mermaid
+flowchart LR
+    A["User verifies\nCF / LC handle"] --> B["Platform data\nsynced to MongoDB"]
+    B --> C["GET /api/leaderboard\nlimit=1000"]
+    C --> D["Frontend sorts\nclient-side"]
+    D --> E1["🏅 Codeforces Tab\nRaw CF Rating"]
+    D --> E2["⚡ LeetCode Tab\nRaw LC Contest Rating"]
+    D --> E3["📈 Total Questions\nEasy + Medium + Hard"]
+```
+
+### Filters Available
+
+| Filter | How It Works |
+|--------|-------------|
+| **Year** | Parsed from institutional email prefix (e.g. `2024xxx@...` → Year 2024) |
+| **Platform** | Switch between CF rating / LC contest rating / total problems |
+
+### Access Rules
+
+```
+Not logged in          →  Redirect to /login
+Non-institutional email →  Access denied
+Logged in (any)        →  Can VIEW the leaderboard
+Platform verified      →  APPEARS on the leaderboard
 ```
 
 ---
@@ -86,405 +177,249 @@ myconsole/
 
 ### Prerequisites
 
-Ensure you have the following installed:
-- **Node.js** (v18 or higher)
-- **npm** or **yarn**
-- **MongoDB** (local or Atlas)
+- **Node.js** v18 or higher
+- **MongoDB** (Atlas free tier works)
+- **Google Cloud Console** account (for OAuth Client ID)
 - **Git**
 
-### Clone the Repository
+### 1. Clone
 
 ```bash
-git clone https://github.com/yourusername/myconsole.git
-cd myconsole
+git clone https://github.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform.git
+cd CONSOLE-Campus-Tech-Community-Platform
 ```
 
-### Backend Setup
+### 2. Backend Setup
 
 ```bash
 cd console-backend
 npm install
 cp .env.example .env
-# Edit .env with your configuration
+# Fill in your values in .env
 npm run dev
 ```
 
-### Frontend Setup
+Backend runs at: `http://localhost:5000`
+
+### 3. Frontend Setup
 
 ```bash
+# New terminal
 cd console-frontend
 npm install
 cp .env.example .env
-# Edit .env with your configuration
+# Fill in your values in .env
 npm run dev
 ```
 
-The application will be available at:
-- **Frontend**: http://localhost:5173
-- **Backend**: http://localhost:5000
-
----
-
-## 📦 Installation
-
-### Detailed Backend Installation
-
-1. **Navigate to backend directory**
-   ```bash
-   cd console-backend
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment variables**
-   ```bash
-   cp .env.example .env
-   ```
-
-4. **Set up MongoDB**
-   - Create a MongoDB Atlas account or use local MongoDB
-   - Get your connection string
-   - Update `MONGO_URI` in `.env`
-
-5. **Configure Google OAuth**
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Create a new project
-   - Enable Google+ API
-   - Create OAuth 2.0 credentials
-   - Add authorized redirect URIs
-   - Copy Client ID to `.env`
-
-6. **Start the server**
-   ```bash
-   npm run dev        # Development mode
-   npm start          # Production mode
-   ```
-
-### Detailed Frontend Installation
-
-1. **Navigate to frontend directory**
-   ```bash
-   cd console-frontend
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment variables**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Update the following in `.env`:
-   ```env
-   VITE_API_URL=http://localhost:5000/api
-   VITE_ADMIN_API_URL=http://localhost:5000/api/admin
-   VITE_GOOGLE_CLIENT_ID=your_google_client_id
-   ```
-
-4. **Start the development server**
-   ```bash
-   npm run dev        # Development mode
-   npm run build      # Production build
-   npm run preview    # Preview production build
-   ```
+Frontend runs at: `http://localhost:5173`
 
 ---
 
 ## ⚙️ Configuration
 
-### Backend Environment Variables
-
-Create a `.env` file in `console-backend/` with the following:
+### Backend — `console-backend/.env`
 
 ```env
-# Database
+# MongoDB
 MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/console
 
-# Authentication
-JWT_SECRET=your_super_secret_jwt_key_min_32_characters
-GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+# JWT
+JWT_SECRET=your-random-secret-minimum-32-characters
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+
+# Admin Login
+ADMIN_EMAIL=admin@yourdomain.com
+ADMIN_PASSWORD=your-secure-password
 
 # Server
 PORT=5000
 NODE_ENV=development
-
-# Admin Credentials
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=secure_password
-
-# Keep Alive (for free tier hosting)
+FRONTEND_URL=http://localhost:5173
 BACKEND_URL=http://localhost:5000
-
 ```
 
-### Frontend Environment Variables
-
-Create a `.env` file in `console-frontend/` with the following:
+### Frontend — `console-frontend/.env`
 
 ```env
-# API Configuration
 VITE_API_URL=http://localhost:5000/api
 VITE_ADMIN_API_URL=http://localhost:5000/api/admin
-
-# Google OAuth
-VITE_GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+VITE_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 ```
 
----
+### Setting Up Google OAuth
 
-## 🎮 Usage
-
-### For Students/Users
-
-1. **Sign Up/Login**
-   - Use your institutional email with Google OAuth
-   - Complete your profile with CodeForces and LeetCode handles
-
-2. **View Leaderboard**
-   - Check real-time rankings
-   - Filter by year, branch, or platform
-   - View detailed analytics
-
-3. **Participate in Contests**
-   - Browse upcoming and ongoing contests
-   - Submit solutions
-   - Track your performance
-
-4. **Explore Resources**
-   - Access curated learning roadmaps
-   - Follow step-by-step guides
-   - Learn from best practices
-
-### For Admins
-
-1. **Login to Admin Panel**
-   - Navigate to `/admin/login`
-   - Use admin credentials
-
-2. **Manage Users**
-   - Approve pending registrations
-   - View user analytics
-   - Manage user roles
-
-3. **Manage Contests**
-   - Create new contests
-   - Set contest parameters
-   - Monitor participation
-
-4. **View Analytics**
-   - Dashboard statistics
-   - User engagement metrics
-   - System health monitoring
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a project → **APIs & Services** → **Credentials**
+3. Create **OAuth 2.0 Client ID** (Web application)
+4. Add Authorized JavaScript origins:
+   - `http://localhost:5173` (dev)
+   - `https://your-frontend-domain.com` (prod)
+5. Copy the **Client ID** into both `.env` files
 
 ---
 
 ## 🌐 Deployment
 
-### Frontend Deployment (Netlify)
+### Frontend → Netlify
 
-1. **Build the project**
-   ```bash
-   cd console-frontend
-   npm run build
-   ```
+```bash
+cd console-frontend
+npm run build
+# Deploy the dist/ folder
+```
 
-2. **Deploy to Netlify**
-   - Connect your GitHub repository
-   - Set build command: `npm run build`
-   - Set publish directory: `dist`
-   - Add environment variables
-   - Deploy!
+In Netlify dashboard:
+- Build command: `npm run build`
+- Publish directory: `dist`
+- Add all `VITE_*` environment variables
 
-### Backend Deployment (Render/Railway)
+### Backend → Render
 
-1. **Prepare for deployment**
-   - Ensure all environment variables are set
-   - Update CORS origins to include your frontend URL
+- Root directory: `console-backend`
+- Build command: `npm install`
+- Start command: `npm start`
+- Add all environment variables from `.env`
 
-2. **Deploy to Render**
-   - Connect your GitHub repository
-   - Set build command: `npm install`
-   - Set start command: `npm start`
-   - Add environment variables
-   - Deploy!
-
-3. **Update Frontend**
-   - Update `VITE_API_URL` in frontend `.env`
-   - Redeploy frontend
-
-📖 **Detailed deployment guide**: See [DEPLOYMENT_GUIDE.md](console-frontend/DEPLOYMENT_GUIDE.md)
+> The `keepalive.js` utility pings the server periodically to prevent Render free-tier sleep.
 
 ---
 
-## 🛠️ Tech Stack
+## 📡 API Reference
 
-### Frontend
-- **Framework**: React 18
-- **Build Tool**: Vite
-- **Styling**: TailwindCSS
-- **Routing**: React Router v6
-- **Animations**: Framer Motion, GSAP
-- **HTTP Client**: Axios
-- **Icons**: Lucide React, React Icons
-- **Notifications**: React Hot Toast
-
-### Backend
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Database**: MongoDB (Mongoose ODM)
-- **Authentication**: JWT, Google OAuth 2.0
-- **Security**: Helmet, CORS, Express Rate Limit
-- **Validation**: Validator.js
-- **Caching**: Node-Cache
-- **Scheduling**: Node-Cron
-
-### External APIs
-- **CodeForces API** - For competitive programming data
-- **LeetCode GraphQL** - For problem-solving statistics
-
-### DevOps
-- **Version Control**: Git
-- **Hosting**: Netlify (Frontend), Render/Railway (Backend)
-- **Database**: MongoDB Atlas
-- **Monitoring**: Built-in health checks
-
----
-
-## 📚 API Documentation
-
-### Authentication Endpoints
+### Auth & Profile
 
 ```http
-POST /api/auth/callback
-GET  /api/auth/profile
-PUT  /api/auth/profile
+POST /api/auth/callback              # Google OAuth login
+GET  /api/auth/profile               # Get current user profile
+PUT  /api/auth/profile               # Update profile
+
+POST /api/auth/platform/validate     # Validate handle exists on platform
+POST /api/auth/platform/submit       # Submit handle, get verification code
+POST /api/auth/platform/verify       # Verify code was added to profile
+POST /api/auth/platform/refresh      # Refresh platform data
+POST /api/auth/platform/delete       # Remove platform handle
 ```
 
-### Leaderboard Endpoints
+### Leaderboard
 
 ```http
-GET  /api/leaderboard/combined
-GET  /api/leaderboard/analytics
-GET  /api/leaderboard/user/:userId
+GET  /api/leaderboard                # Get leaderboard
+     ?platform=leetcode|codeforces|all
+     &limit=1000
+     &page=1
 ```
 
-### Contest Endpoints
+### Contests
 
 ```http
-GET  /api/contest/all
-GET  /api/contest/:id
-POST /api/contest/create          # Admin only
-PUT  /api/contest/:id             # Admin only
+GET  /api/contest/recent             # Recent contests
+GET  /api/contest/upcoming           # Upcoming contests
+POST /api/contest/sync               # Trigger sync (admin)
 ```
 
-### Admin Endpoints
+### Admin
 
 ```http
-GET  /api/admin/users
-GET  /api/admin/pending-users
-PUT  /api/admin/approve-user/:id
-GET  /api/admin/stats
-```
-
-### Platform Endpoints
-
-```http
-POST /api/auth/platform/validate
-POST /api/auth/platform/submit
-POST /api/auth/platform/verify
-POST /api/auth/platform/refresh
-POST /api/auth/platform/delete
+POST /api/admin/login                # Admin login
+GET  /api/admin/users                # All users
+GET  /api/admin/stats                # Platform stats
+POST /api/admin/sync-contests        # Sync LeetCode contests
+POST /api/admin/sync-codeforces      # Sync Codeforces contests
 ```
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions! Here's how you can help:
+CONSOLE is open to **everyone**. You don't need to be from our campus to contribute.
 
-1. **Fork the repository**
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/AmazingFeature
-   ```
-3. **Commit your changes**
-   ```bash
-   git commit -m 'Add some AmazingFeature'
-   ```
-4. **Push to the branch**
-   ```bash
-   git push origin feature/AmazingFeature
-   ```
-5. **Open a Pull Request**
+Whether you fix a typo or build an entire AI interview agent — every contribution matters.
 
-### Development Guidelines
+### New to Open Source?
 
-- Follow the existing code style
-- Write meaningful commit messages
-- Add comments for complex logic
-- Test your changes thoroughly
-- Update documentation as needed
+Watch these first — they will teach you everything you need:
+
+| Video | What You Learn |
+|-------|---------------|
+| [▶ Git and GitHub for Beginners (freeCodeCamp)](https://www.youtube.com/watch?v=RGOj5yH7evk) | Git basics, fork, clone, push |
+| [▶ How to Make Your First Pull Request (Fireship)](https://www.youtube.com/watch?v=8lGpZkjnkt4) | Fork → branch → PR workflow |
+| [▶ Contributing to Open Source for Beginners](https://www.youtube.com/watch?v=yzeVMecydCE) | How to find issues, what to build |
+
+### Contribution Flow
+
+```mermaid
+flowchart TD
+    A["⭐ Star & Fork the repo"] --> B["📖 Read CONTRIBUTING_IDEAS.md\nPick a feature you want to build"]
+    B --> C["🐛 Open a GitHub Issue\nDescribe what you will build"]
+    C --> D["🌿 Create a feature branch\ngit checkout -b feature/your-feature"]
+    D --> E["💻 Build it"]
+    E --> F["✅ Test it\nnpm run build / npm test"]
+    F --> G["📤 Open a Pull Request\ntarget: dev branch"]
+    G --> H["👀 Code Review"]
+    H --> I["🎉 Merged!"]
+```
+
+### Branch Rules
+
+| Branch | Purpose |
+|--------|---------|
+| `main` | Production — protected, no direct pushes |
+| `dev` | Active development — **all PRs target this** |
+| `feature/*` | Your feature branches |
+
+> ⚠️ Always PR into `dev`, never into `main`.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines and [CONTRIBUTING_IDEAS.md](CONTRIBUTING_IDEAS.md) for **50+ feature ideas** to build.
 
 ---
 
-## 🐛 Known Issues & Roadmap
+## 💡 Feature Ideas
 
-### Known Issues
-- [ ] Mobile responsiveness improvements needed
-- [ ] Contest timer synchronization edge cases
+We've put together **50+ ideas** — from beginner UI improvements to advanced AI agents.
 
-### Roadmap
-- [ ] Real-time notifications
-- [ ] Social features (comments, likes)
-- [ ] More platform integrations (HackerRank, CodeChef)
-- [ ] Advanced analytics dashboard
-- [ ] Mobile app (React Native)
-- [ ] Discord bot integration
+→ **[View all ideas in CONTRIBUTING_IDEAS.md](CONTRIBUTING_IDEAS.md)**
+
+A few highlights:
+
+- 🤖 **AI Mock Interview Agent** — conducts a real technical interview round by round
+- 📄 **Resume Builder** — auto-fills CP stats from your CONSOLE profile
+- 🎮 **CP Quest Mode** — RPG-style gamified DSA learning path
+- 📊 **Real-Time Leaderboard** — WebSocket-powered live rank updates
+- 💬 **Interview Experience Board** — crowdsourced placement interview experiences
+- 🔧 **VS Code Extension** — shows your CONSOLE rank in the status bar
+- 🏅 **Annual Wrapped** — your year in competitive programming
+
+Pick one. Open an issue. Build it.
+
+---
+
+## 👥 Team
+
+Built from scratch by:
+
+| Name | Role | GitHub |
+|------|------|--------|
+| **Rishi Kataria** | Co-founder, Lead Developer | [@the-sage-00](https://github.com/the-sage-00) |
+| **Amit Kumar** | Co-founder, Developer | [@Amit6217](https://github.com/Amit6217) |
+| **Shivam Parekh** | Co-founder, Developer | — |
+
+Started: **Summer 2024** · Launched: **December 2024**
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License — see [LICENSE](LICENSE) for details.
 
----
-
-## 👥 Authors
-
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
-
----
-
-## 🙏 Acknowledgments
-
-- CodeForces API for competitive programming data
-- LeetCode for problem-solving statistics
-- All contributors who have helped this project grow
-- The open-source community
-
----
-
-## 📞 Support
-
-If you have any questions or need help, feel free to:
-- 📧 Email: support@console.net.in
-- 💬 Open an issue on GitHub
-- 🌐 Visit our website: [console.net.in](https://console.net.in)
+You are free to use, modify, and distribute this project. If you build something with it, we'd love to hear about it.
 
 ---
 
 <div align="center">
 
-**Made with ❤️ by the Console Team**
-
-⭐ Star this repository if you find it helpful!
+Built with ❤️ · [console.net.in](https://console.net.in) · ⭐ Star this repo if it helped you
 
 </div>
