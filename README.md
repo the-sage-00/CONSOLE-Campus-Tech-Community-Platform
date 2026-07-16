@@ -400,13 +400,13 @@ Pick one. Open an issue. Build it.
 
 Built from scratch by:
 
-| Name | Role | GitHub |
-|------|------|--------|
-| **Rishi Kataria** | Co-founder, Lead Developer | [@the-sage-00](https://github.com/the-sage-00) |
-| **Amit Kumar** | Co-founder, Developer | [@Amit6217](https://github.com/Amit6217) |
-| **Shivam Parekh** | Co-founder, Developer | — |
+| Name | GitHub |
+|------|--------|
+| **Rishi Kataria** | [@the-sage-00](https://github.com/the-sage-00) |
+| **Amit Kumar** | [@Amit6217](https://github.com/Amit6217) |
+| **Shivam Parekh** | — |
 
-Started: **Summer 2024** · Launched: **December 2024**
+Started: **Summer 2024** · Launched: **September 2024**
 
 ---
 
