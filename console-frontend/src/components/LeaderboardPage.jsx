@@ -153,14 +153,16 @@ const LeaderboardPage = () => {
       color: 'text-yellow-400',
       bgColor: 'bg-yellow-500/10',
       borderColor: 'border-yellow-500/20',
+    }
   ];
 
   // Year filter options
   const yearFilters = [
     { key: null, label: 'All Years', year: null },
-    { key: '2025', label: 'First Year', year: '2025' },
-    { key: '2024', label: 'Second Year', year: '2024' },
-    { key: '2023', label: 'Third Year', year: '2023' },
+    { key: '2023', label: 'Fourth Year', year: '2023' },
+    { key: '2024', label: 'Third Year', year: '2024' },
+    { key: '2025', label: 'Second Year', year: '2025' },
+    { key: '2026', label: 'First Year', year: '2026' },
   ];
   
   const features = [

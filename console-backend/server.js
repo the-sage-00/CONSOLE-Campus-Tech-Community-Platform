@@ -183,10 +183,6 @@ app.get('/', (req, res) => {
     }
   });
 });
-app.get('/ping', (req, res) => {
-  res.status(200);
-  res.send('pong');
-});
 
 // Keep-alive endpoint (also available at /api/ping for compatibility)
 app.get('/api/ping', (req, res) => {
