@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
   // Basic Info
@@ -14,10 +13,6 @@ const userSchema = new mongoose.Schema({
     unique: true,
     trim: true,
     lowercase: true
-  },
-  password: {
-    type: String,
-    required: false  // Not required for Google OAuth users
   },
   branch: {
     type: String,
@@ -206,20 +201,6 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Hash password before saving (only when password changes and is provided)
-userSchema.pre('save', async function (next) {
-  // Skip password hashing if password is not modified or is empty (for Google OAuth users)
-  if (!this.isModified('password') || !this.password) return next();
-
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
-
 // Ensure nested defaults exist before saving (prevents Cast to Object on undefined)
 userSchema.pre('save', function (next) {
   try {
@@ -323,11 +304,6 @@ userSchema.pre('save', function (next) {
     next(err);
   }
 });
-
-// Compare password method
-userSchema.methods.comparePassword = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
-};
 
 // Generate verification code for platform (legacy method - not used in new flow)
 userSchema.methods.generateVerificationCode = function (platform) {

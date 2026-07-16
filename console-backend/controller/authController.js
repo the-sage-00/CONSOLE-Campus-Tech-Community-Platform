@@ -1,209 +1,8 @@
 import User from "../models/User.js";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import crypto from "crypto";
-import emailService from "../services/emailService.js";
 import verificationService from "../services/verificationService.js";
 import fetch from "node-fetch";
 
-// Register new user and sent a otp through email to user
-const register = async (req, res) => {
-  try {
-    const { name, email, password, branch } = req.body;
-
-    // Check if user already exists
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
-    
-    if (existingUser) {
-      // If user exists and is verified, redirect to login
-      if (existingUser.isEmailVerified) {
-        return res.status(400).json({ 
-          error: "User with this email already exists and is verified. Please login instead.",
-          redirectToLogin: true
-        });
-      } else {
-        // If user exists but is not verified, allow re-registration
-        // Delete the existing unverified user
-        await User.findByIdAndDelete(existingUser._id);
-        console.log(`Deleted unverified user: ${email}`);
-      }
-    }
-
-    // Generate OTP for email verification
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-    // Create new user
-    const user = new User({
-      name: name.trim(),
-      email: email.toLowerCase(),
-      password,
-      branch,
-      emailVerificationToken: otp,
-      emailVerificationExpires: otpExpires,
-    });
-
-    await user.save();
-
-    // Send OTP email
-    const emailSent = await emailService.sendOTPEmail(email, name, otp);
-
-    if (!emailSent) {
-      console.log("⚠  Email service failed, but user created. OTP:", otp);
-    }
-
-    res.status(201).json({
-      message: "Registration successful! Please check your email for verification code.",
-      data: {
-        userId: user._id,
-        email: user.email,
-      },
-    });
-  } catch (error) {
-    console.error("Registration error:", error);
-    res.status(500).json({ error: "Registration failed. Please try again." });
-  }
-};
-
-// Login user
-const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // Find user
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-
-    // Check password
-    const isPasswordValid = await user.comparePassword(password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-
-    // Check if email is verified
-    if (!user.isEmailVerified) {
-      return res.status(401).json({
-        error: "Please verify your email before logging in.",
-        needsVerification: true,
-        userId: user._id,
-      });
-    }
-
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: user._id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    res.json({
-      message: "Login successful",
-      data: {
-        token,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          branch: user.branch,
-          isEmailVerified: user.isEmailVerified,
-        },
-      },
-    });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ error: "Login failed. Please try again." });
-  }
-};
-
-// Verify email with OTP
-const verifyEmail = async (req, res) => {
-  try {
-    const { userId, otp } = req.body;
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    if (user.isEmailVerified) {
-      return res.status(400).json({ error: "Email is already verified" });
-    }
-
-    // Check if OTP is valid and not expired
-    if (user.emailVerificationToken !== otp) {
-      return res.status(400).json({ error: "Invalid verification code" });
-    }
-
-    if (new Date() > user.emailVerificationExpires) {
-      return res.status(400).json({ error: "Verification code has expired" });
-    }
-
-    // Mark email as verified
-    user.isEmailVerified = true;
-    user.emailVerificationToken = undefined;
-    user.emailVerificationExpires = undefined;
-    await user.save();
-
-    res.json({
-      message: "Email verified successfully! You can now login.",
-      data: {
-        userId: user._id,
-        email: user.email,
-      },
-    });
-  } catch (error) {
-    console.error("Email verification error:", error);
-    res
-      .status(500)
-      .json({ error: "Email verification failed. Please try again." });
-  }
-};
-
-// Resend verification OTP
-const resendVerificationEmail = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    if (user.isEmailVerified) {
-      return res.status(400).json({ error: "Email is already verified" });
-    }
-
-    // Generate new OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-    user.emailVerificationToken = otp;
-    user.emailVerificationExpires = otpExpires;
-    await user.save();
-
-    // Send new OTP email
-    const emailSent = await emailService.sendOTPEmail(email, user.name, otp);
-
-    if (!emailSent) {
-      console.log("⚠  Email service failed, but OTP generated. OTP:", otp);
-    }
-
-    res.json({
-      message: "Verification code sent successfully!",
-      data: {
-        userId: user._id,
-        email: user.email,
-      },
-    });
-  } catch (error) {
-    console.error("Resend verification error:", error);
-    res
-      .status(500)
-      .json({ error: "Failed to send verification code. Please try again." });
-  }
-};
 
 // Submit platform handle using new verification service
 const submitPlatformHandle = async (req, res) => {
@@ -825,27 +624,6 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// Get verification steps for platform
-const getVerificationSteps = (platform) => {
-  const steps = {
-    leetcode: [
-      "Go to your LeetCode profile",
-      'Click on "Edit Profile"',
-      'Add the verification code to your "Display Name"',
-      "Save the changes",
-      'Come back and click "Verify"',
-    ],
-    codeforces: [
-      "Go to your Codeforces profile",
-      'Click on "Settings"',
-      'Add the verification code to your "First Name"',
-      "Save the changes",
-      'Come back and click "Verify"',
-    ],
-  };
-  return steps[platform] || [];
-};
-
 // Verify platform profile by checking for verification code
 const verifyPlatformProfile = async (platform, handle, verificationCode) => {
   try {
@@ -1402,16 +1180,11 @@ const debugPlatformProfile = async (req, res) => {
 };
 
 export {
-  register,
-  login,
-  verifyEmail,
-  resendVerificationEmail,
   submitPlatformHandle,
   verifyPlatformHandle,
   validatePlatformHandle,
   getProfile,
   updateProfile,
-  getVerificationSteps,
   refreshPlatformData,
   deletePlatformHandle,
   debugPlatformProfile,

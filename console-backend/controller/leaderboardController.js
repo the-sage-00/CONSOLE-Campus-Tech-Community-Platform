@@ -1,5 +1,4 @@
 import User from '../models/User.js';
-import { calculateLeetcodeScore, calculateUnifiedScore } from '../utils/scoreCalculator.js';
 import cacheService from '../services/cacheService.js';
 
 // Get unified leaderboard
