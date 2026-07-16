@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/dev/console-frontend/public/console_logo_withText.png" alt="CONSOLE Logo" width="320"/>
+<img src="./console-frontend/public/console_logo_withText.png" alt="CONSOLE Logo" width="320"/>
 
 <br/>
 
