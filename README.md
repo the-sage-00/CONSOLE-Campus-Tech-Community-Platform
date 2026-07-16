@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 <img src="https://raw.githubusercontent.com/the-sage-00/CONSOLE-Campus-Tech-Community-Platform/dev/console-frontend/public/console_logo_withText.png" alt="CONSOLE Logo" width="320"/>
 
@@ -20,13 +20,13 @@
 
 ## 📖 The Story
 
-In **summer 2024**, Rishi and his teammates looked around and saw something missing — there was no single place where students could track each other's competitive programming journey, discover resources, and actually feel part of a tech community together.
+In **summer 2024**, we looked around and saw something missing — there was no single place where students could track each other's competitive programming journey, discover resources, and actually feel part of a tech community together.
 
-So they built one from scratch.
+So we built one from scratch.
 
-By **December 2024**, CONSOLE was live — a platform where students verify their LeetCode and Codeforces accounts, appear on a real leaderboard ranked by actual platform ratings, track weekly contests, follow tech roadmaps, and work through a DSA sheet.
+By **September 2024**, CONSOLE was live — a platform where students verify their LeetCode and Codeforces accounts, appear on a real leaderboard ranked by actual platform ratings, track weekly contests, follow tech roadmaps, and work through a DSA sheet.
 
-It was built by students, for students. No vendor. No budget. Just code.
+Built by students, for students. No vendor. No budget. Just code.
 
 Now it is open source — not because it is finished, but because the best features haven't been built yet. **Come build them.**
 

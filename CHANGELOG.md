@@ -1,4 +1,4 @@
-﻿# Changelog
+# Changelog
 
 All notable changes to CONSOLE are documented here.
 
@@ -51,7 +51,7 @@ See [CONTRIBUTING_IDEAS.md](CONTRIBUTING_IDEAS.md) for the full roadmap.
 
 ---
 
-## [2.0.0] — December 2024 · Platform Launch
+## [2.0.0] — September 2024 · Platform Launch
 
 ### Added
 - **Google OAuth** — institutional email login, replaces all password-based auth
