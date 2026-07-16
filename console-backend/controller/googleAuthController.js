@@ -1,6 +1,6 @@
 import { OAuth2Client } from 'google-auth-library';
-import User from "../models/User.js";
-import jwt from "jsonwebtoken";
+import User from '../models/User.js';
+import jwt from 'jsonwebtoken';
 import { parseIdentityFromEmail, calculateAcademicState } from '../utils/identity.js';
 
 // Create a new OAuth client
@@ -24,7 +24,7 @@ export const googleAuthCallback = async (req, res) => {
     if (!credential) {
       return res.status(400).json({
         success: false,
-        message: "Google credential token is required"
+        message: 'Google credential token is required',
       });
     }
 
@@ -33,13 +33,13 @@ export const googleAuthCallback = async (req, res) => {
     try {
       ticket = await client.verifyIdToken({
         idToken: credential,
-        audience: process.env.GOOGLE_CLIENT_ID
+        audience: process.env.GOOGLE_CLIENT_ID,
       });
     } catch (verifyError) {
       console.error('Token verification failed:', verifyError);
       return res.status(401).json({
         success: false,
-        message: "Invalid Google token"
+        message: 'Invalid Google token',
       });
     }
 
@@ -50,7 +50,7 @@ export const googleAuthCallback = async (req, res) => {
     if (!email_verified) {
       return res.status(400).json({
         success: false,
-        message: "Google account email is not verified"
+        message: 'Google account email is not verified',
       });
     }
 
@@ -62,8 +62,8 @@ export const googleAuthCallback = async (req, res) => {
     if (emailDomain !== allowedDomain) {
       return res.status(403).json({
         success: false,
-        message: "Only MNIT email addresses (@mnit.ac.in) are allowed.",
-        domain: emailDomain
+        message: 'Only MNIT email addresses (@mnit.ac.in) are allowed.',
+        domain: emailDomain,
       });
     }
 
@@ -83,7 +83,7 @@ export const googleAuthCallback = async (req, res) => {
         name: name,
         googleId: googleId,
         profilePicture: picture,
-        isEmailVerified: true // Google already verified the email
+        isEmailVerified: true, // Google already verified the email
       };
 
       // Add parsed identity fields if available
@@ -161,13 +161,13 @@ export const googleAuthCallback = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: '7d' },
     );
 
     // STEP 10: Return success with user info and token
     res.json({
       success: true,
-      message: isNewUser ? "Account created successfully!" : "Login successful",
+      message: isNewUser ? 'Account created successfully!' : 'Login successful',
       isNewUser,
       token,
       user: {
@@ -180,14 +180,14 @@ export const googleAuthCallback = async (req, res) => {
         branchCode: user.branchCode,
         admissionYear: user.admissionYear,
         rollNo: user.rollNo,
-        academicState: academicState
-      }
+        academicState: academicState,
+      },
     });
   } catch (error) {
-    console.error("Google authentication error:", error);
+    console.error('Google authentication error:', error);
     res.status(500).json({
       success: false,
-      message: "Authentication failed. Please try again."
+      message: 'Authentication failed. Please try again.',
     });
   }
 };

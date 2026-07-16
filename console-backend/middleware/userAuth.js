@@ -27,7 +27,7 @@ const userAuth = async (req, res, next) => {
       id: decoded.id,
       email: user.email,
       name: user.name,
-      role: user.role // Add role to the user object
+      role: user.role, // Add role to the user object
     };
     req.userId = decoded.id; // For backward compatibility
     req.userType = user.role; // For backward compatibility

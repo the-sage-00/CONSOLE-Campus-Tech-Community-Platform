@@ -12,7 +12,7 @@ import {
   verifyPlatformHandle,
   refreshPlatformData,
   deletePlatformHandle,
-  debugPlatformProfile
+  debugPlatformProfile,
 } from '../controller/authController.js';
 
 import userAuth from '../middleware/userAuth.js';
@@ -47,7 +47,7 @@ router.get('/health', (req, res) => {
     status: 'OK',
     message: 'Auth service is running',
     authMethod: 'Google OAuth only',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 

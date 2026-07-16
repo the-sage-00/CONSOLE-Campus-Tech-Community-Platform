@@ -221,10 +221,6 @@ ADMIN_PASSWORD=secure_password
 # Keep Alive (for free tier hosting)
 BACKEND_URL=http://localhost:5000
 
-# Optional: Email Service
-EMAIL_SERVICE=gmail
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_app_password
 ```
 
 ### Frontend Environment Variables
@@ -345,7 +341,6 @@ VITE_GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
 - **Authentication**: JWT, Google OAuth 2.0
 - **Security**: Helmet, CORS, Express Rate Limit
 - **Validation**: Validator.js
-- **Email**: Nodemailer, SendGrid
 - **Caching**: Node-Cache
 - **Scheduling**: Node-Cron
 
@@ -366,9 +361,9 @@ VITE_GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
 ### Authentication Endpoints
 
 ```http
-POST /api/auth/google-login
-POST /api/auth/logout
-GET  /api/auth/verify
+POST /api/auth/callback
+GET  /api/auth/profile
+PUT  /api/auth/profile
 ```
 
 ### Leaderboard Endpoints
@@ -397,12 +392,14 @@ PUT  /api/admin/approve-user/:id
 GET  /api/admin/stats
 ```
 
-### User Profile Endpoints
+### Platform Endpoints
 
 ```http
-GET  /api/auth/profile
-PUT  /api/auth/profile
-POST /api/auth/sync-data
+POST /api/auth/platform/validate
+POST /api/auth/platform/submit
+POST /api/auth/platform/verify
+POST /api/auth/platform/refresh
+POST /api/auth/platform/delete
 ```
 
 ---
