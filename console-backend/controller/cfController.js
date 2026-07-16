@@ -7,7 +7,7 @@ const getUserData = async (req, res) => {
     
     const user = await User.findOne({
       'platformVerification.codeforces.handle': username,
-      'platformVerification.codeforces.isVerified': true
+      'platformVerification.codeforces.isVerified': true,
     });
 
     if (!user) {
@@ -19,8 +19,8 @@ const getUserData = async (req, res) => {
       data: {
         name: user.name,
         email: user.email,
-        codeforces: user.platformVerification.codeforces.platformData
-      }
+        codeforces: user.platformVerification.codeforces.platformData,
+      },
     });
   } catch (error) {
     console.error('Error getting CodeForces user data:', error);
@@ -35,7 +35,7 @@ const getUserStats = async (req, res) => {
     
     const user = await User.findOne({
       'platformVerification.codeforces.handle': username,
-      'platformVerification.codeforces.isVerified': true
+      'platformVerification.codeforces.isVerified': true,
     });
 
     if (!user) {
@@ -46,7 +46,7 @@ const getUserStats = async (req, res) => {
     
     res.json({
       message: 'CodeForces stats retrieved successfully',
-      data: stats
+      data: stats,
     });
   } catch (error) {
     console.error('Error getting CodeForces stats:', error);
@@ -56,5 +56,5 @@ const getUserStats = async (req, res) => {
 
 export {
   getUserData,
-  getUserStats
+  getUserStats,
 };

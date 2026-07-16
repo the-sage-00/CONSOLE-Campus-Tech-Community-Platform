@@ -21,14 +21,14 @@ const apiCall = async (endpoint, options = {}) => {
       success: response.ok,
       status: response.status,
       data: data,
-      error: !response.ok ? data.error || 'Request failed' : null
+      error: !response.ok ? data.error || 'Request failed' : null,
     };
   } catch (error) {
     return {
       success: false,
       status: 0,
       data: null,
-      error: error.message || 'Network error'
+      error: error.message || 'Network error',
     };
   }
 };
@@ -39,7 +39,7 @@ export const authAPI = {
   register: async (userData) => {
     return apiCall('/register', {
       method: 'POST',
-      body: JSON.stringify(userData)
+      body: JSON.stringify(userData),
     });
   },
 
@@ -47,7 +47,7 @@ export const authAPI = {
   login: async (credentials) => {
     return apiCall('/login', {
       method: 'POST',
-      body: JSON.stringify(credentials)
+      body: JSON.stringify(credentials),
     });
   },
 
@@ -55,7 +55,7 @@ export const authAPI = {
   verifyEmail: async (verificationData) => {
     return apiCall('/verify-email', {
       method: 'POST',
-      body: JSON.stringify(verificationData)
+      body: JSON.stringify(verificationData),
     });
   },
 
@@ -63,7 +63,7 @@ export const authAPI = {
   resendVerification: async (email) => {
     return apiCall('/resend-verification', {
       method: 'POST',
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email }),
     });
   },
 
@@ -71,7 +71,7 @@ export const authAPI = {
   forgotPassword: async (email) => {
     return apiCall('/forgot-password', {
       method: 'POST',
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email }),
     });
   },
 
@@ -80,7 +80,7 @@ export const authAPI = {
     console.log('🔄 Sending password reset request:', resetData);
     const result = await apiCall('/reset-password', {
       method: 'POST',
-      body: JSON.stringify(resetData)
+      body: JSON.stringify(resetData),
     });
     console.log('📥 Password reset response:', result);
     return result;
@@ -89,14 +89,14 @@ export const authAPI = {
   // Get pending status
   getPendingStatus: async (email) => {
     return apiCall(`/pending-status?email=${encodeURIComponent(email)}`, {
-      method: 'GET'
+      method: 'GET',
     });
   },
 
   // Get system stats (for admin)
   getStats: async () => {
     return apiCall('/stats', {
-      method: 'GET'
+      method: 'GET',
     });
   },
 
@@ -105,10 +105,10 @@ export const authAPI = {
     return apiCall('/profile', {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
+        'Authorization': `Bearer ${token}`,
+      },
     });
-  }
+  },
 };
 
 // Auth state management helpers
@@ -140,5 +140,5 @@ export const authUtils = {
     } catch {
       return false;
     }
-  }
+  },
 };

@@ -5,34 +5,34 @@ class VerificationService {
     this.axiosConfig = {
       timeout: 15000,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-      }
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      },
     };
   }
 
   // Generate verification code for platform (matching test.js and test2.js)
   generateVerificationCode(platform) {
     switch (platform) {
-      case 'codeforces': {
-        // Use a set of well-known existing problems to avoid verification failures
-        const knownProblems = ['1A', '4A', '71A', '158A', '231A', '339A'];
-        const idx = Math.floor(Math.random() * knownProblems.length);
-        return knownProblems[idx];
-      }
-      case 'leetcode': {
-        // Generate a readable code like console-1234
-        const num = Math.floor(Math.random() * 9000) + 1000;
-        return `console-${num}`;
-      }
-      default:
-        throw new Error('Unsupported platform');
+    case 'codeforces': {
+      // Use a set of well-known existing problems to avoid verification failures
+      const knownProblems = ['1A', '4A', '71A', '158A', '231A', '339A'];
+      const idx = Math.floor(Math.random() * knownProblems.length);
+      return knownProblems[idx];
+    }
+    case 'leetcode': {
+      // Generate a readable code like console-1234
+      const num = Math.floor(Math.random() * 9000) + 1000;
+      return `console-${num}`;
+    }
+    default:
+      throw new Error('Unsupported platform');
     }
   }
 
   // Verify LeetCode profile using About Me section (matching test2.js)
   async verifyLeetCodeProfile(username, verificationCode) {
     try {
-      console.log(`🔍 === LEETCODE VERIFICATION START ===`);
+      console.log('🔍 === LEETCODE VERIFICATION START ===');
       console.log(`Username: ${username}`);
       console.log(`Verification Code: ${verificationCode}`);
       console.log(`Code length: ${verificationCode.length}`);
@@ -50,10 +50,10 @@ class VerificationService {
             }
           }
         }
-        `
+        `,
       };
 
-      console.log(`📡 Making GraphQL request...`);
+      console.log('📡 Making GraphQL request...');
       const response = await axios.post('https://leetcode.com/graphql', query, {
         ...this.axiosConfig,
         headers: {
@@ -61,8 +61,8 @@ class VerificationService {
           'Content-Type': 'application/json',
           'Referer': 'https://leetcode.com/',
           'Origin': 'https://leetcode.com',
-          'Accept': 'application/json'
-        }
+          'Accept': 'application/json',
+        },
       });
 
       console.log(`📊 GraphQL Response Status: ${response.status}`);
@@ -72,7 +72,7 @@ class VerificationService {
         const aboutMe = profile.aboutMe || '';
         const realName = profile.realName || '';
 
-        console.log(`📋 Profile data received:`);
+        console.log('📋 Profile data received:');
         console.log(`  - About Me: "${aboutMe}"`);
         console.log(`  - About Me length: ${aboutMe.length} characters`);
         console.log(`  - Real Name: "${realName}"`);
@@ -82,7 +82,7 @@ class VerificationService {
         const aboutMeContainsCode = aboutMe.includes(verificationCode);
         const realNameContainsCode = realName.includes(verificationCode);
 
-        console.log(`🔍 Verification checks:`);
+        console.log('🔍 Verification checks:');
         console.log(`  - About Me contains "${verificationCode}": ${aboutMeContainsCode}`);
         console.log(`  - Real Name contains "${verificationCode}": ${realNameContainsCode}`);
 
@@ -90,28 +90,28 @@ class VerificationService {
         const isVerified = aboutMeContainsCode || realNameContainsCode;
 
         if (isVerified) {
-          console.log(`✅ VERIFICATION SUCCESS: Exact code match found!`);
+          console.log('✅ VERIFICATION SUCCESS: Exact code match found!');
         } else {
-          console.log(`❌ VERIFICATION FAILED: No exact code match found`);
+          console.log('❌ VERIFICATION FAILED: No exact code match found');
           console.log(`💡 User needs to add the exact verification code: "${verificationCode}"`);
         }
 
         console.log(`🎯 FINAL VERIFICATION RESULT: ${isVerified}`);
-        console.log(`🔍 === LEETCODE VERIFICATION END ===`);
+        console.log('🔍 === LEETCODE VERIFICATION END ===');
 
         return isVerified;
       } else {
-        console.log(`❌ GraphQL response structure invalid:`);
+        console.log('❌ GraphQL response structure invalid:');
         console.log(`  - Status: ${response.status}`);
         console.log(`  - Has data: ${!!response.data}`);
         console.log(`  - Has matchedUser: ${!!response.data?.data?.matchedUser}`);
-        console.log(`🔍 === LEETCODE VERIFICATION END (FAILED) ===`);
+        console.log('🔍 === LEETCODE VERIFICATION END (FAILED) ===');
         return false;
       }
     } catch (error) {
       console.error(`❌ LeetCode verification error for ${username}:`, error.message);
-      console.error(`❌ Error details:`, error.response?.data || error.stack);
-      console.log(`🔍 === LEETCODE VERIFICATION END (ERROR) ===`);
+      console.error('❌ Error details:', error.response?.data || error.stack);
+      console.log('🔍 === LEETCODE VERIFICATION END (ERROR) ===');
       return false;
     }
   }
@@ -119,7 +119,7 @@ class VerificationService {
   // Verify Codeforces profile using submission checking (matching test.js)
   async verifyCodeforcesProfile(handle, verificationCode) {
     try {
-      console.log(`🔍 === CODEFORCES VERIFICATION START ===`);
+      console.log('🔍 === CODEFORCES VERIFICATION START ===');
       console.log(`Handle: ${handle}`);
       console.log(`Verification Code: ${verificationCode}`);
 
@@ -129,15 +129,15 @@ class VerificationService {
         ...this.axiosConfig,
         headers: {
           ...this.axiosConfig.headers,
-          'Accept': 'application/json'
-        }
+          'Accept': 'application/json',
+        },
       });
 
       console.log(`📊 CodeForces API response status: ${response.status}`);
 
       if (response.status !== 200) {
         console.error(`❌ Codeforces API error: Status ${response.status}`);
-        console.log(`🔍 === CODEFORCES VERIFICATION END (API ERROR) ===`);
+        console.log('🔍 === CODEFORCES VERIFICATION END (API ERROR) ===');
         return false;
       }
 
@@ -147,7 +147,7 @@ class VerificationService {
       if (data.status !== 'OK') {
         console.error(`❌ CodeForces API status not OK: ${data.status}`);
         console.error(`❌ Comment: ${data.comment || 'Unknown error'}`);
-        console.log(`🔍 === CODEFORCES VERIFICATION END (API STATUS ERROR) ===`);
+        console.log('🔍 === CODEFORCES VERIFICATION END (API STATUS ERROR) ===');
         return false;
       }
 
@@ -159,7 +159,7 @@ class VerificationService {
         const match = verificationCode.match(/^(\d+)([A-Z])$/);
         if (!match) {
           console.log('❌ Invalid problem format - must be like "42A"');
-          console.log(`🔍 === CODEFORCES VERIFICATION END (INVALID FORMAT) ===`);
+          console.log('🔍 === CODEFORCES VERIFICATION END (INVALID FORMAT) ===');
           return false;
         }
 
@@ -183,18 +183,18 @@ class VerificationService {
         });
 
         if (matched) {
-          console.log(`✅ VERIFICATION SUCCESS: Problem submission found!`);
-          console.log(`🔍 === CODEFORCES VERIFICATION END (SUCCESS) ===`);
+          console.log('✅ VERIFICATION SUCCESS: Problem submission found!');
+          console.log('🔍 === CODEFORCES VERIFICATION END (SUCCESS) ===');
         } else {
           console.log(`❌ VERIFICATION FAILED: No submission found for problem ${targetContestId}${targetIndex}`);
           console.log(`💡 User needs to submit a solution to problem ${targetContestId}${targetIndex}`);
-          console.log(`🔍 === CODEFORCES VERIFICATION END (FAILED) ===`);
+          console.log('🔍 === CODEFORCES VERIFICATION END (FAILED) ===');
         }
 
         return matched;
       } else {
-        console.log(`❌ Codeforces API response structure invalid`);
-        console.log(`🔍 === CODEFORCES VERIFICATION END (INVALID RESPONSE) ===`);
+        console.log('❌ Codeforces API response structure invalid');
+        console.log('🔍 === CODEFORCES VERIFICATION END (INVALID RESPONSE) ===');
         return false;
       }
     } catch (error) {
@@ -202,14 +202,14 @@ class VerificationService {
 
       if (error.response) {
         console.error(`❌ Response status: ${error.response.status}`);
-        console.error(`❌ Response data:`, error.response.data);
+        console.error('❌ Response data:', error.response.data);
       } else if (error.request) {
-        console.error(`❌ No response received from CodeForces API`);
+        console.error('❌ No response received from CodeForces API');
       } else {
-        console.error(`❌ Error details:`, error.stack);
+        console.error('❌ Error details:', error.stack);
       }
 
-      console.log(`🔍 === CODEFORCES VERIFICATION END (ERROR) ===`);
+      console.log('🔍 === CODEFORCES VERIFICATION END (ERROR) ===');
       return false;
     }
   }
@@ -217,42 +217,42 @@ class VerificationService {
   // Main verification method
   async verifyProfile(platform, handle, verificationCode) {
     switch (platform) {
-      case 'leetcode':
-        return await this.verifyLeetCodeProfile(handle, verificationCode);
+    case 'leetcode':
+      return await this.verifyLeetCodeProfile(handle, verificationCode);
 
-      case 'codeforces':
-        return await this.verifyCodeforcesProfile(handle, verificationCode);
+    case 'codeforces':
+      return await this.verifyCodeforcesProfile(handle, verificationCode);
 
-      default:
-        throw new Error('Unsupported platform');
+    default:
+      throw new Error('Unsupported platform');
     }
   }
 
   // Get verification steps for platform
   getVerificationSteps(platform) {
     switch (platform) {
-      case 'leetcode':
-        return [
-          '📝 Go to your LeetCode profile: https://leetcode.com/profile/',
-          '✏ Click on "Edit Profile" button',
-          '📋 In the "Summary" section, paste the verification code exactly as shown',
-          '💾 Click "Save" to update your profile',
-          '✅ Come back here and click "Verify" button (we will check automatically)',
-          '🔄 After verification, you can change your About Me back to normal'
-        ];
+    case 'leetcode':
+      return [
+        '📝 Go to your LeetCode profile: https://leetcode.com/profile/',
+        '✏ Click on "Edit Profile" button',
+        '📋 In the "Summary" section, paste the verification code exactly as shown',
+        '💾 Click "Save" to update your profile',
+        '✅ Come back here and click "Verify" button (we will check automatically)',
+        '🔄 After verification, you can change your About Me back to normal',
+      ];
 
-      case 'codeforces':
-        return [
-          '📝 Go to Codeforces problemset: https://codeforces.com/problemset',
-          '🔍 Find the problem with the given code (e.g., if code is "42A", find problem 42A)',
-          '💻 Submit any solution to that problem (even if it\'s wrong)',
-          '⏳ Wait 2-3 minutes for the submission to be processed',
-          '✅ Come back here and click "Verify" button (we will check automatically)',
-          '🔄 After verification, you can delete the submission if you want'
-        ];
+    case 'codeforces':
+      return [
+        '📝 Go to Codeforces problemset: https://codeforces.com/problemset',
+        '🔍 Find the problem with the given code (e.g., if code is "42A", find problem 42A)',
+        '💻 Submit any solution to that problem (even if it\'s wrong)',
+        '⏳ Wait 2-3 minutes for the submission to be processed',
+        '✅ Come back here and click "Verify" button (we will check automatically)',
+        '🔄 After verification, you can delete the submission if you want',
+      ];
 
-      default:
-        return ['Please follow the platform-specific instructions'];
+    default:
+      return ['Please follow the platform-specific instructions'];
     }
   }
 
@@ -274,24 +274,24 @@ class VerificationService {
 
     // Character rules per platform - now allowing all non-whitespace characters
     switch (platform) {
-      case 'leetcode': {
-        // Allow any non-whitespace characters; 1-50 chars
-        // Removed strict alphanumeric restriction to allow dots, @, etc.
-        if (trimmedHandle.length < 1 || trimmedHandle.length > 50) {
-          return { valid: false, error: 'LeetCode username must be 1-50 characters' };
-        }
-        break;
+    case 'leetcode': {
+      // Allow any non-whitespace characters; 1-50 chars
+      // Removed strict alphanumeric restriction to allow dots, @, etc.
+      if (trimmedHandle.length < 1 || trimmedHandle.length > 50) {
+        return { valid: false, error: 'LeetCode username must be 1-50 characters' };
       }
-      case 'codeforces': {
-        // Allow any non-whitespace characters; 1-50 chars
-        // Removed strict alphanumeric restriction to allow dots, @, etc.
-        if (trimmedHandle.length < 1 || trimmedHandle.length > 50) {
-          return { valid: false, error: 'Codeforces handle must be 1-50 characters' };
-        }
-        break;
+      break;
+    }
+    case 'codeforces': {
+      // Allow any non-whitespace characters; 1-50 chars
+      // Removed strict alphanumeric restriction to allow dots, @, etc.
+      if (trimmedHandle.length < 1 || trimmedHandle.length > 50) {
+        return { valid: false, error: 'Codeforces handle must be 1-50 characters' };
       }
-      default:
-        return { valid: false, error: 'Unsupported platform' };
+      break;
+    }
+    default:
+      return { valid: false, error: 'Unsupported platform' };
     }
 
     return { valid: true, handle: trimmedHandle };
@@ -308,14 +308,14 @@ class VerificationService {
       }
 
       switch (platform) {
-        case 'leetcode':
-          return await this.fetchLeetCodeData(handle);
+      case 'leetcode':
+        return await this.fetchLeetCodeData(handle);
 
-        case 'codeforces':
-          return await this.fetchCodeForcesData(handle);
+      case 'codeforces':
+        return await this.fetchCodeForcesData(handle);
 
-        default:
-          return { success: false, error: 'Unsupported platform' };
+      default:
+        return { success: false, error: 'Unsupported platform' };
       }
     } catch (error) {
       console.error(`Error fetching ${platform} data:`, error);
@@ -352,10 +352,10 @@ class VerificationService {
             }
           }
         }
-        `
+        `,
       };
 
-      console.log(`📡 Making GraphQL request to LeetCode...`);
+      console.log('📡 Making GraphQL request to LeetCode...');
       const response = await axios.post('https://leetcode.com/graphql', query, {
         ...this.axiosConfig,
         headers: {
@@ -363,8 +363,8 @@ class VerificationService {
           'Content-Type': 'application/json',
           'Referer': 'https://leetcode.com/',
           'Origin': 'https://leetcode.com',
-          'Accept': 'application/json'
-        }
+          'Accept': 'application/json',
+        },
       });
 
       console.log(`📊 LeetCode API response status: ${response.status}`);
@@ -373,7 +373,7 @@ class VerificationService {
         console.error(`❌ LeetCode API error: Status ${response.status}`);
         return {
           success: false,
-          error: `LeetCode API returned status ${response.status}. Please try again later.`
+          error: `LeetCode API returned status ${response.status}. Please try again later.`,
         };
       }
 
@@ -386,7 +386,7 @@ class VerificationService {
         const errorMessage = data.errors[0]?.message || 'Unknown GraphQL error';
         return {
           success: false,
-          error: `LeetCode API error: ${errorMessage}. Please check your username.`
+          error: `LeetCode API error: ${errorMessage}. Please check your username.`,
         };
       }
 
@@ -394,7 +394,7 @@ class VerificationService {
         console.error(`❌ User not found: ${username}`);
         return {
           success: false,
-          error: 'User not found or profile is private. Please make sure your LeetCode profile exists and is public.'
+          error: 'User not found or profile is private. Please make sure your LeetCode profile exists and is public.',
         };
       }
 
@@ -421,8 +421,8 @@ class VerificationService {
           hardSolved,
           reputation: user.profile?.reputation || 0,
           aboutMe: user.profile?.aboutMe || '',
-          realName: user.profile?.realName || ''
-        }
+          realName: user.profile?.realName || '',
+        },
       };
     } catch (error) {
       console.error('❌ LeetCode fetch error:', error);
@@ -430,22 +430,22 @@ class VerificationService {
       // Provide more detailed error messages
       if (error.response) {
         console.error(`❌ Response status: ${error.response.status}`);
-        console.error(`❌ Response data:`, error.response.data);
+        console.error('❌ Response data:', error.response.data);
         return {
           success: false,
-          error: `LeetCode API error (${error.response.status}): ${error.response.data?.message || 'Failed to fetch data. Please check your username.'}`
+          error: `LeetCode API error (${error.response.status}): ${error.response.data?.message || 'Failed to fetch data. Please check your username.'}`,
         };
       } else if (error.request) {
         console.error('❌ No response received from LeetCode API');
         return {
           success: false,
-          error: 'Network error: Could not connect to LeetCode API. Please check your internet connection and try again.'
+          error: 'Network error: Could not connect to LeetCode API. Please check your internet connection and try again.',
         };
       } else {
         console.error(`❌ Error setting up request: ${error.message}`);
         return {
           success: false,
-          error: `Failed to fetch LeetCode data: ${error.message}. Please check your username.`
+          error: `Failed to fetch LeetCode data: ${error.message}. Please check your username.`,
         };
       }
     }
@@ -460,13 +460,13 @@ class VerificationService {
       const encodedUsername = encodeURIComponent(username);
       const apiUrl = `https://codeforces.com/api/user.info?handles=${encodedUsername}`;
 
-      console.log(`📡 Making API request to CodeForces...`);
+      console.log('📡 Making API request to CodeForces...');
       const response = await axios.get(apiUrl, {
         ...this.axiosConfig,
         headers: {
           ...this.axiosConfig.headers,
-          'Accept': 'application/json'
-        }
+          'Accept': 'application/json',
+        },
       });
 
       console.log(`📊 CodeForces API response status: ${response.status}`);
@@ -475,7 +475,7 @@ class VerificationService {
         console.error(`❌ CodeForces API error: Status ${response.status}`);
         return {
           success: false,
-          error: `CodeForces API returned status ${response.status}. Please try again later.`
+          error: `CodeForces API returned status ${response.status}. Please try again later.`,
         };
       }
 
@@ -488,7 +488,7 @@ class VerificationService {
         const comment = data.comment || 'Unknown error';
         return {
           success: false,
-          error: `CodeForces API error: ${comment}. Please check your handle.`
+          error: `CodeForces API error: ${comment}. Please check your handle.`,
         };
       }
 
@@ -496,7 +496,7 @@ class VerificationService {
         console.error(`❌ No user data found for: ${username}`);
         return {
           success: false,
-          error: 'User not found. Please check your CodeForces handle and ensure it exists.'
+          error: 'User not found. Please check your CodeForces handle and ensure it exists.',
         };
       }
 
@@ -511,9 +511,9 @@ class VerificationService {
           ...this.axiosConfig,
           headers: {
             ...this.axiosConfig.headers,
-            'Accept': 'application/json'
+            'Accept': 'application/json',
           },
-          timeout: 30000 // 30 second timeout for status API
+          timeout: 30000, // 30 second timeout for status API
         });
 
         if (statusResponse.status === 200 && statusResponse.data.status === 'OK') {
@@ -530,10 +530,10 @@ class VerificationService {
           problemsSolved = solvedProblems.size;
           console.log(`✅ Found ${problemsSolved} unique solved problems for ${username}`);
         } else {
-          console.log(`⚠️ Could not fetch problems solved count, using 0`);
+          console.log('⚠️ Could not fetch problems solved count, using 0');
         }
       } catch (statusError) {
-        console.error(`⚠️ Error fetching problems solved count:`, statusError.message);
+        console.error('⚠️ Error fetching problems solved count:', statusError.message);
         // Continue without problems solved count - don't fail the entire request
       }
 
@@ -551,8 +551,8 @@ class VerificationService {
           friendOfCount: user.friendOfCount || 0,
           registrationTime: user.registrationTimeSeconds || user.registrationTime || 0,
           lastOnlineTime: user.lastOnlineTimeSeconds || user.lastOnlineTime || 0,
-          totalSolved: problemsSolved
-        }
+          totalSolved: problemsSolved,
+        },
       };
     } catch (error) {
       console.error('❌ CodeForces fetch error:', error);
@@ -560,32 +560,32 @@ class VerificationService {
       // Provide more detailed error messages
       if (error.response) {
         console.error(`❌ Response status: ${error.response.status}`);
-        console.error(`❌ Response data:`, error.response.data);
+        console.error('❌ Response data:', error.response.data);
 
         // Check if it's a CodeForces API error response
         if (error.response.data?.status === 'FAILED') {
           const comment = error.response.data.comment || 'Unknown error';
           return {
             success: false,
-            error: `CodeForces API error: ${comment}. Please check your handle.`
+            error: `CodeForces API error: ${comment}. Please check your handle.`,
           };
         }
 
         return {
           success: false,
-          error: `CodeForces API error (${error.response.status}): Failed to fetch data. Please check your handle.`
+          error: `CodeForces API error (${error.response.status}): Failed to fetch data. Please check your handle.`,
         };
       } else if (error.request) {
         console.error('❌ No response received from CodeForces API');
         return {
           success: false,
-          error: 'Network error: Could not connect to CodeForces API. Please check your internet connection and try again.'
+          error: 'Network error: Could not connect to CodeForces API. Please check your internet connection and try again.',
         };
       } else {
         console.error(`❌ Error setting up request: ${error.message}`);
         return {
           success: false,
-          error: `Failed to fetch CodeForces data: ${error.message}. Please check your handle.`
+          error: `Failed to fetch CodeForces data: ${error.message}. Please check your handle.`,
         };
       }
     }

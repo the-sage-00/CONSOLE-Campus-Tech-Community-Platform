@@ -4,54 +4,54 @@ const contestParticipantSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: true,
   },
   rating: {
     type: Number,
-    required: true
+    required: true,
   },
   ranking: {
     type: Number,
-    required: true
+    required: true,
   },
   problemsSolved: {
     type: Number,
-    default: 0
+    default: 0,
   },
   oldRating: {
     type: Number,
-    default: 0
+    default: 0,
   },
   newRating: {
     type: Number,
-    default: 0
-  }
+    default: 0,
+  },
 }, { _id: false });
 
 const contestSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   platform: {
     type: String,
     enum: ['leetcode', 'codeforces'],
     required: true,
-    default: 'leetcode'
+    default: 'leetcode',
   },
   contestId: {
     type: Number, // For Codeforces contest ID
-    default: null
+    default: null,
   },
   date: {
     type: Date,
-    required: true
+    required: true,
   },
   participants: [contestParticipantSchema],
   syncedAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 // Compound index to ensure uniqueness per platform

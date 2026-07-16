@@ -5,72 +5,72 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
   },
   email: {
     type: String,
     required: true,
     unique: true,
     trim: true,
-    lowercase: true
+    lowercase: true,
   },
   branch: {
     type: String,
     required: false,  // Parsed from email or user-entered
-    trim: true
+    trim: true,
   },
 
   // Student Identity (parsed from email)
   admissionYear: {
     type: Number,
-    default: null
+    default: null,
     // Example: 2024
   },
   rollNo: {
     type: String,
     default: null,
     trim: true,
-    lowercase: true
+    lowercase: true,
     // Example: "2024ucp1566"
   },
   branchCode: {
     type: String,
     default: null,
     trim: true,
-    lowercase: true
+    lowercase: true,
     // Example: "ucp", "ece", "me"
   },
 
   // Google OAuth
   googleId: {
     type: String,
-    default: null
+    default: null,
   },
   profilePicture: {
     type: String,
-    default: null
+    default: null,
   },
 
   // Email verification
   isEmailVerified: {
     type: Boolean,
-    default: false
+    default: false,
   },
   emailVerificationToken: {
-    type: String
+    type: String,
   },
   emailVerificationExpires: {
-    type: Date
+    type: Date,
   },
 
   // Platform handles with verification status
   cfHandle: {
     type: String,
-    trim: true
+    trim: true,
   },
   lcHandle: {
     type: String,
-    trim: true
+    trim: true,
   },
 
 
@@ -85,7 +85,7 @@ const userSchema = new mongoose.Schema({
       verifiedAt: { type: Date, default: null },
       platformData: {
         type: mongoose.Schema.Types.Mixed,
-        default: {}
+        default: {},
       },
       lastFetched: { type: Date, default: null },
       contestStats: {
@@ -95,10 +95,10 @@ const userSchema = new mongoose.Schema({
             contestName: { type: String },
             rating: { type: Number },
             // Add other relevant fields like rank, problems solved, etc. if needed later
-          }
+          },
         ],
         lastContestParticipation: { type: Date, default: null },
-      }
+      },
     },
     leetcode: {
       handle: { type: String, default: '' },
@@ -131,13 +131,13 @@ const userSchema = new mongoose.Schema({
             date: { type: Date },
             participated: { type: Boolean, default: false },
             rank: { type: Number, default: null },
-            rating: { type: Number, default: null }
-          }
+            rating: { type: Number, default: null },
+          },
         ],
         lastContestFetch: { type: Date, default: null },
         lastContestName: { type: String, default: '' },
-        lastContestParticipated: { type: Boolean, default: false }
-      }
+        lastContestParticipated: { type: Boolean, default: false },
+      },
     },
 
   },
@@ -145,24 +145,24 @@ const userSchema = new mongoose.Schema({
   // Platform ratings/scores
   cfRating: {
     type: Number,
-    default: 0
+    default: 0,
   },
   lcRating: {
     type: Number,
-    default: 0
+    default: 0,
   },
 
 
   // Platform ranks
   cfRank: {
     type: String,
-    default: ''
+    default: '',
   },
 
   // Status fields
   isActive: {
     type: Boolean,
-    default: true
+    default: true,
   },
 
   // Legacy platforms field for backward compatibility
@@ -173,7 +173,7 @@ const userSchema = new mongoose.Schema({
       rank: String,
       maxRating: { type: Number, default: 0 },
       contestsParticipated: { type: Number, default: 0 },
-      lastUpdated: { type: Date, default: Date.now }
+      lastUpdated: { type: Date, default: Date.now },
     },
     leetcode: {
       handle: String,
@@ -184,21 +184,21 @@ const userSchema = new mongoose.Schema({
       mediumSolved: { type: Number, default: 0 },
       hardSolved: { type: Number, default: 0 },
       acceptanceRate: { type: Number, default: 0 },
-      lastUpdated: { type: Date, default: Date.now }
+      lastUpdated: { type: Date, default: Date.now },
     },
 
   },
   lastGlobalUpdate: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   // Aggregated leaderboard score on LC scale
   totalScore: {
     type: Number,
-    default: 0
-  }
+    default: 0,
+  },
 }, {
-  timestamps: true
+  timestamps: true,
 });
 
 // Ensure nested defaults exist before saving (prevents Cast to Object on undefined)
@@ -256,14 +256,14 @@ userSchema.pre('save', function (next) {
       recentContests: [],
       lastContestFetch: null,
       lastContestName: '',
-      lastContestParticipated: false
+      lastContestParticipated: false,
     });
 
     // Ensure Codeforces contestStats defaults
     ensureContestStats('codeforces', {
       totalContests: 0,
       contestHistory: [],
-      lastContestParticipation: null
+      lastContestParticipation: null,
     });
 
     // Ensure LeetCode platformData structure if it exists but is incomplete
@@ -339,8 +339,8 @@ userSchema.methods.generateVerificationCode = function (platform) {
           recentContests: [],
           lastContestFetch: null,
           lastContestName: '',
-          lastContestParticipated: false
-        }
+          lastContestParticipated: false,
+        },
       };
     } else {
       this.platformVerification[platform] = {
@@ -355,8 +355,8 @@ userSchema.methods.generateVerificationCode = function (platform) {
         contestStats: {
           totalContests: 0,
           contestHistory: [],
-          lastContestParticipation: null
-        }
+          lastContestParticipation: null,
+        },
       };
     }
   }
@@ -378,11 +378,11 @@ userSchema.methods.generateVerificationCode = function (platform) {
       recentContests: [],
       lastContestFetch: null,
       lastContestName: '',
-      lastContestParticipated: false
+      lastContestParticipated: false,
     } : {
       totalContests: 0,
       contestHistory: [],
-      lastContestParticipation: null
+      lastContestParticipation: null,
     });
 
   this.platformVerification[platform] = {
@@ -390,7 +390,7 @@ userSchema.methods.generateVerificationCode = function (platform) {
     verificationCode: code,
     verificationExpires: expires,
     submittedAt: new Date(),
-    contestStats: existingContestStats // Preserve contest stats
+    contestStats: existingContestStats, // Preserve contest stats
   };
 
   return code;
@@ -411,12 +411,12 @@ userSchema.methods.markPlatformVerified = function (platform) {
 
   // Update legacy platform handle
   switch (platform) {
-    case 'codeforces':
-      this.cfHandle = this.platformVerification[platform].handle;
-      break;
-    case 'leetcode':
-      this.lcHandle = this.platformVerification[platform].handle;
-      break;
+  case 'codeforces':
+    this.cfHandle = this.platformVerification[platform].handle;
+    break;
+  case 'leetcode':
+    this.lcHandle = this.platformVerification[platform].handle;
+    break;
 
   }
 };

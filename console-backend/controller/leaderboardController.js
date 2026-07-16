@@ -19,13 +19,13 @@ const getUnifiedLeaderboard = async (req, res) => {
     const parsedPage = parseInt(page);
     const skip = (parsedPage - 1) * parsedLimit;
 
-    let matchQuery = { isEmailVerified: true };
+    const matchQuery = { isEmailVerified: true };
     if (platform !== 'all') {
       matchQuery[`platformVerification.${platform}.isVerified`] = true;
     } else {
       matchQuery.$or = [
         { 'platformVerification.codeforces.isVerified': true },
-        { 'platformVerification.leetcode.isVerified': true }
+        { 'platformVerification.leetcode.isVerified': true },
       ];
     }
 
@@ -41,70 +41,70 @@ const getUnifiedLeaderboard = async (req, res) => {
     const aggregationPipeline = [
       { $match: matchQuery },
       { $addFields: {
-          calculatedLeetcodeScore: {
-            $cond: [
-              '$platformVerification.leetcode.isVerified',
-              {
-                $add: [
-                  700,
-                  { $multiply: [22, { $sqrt: {
-                    $add: [
-                      { $multiply: ['$platformVerification.leetcode.platformData.easySolved', 1] },
-                      { $multiply: ['$platformVerification.leetcode.platformData.mediumSolved', 2.5] },
-                      { $multiply: ['$platformVerification.leetcode.platformData.hardSolved', 4] }
-                    ]
-                  }}]}
-                ]
-              },
-              0
-            ]
-          },
-          calculatedCodeforcesRating: {
-            $cond: [
-              '$platformVerification.codeforces.isVerified',
-              '$platformVerification.codeforces.platformData.rating',
-              0
-            ]
-          }
-      }},
+        calculatedLeetcodeScore: {
+          $cond: [
+            '$platformVerification.leetcode.isVerified',
+            {
+              $add: [
+                700,
+                { $multiply: [22, { $sqrt: {
+                  $add: [
+                    { $multiply: ['$platformVerification.leetcode.platformData.easySolved', 1] },
+                    { $multiply: ['$platformVerification.leetcode.platformData.mediumSolved', 2.5] },
+                    { $multiply: ['$platformVerification.leetcode.platformData.hardSolved', 4] },
+                  ],
+                } }] },
+              ],
+            },
+            0,
+          ],
+        },
+        calculatedCodeforcesRating: {
+          $cond: [
+            '$platformVerification.codeforces.isVerified',
+            '$platformVerification.codeforces.platformData.rating',
+            0,
+          ],
+        },
+      } },
       { $addFields: {
-          calculatedTotalScore: {
-            $max: ['$calculatedCodeforcesRating', '$calculatedLeetcodeScore']
-          }
-      }},
+        calculatedTotalScore: {
+          $max: ['$calculatedCodeforcesRating', '$calculatedLeetcodeScore'],
+        },
+      } },
       { $sort: sortStage },
       { $project: {
-          _id: 1,
-          name: 1,
-          email: 1,
-          branch: 1,
-          totalScore: { $round: '$calculatedTotalScore' },
-          platforms: {
-            leetcode: '$platformVerification.leetcode.platformData',
-            codeforces: '$platformVerification.codeforces.platformData'
+        _id: 1,
+        name: 1,
+        email: 1,
+        branch: 1,
+        totalScore: { $round: '$calculatedTotalScore' },
+        platforms: {
+          leetcode: '$platformVerification.leetcode.platformData',
+          codeforces: '$platformVerification.codeforces.platformData',
+        },
+        platformVerification: {
+          leetcode: {
+            platformData: '$platformVerification.leetcode.platformData',
+            contestStats: '$platformVerification.leetcode.contestStats',
           },
-          platformVerification: {
-            leetcode: {
-              platformData: '$platformVerification.leetcode.platformData',
-              contestStats: '$platformVerification.leetcode.contestStats'
-            },
-            codeforces: {
-              platformData: '$platformVerification.codeforces.platformData',
-              contestStats: '$platformVerification.codeforces.contestStats'
-            }
-          }
-      }}
+          codeforces: {
+            platformData: '$platformVerification.codeforces.platformData',
+            contestStats: '$platformVerification.codeforces.contestStats',
+          },
+        },
+      } },
     ];
 
     const [result] = await User.aggregate([
       { $facet: {
-          metadata: [{ $count: "totalCount" }],
-          data: [
-            ...aggregationPipeline,
-            { $skip: skip },
-            { $limit: parsedLimit }
-          ]
-      }}
+        metadata: [{ $count: 'totalCount' }],
+        data: [
+          ...aggregationPipeline,
+          { $skip: skip },
+          { $limit: parsedLimit },
+        ],
+      } },
     ]);
 
     const leaderboard = result.data || [];
@@ -143,37 +143,37 @@ const getUserRanking = async (req, res) => {
     const userScorePipeline = [
       { $match: { _id: user._id } },
       { $addFields: {
-          calculatedLeetcodeScore: {
-            $cond: [
-              '$platformVerification.leetcode.isVerified',
-              {
-                $add: [
-                  700,
-                  { $multiply: [22, { $sqrt: {
-                    $add: [
-                      { $multiply: ['$platformVerification.leetcode.platformData.easySolved', 1] },
-                      { $multiply: ['$platformVerification.leetcode.platformData.mediumSolved', 2.5] },
-                      { $multiply: ['$platformVerification.leetcode.platformData.hardSolved', 4] }
-                    ]
-                  }}]}
-                ]
-              },
-              0
-            ]
-          },
-          calculatedCodeforcesRating: {
-            $cond: [
-              '$platformVerification.codeforces.isVerified',
-              '$platformVerification.codeforces.platformData.rating',
-              0
-            ]
-          }
-      }},
+        calculatedLeetcodeScore: {
+          $cond: [
+            '$platformVerification.leetcode.isVerified',
+            {
+              $add: [
+                700,
+                { $multiply: [22, { $sqrt: {
+                  $add: [
+                    { $multiply: ['$platformVerification.leetcode.platformData.easySolved', 1] },
+                    { $multiply: ['$platformVerification.leetcode.platformData.mediumSolved', 2.5] },
+                    { $multiply: ['$platformVerification.leetcode.platformData.hardSolved', 4] },
+                  ],
+                } }] },
+              ],
+            },
+            0,
+          ],
+        },
+        calculatedCodeforcesRating: {
+          $cond: [
+            '$platformVerification.codeforces.isVerified',
+            '$platformVerification.codeforces.platformData.rating',
+            0,
+          ],
+        },
+      } },
       { $addFields: {
-          calculatedTotalScore: {
-            $max: ['$calculatedCodeforcesRating', '$calculatedLeetcodeScore']
-          }
-      }}
+        calculatedTotalScore: {
+          $max: ['$calculatedCodeforcesRating', '$calculatedLeetcodeScore'],
+        },
+      } },
     ];
 
     const [userWithScores] = await User.aggregate(userScorePipeline);
@@ -186,57 +186,57 @@ const getUserRanking = async (req, res) => {
     const ranks = await User.aggregate([
       { $match: { isEmailVerified: true } },
       { $addFields: {
-          calculatedLeetcodeScore: {
-            $cond: [
-              '$platformVerification.leetcode.isVerified',
-              {
-                $add: [
-                  700,
-                  { $multiply: [22, { $sqrt: {
-                    $add: [
-                      { $multiply: ['$platformVerification.leetcode.platformData.easySolved', 1] },
-                      { $multiply: ['$platformVerification.leetcode.platformData.mediumSolved', 2.5] },
-                      { $multiply: ['$platformVerification.leetcode.platformData.hardSolved', 4] }
-                    ]
-                  }}]}
-                ]
-              },
-              0
-            ]
-          },
-          calculatedCodeforcesRating: {
-            $cond: [
-              '$platformVerification.codeforces.isVerified',
-              '$platformVerification.codeforces.platformData.rating',
-              0
-            ]
-          }
-      }},
+        calculatedLeetcodeScore: {
+          $cond: [
+            '$platformVerification.leetcode.isVerified',
+            {
+              $add: [
+                700,
+                { $multiply: [22, { $sqrt: {
+                  $add: [
+                    { $multiply: ['$platformVerification.leetcode.platformData.easySolved', 1] },
+                    { $multiply: ['$platformVerification.leetcode.platformData.mediumSolved', 2.5] },
+                    { $multiply: ['$platformVerification.leetcode.platformData.hardSolved', 4] },
+                  ],
+                } }] },
+              ],
+            },
+            0,
+          ],
+        },
+        calculatedCodeforcesRating: {
+          $cond: [
+            '$platformVerification.codeforces.isVerified',
+            '$platformVerification.codeforces.platformData.rating',
+            0,
+          ],
+        },
+      } },
       { $addFields: {
-          calculatedTotalScore: {
-            $max: ['$calculatedCodeforcesRating', '$calculatedLeetcodeScore']
-          }
-      }},
+        calculatedTotalScore: {
+          $max: ['$calculatedCodeforcesRating', '$calculatedLeetcodeScore'],
+        },
+      } },
       { $facet: {
-          leetcodeRank: [
-            { $match: { 'platformVerification.leetcode.isVerified': true, calculatedLeetcodeScore: { $gt: leetcodeScore } } },
-            { $count: 'count' }
-          ],
-          codeforcesRank: [
-            { $match: { 'platformVerification.codeforces.isVerified': true, calculatedCodeforcesRating: { $gt: cfRating } } },
-            { $count: 'count' }
-          ],
-          totalRank: [
-            { $match: {
-                $or: [
-                  { 'platformVerification.codeforces.isVerified': true },
-                  { 'platformVerification.leetcode.isVerified': true }
-                ],
-                calculatedTotalScore: { $gt: totalScore }
-            } },
-            { $count: 'count' }
-          ]
-      }}
+        leetcodeRank: [
+          { $match: { 'platformVerification.leetcode.isVerified': true, calculatedLeetcodeScore: { $gt: leetcodeScore } } },
+          { $count: 'count' },
+        ],
+        codeforcesRank: [
+          { $match: { 'platformVerification.codeforces.isVerified': true, calculatedCodeforcesRating: { $gt: cfRating } } },
+          { $count: 'count' },
+        ],
+        totalRank: [
+          { $match: {
+            $or: [
+              { 'platformVerification.codeforces.isVerified': true },
+              { 'platformVerification.leetcode.isVerified': true },
+            ],
+            calculatedTotalScore: { $gt: totalScore },
+          } },
+          { $count: 'count' },
+        ],
+      } },
     ]);
 
     const leetcodeRank = ranks[0].leetcodeRank[0]?.count || 0;
@@ -247,18 +247,18 @@ const getUserRanking = async (req, res) => {
       user: {
         name: user.name,
         email: user.email,
-        branch: user.branch
+        branch: user.branch,
       },
       rankings: {
         leetcode: leetcodeRank + 1,
         codeforces: codeforcesRank + 1,
-        total: totalRank + 1
+        total: totalRank + 1,
       },
       scores: {
         leetcode: Math.round(leetcodeScore),
         codeforces: cfRating,
-        total: Math.round(totalScore)
-      }
+        total: Math.round(totalScore),
+      },
     };
 
     cacheService.set(cacheKey, responseData, 60);
@@ -272,5 +272,5 @@ const getUserRanking = async (req, res) => {
 
 export {
   getUnifiedLeaderboard,
-  getUserRanking
+  getUserRanking,
 };
