@@ -67,76 +67,29 @@ Now it is open source — not because it is finished, but because the best featu
 
 ## 🏗️ Architecture
 
-```mermaid
-graph TB
-    subgraph Client["🌐 Frontend (React + Vite)"]
-        UI["Components"]
-        Auth["AuthProvider Context"]
-        Admin["Admin Panel"]
-    end
-
-    subgraph Server["⚙️ Backend (Node.js + Express)"]
-        GAuth["Google Auth Controller"]
-        AuthCtrl["Auth Controller\n(Platform Verification)"]
-        LB["Leaderboard Controller"]
-        Contest["Contest Controller"]
-        AdminCtrl["Admin Controller"]
-        Cache["Cache Service"]
-        Cron["Contest Cron (weekly)"]
-    end
-
-    subgraph DB["🗄️ MongoDB Atlas"]
-        Users[("Users")]
-        Contests[("Contests")]
-        DSA[("DSA Sheet")]
-    end
-
-    subgraph External["🌍 External APIs"]
-        Google["Google Identity Services"]
-        CF["Codeforces REST API"]
-        LC["LeetCode GraphQL API"]
-    end
-
-    UI -->|"JWT Bearer"| Server
-    Auth -->|"POST /api/auth/callback"| GAuth
-    GAuth -->|"verify credential"| Google
-    GAuth -->|"find/create user"| Users
-    AuthCtrl -->|"verify handle"| CF
-    AuthCtrl -->|"verify handle"| LC
-    LB -->|"aggregation"| Users
-    LB --> Cache
-    Contest -->|"sync"| CF
-    Contest -->|"sync"| LC
-    Contest --> Contests
-    Cron -->|"weekly trigger"| Contest
-    AdminCtrl --> Users
-    AdminCtrl --> Contests
-```
-
-### Directory Structure
-
 ```
 CONSOLE-Campus-Tech-Community-Platform/
-├── console-backend/
-│   ├── controller/          # Route handlers
-│   │   ├── googleAuthController.js   # Google OAuth
-│   │   ├── authController.js         # Platform verification
-│   │   ├── leaderboardController.js  # Rankings
-│   │   ├── contestController.js      # Contest sync
-│   │   └── adminController.js        # Admin operations
-│   ├── models/              # Mongoose schemas (User, Contest, DSA)
-│   ├── routes/              # Express routers
-│   ├── middleware/          # userAuth, adminAuth, security
-│   ├── services/            # verificationService, platformService, cacheService
-│   ├── utils/               # errorHandler, identity, keepalive
-│   └── schedulers/          # contestCron.js
 │
-└── console-frontend/
+├── console-backend/                  # Node.js + Express API
+│   ├── controller/
+│   │   ├── googleAuthController.js   # Google OAuth login
+│   │   ├── authController.js         # Platform handle verification
+│   │   ├── leaderboardController.js  # Rankings & user data
+│   │   ├── contestController.js      # LeetCode + CF contest sync
+│   │   └── adminController.js        # Admin operations
+│   ├── models/                       # Mongoose schemas (User, Contest, DSA)
+│   ├── routes/                       # Express routers
+│   ├── middleware/                   # JWT auth, rate limiting, security
+│   ├── services/                     # verificationService, platformService, cacheService
+│   ├── utils/                        # errorHandler, identity, keepalive
+│   └── schedulers/                   # Weekly contest sync cron
+│
+└── console-frontend/                 # React 18 + Vite
     └── src/
-        ├── components/      # All UI components
-        ├── admin/           # Admin panel pages
-        ├── context/         # AuthProvider
-        └── utils/           # api.js, logger.js
+        ├── components/               # All UI pages and components
+        ├── admin/                    # Admin panel pages
+        ├── context/                  # AuthProvider (JWT + Google OAuth)
+        └── utils/                   # api.js, logger.js
 ```
 
 ---
@@ -348,19 +301,16 @@ Watch these first — they will teach you everything you need:
 | [▶ How to Make Your First Pull Request (Fireship)](https://www.youtube.com/watch?v=8lGpZkjnkt4) | Fork → branch → PR workflow |
 | [▶ Contributing to Open Source for Beginners](https://www.youtube.com/watch?v=yzeVMecydCE) | How to find issues, what to build |
 
-### Contribution Flow
+### How to Contribute
 
-```mermaid
-flowchart TD
-    A["⭐ Star & Fork the repo"] --> B["📖 Read CONTRIBUTING_IDEAS.md\nPick a feature you want to build"]
-    B --> C["🐛 Open a GitHub Issue\nDescribe what you will build"]
-    C --> D["🌿 Create a feature branch\ngit checkout -b feature/your-feature"]
-    D --> E["💻 Build it"]
-    E --> F["✅ Test it\nnpm run build / npm test"]
-    F --> G["📤 Open a Pull Request\ntarget: dev branch"]
-    G --> H["👀 Code Review"]
-    H --> I["🎉 Merged!"]
-```
+1. ⭐ **Star & Fork** the repo
+2. 📖 **Read [CONTRIBUTING_IDEAS.md](CONTRIBUTING_IDEAS.md)** — pick a feature you want to build
+3. 🐛 **Open a GitHub Issue** — describe what you'll build (so no one duplicates it)
+4. 🌿 **Create a branch** — `git checkout -b feature/your-feature-name`
+5. 💻 **Build it**
+6. ✅ **Test it** — `npm run build` must pass
+7. 📤 **Open a PR** — target the `dev` branch
+8. 🎉 **Get reviewed and merged**
 
 ### Branch Rules
 
