@@ -52,7 +52,7 @@ export const syncLeetcodeContests = async (req, res) => {
   try {
     const leetcodeUsers = await User.find({
       'platformVerification.leetcode.isVerified': true,
-      'platformVerification.leetcode.handle': { $ne: null, $ne: '' },
+      'platformVerification.leetcode.handle': { $nin: [null, ''] },
     }).select('platformVerification.leetcode name');
 
     if (leetcodeUsers.length === 0) {
@@ -189,7 +189,7 @@ export const syncLeetcodeContests = async (req, res) => {
     }
 
     // Update user contest stats (using already fetched history)
-    for (const [userId, { user, fullHistory, weekendContest }] of userHistoryMap) {
+    for (const [_userId, { user, fullHistory, weekendContest }] of userHistoryMap) {
       try {
         // Update user's rolling contest history (store last 5)
         const allContests = (fullHistory || [])
@@ -330,7 +330,7 @@ export const getRecentContest = async (req, res) => {
     }));
 
     res.status(200).json({
-      contestId: contest._id,
+      _id: contest._id,
       contestName: contest.name,
       date: contest.date,
       platform: contest.platform,
@@ -346,8 +346,8 @@ export const getRecentContest = async (req, res) => {
 
 export const getUserContestHistory = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const user = await User.findById(userId).select(
+    const _userId = req.params.userId;
+    const user = await User.findById(_userId).select(
       'platformVerification.leetcode.contestStats name',
     );
 
@@ -394,7 +394,7 @@ export const getNonParticipants = async (req, res) => {
 
     const allVerified = await User.find({
       'platformVerification.leetcode.isVerified': true,
-      'platformVerification.leetcode.handle': { $ne: null, $ne: '' },
+      'platformVerification.leetcode.handle': { $nin: [null, ''] },
     }).select(
       'name email branch platformVerification.leetcode.handle platformVerification.leetcode.contestStats',
     );
@@ -449,7 +449,7 @@ export const getContestLeaderboard = async (req, res) => {
     }));
 
     res.status(200).json({
-      contestId: contest._id,
+      _id: contest._id,
       contestName: contest.name,
       date: contest.date,
       platform: contest.platform,
@@ -474,7 +474,7 @@ export const syncCodeforcesContests = async (req, res) => {
   try {
     const codeforcesUsers = await User.find({
       'platformVerification.codeforces.isVerified': true,
-      'platformVerification.codeforces.handle': { $ne: null, $ne: '' },
+      'platformVerification.codeforces.handle': { $nin: [null, ''] },
     }).select('platformVerification.codeforces name');
 
     if (codeforcesUsers.length === 0) {

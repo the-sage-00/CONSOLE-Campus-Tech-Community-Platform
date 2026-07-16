@@ -1,5 +1,5 @@
 import User from '../models/User.js';
-import jwt from 'jsonwebtoken';
+
 import verificationService from '../services/verificationService.js';
 import fetch from 'node-fetch';
 
@@ -293,7 +293,7 @@ const submitPlatformHandle = async (req, res) => {
 // Verify platform handle using new verification service
 const verifyPlatformHandle = async (req, res) => {
   try {
-    const { platform, manualVerification = false } = req.body;
+    const { platform, manualVerification: _manualVerification = false } = req.body;
     const userId = req.user.id;
 
     console.log('🔍 === VERIFICATION START ===');
@@ -507,6 +507,7 @@ const validatePlatformHandle = async (req, res) => {
 };
 
 // Validate platform profile (check if account exists)
+// eslint-disable-next-line no-unused-vars
 const validatePlatformProfile = async (platform, handle) => {
   try {
     const options = {
@@ -625,6 +626,7 @@ const updateProfile = async (req, res) => {
 };
 
 // Verify platform profile by checking for verification code
+// eslint-disable-next-line no-unused-vars
 const verifyPlatformProfile = async (platform, handle, verificationCode) => {
   try {
     const options = {

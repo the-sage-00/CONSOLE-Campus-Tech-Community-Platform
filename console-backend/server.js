@@ -4,14 +4,13 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+
 
 // Configure dotenv FIRST
 dotenv.config();
 
 // Get __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 // Import security and error handling
 import { securityHeaders, validateJWTSecret } from './middleware/security.js';

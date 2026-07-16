@@ -5,13 +5,14 @@ import { jest } from '@jest/globals';
 // Mock leetcode-query
 jest.unstable_mockModule('leetcode-query', () => {
   class LeetCodeMock {
-    async userContestRankingHistory(username) {
+    // eslint-disable-next-line no-unused-vars
+    userContestRankingHistory(username) {
       // Sorted newest -> oldest (by startTime)
-      return [
+      return Promise.resolve([
         { title: 'Weekly Contest 403', startTime: 3000, finishTime: 3001, attended: true, ranking: 500, rating: 1700 }, // latest (should be skipped)
         { title: 'Weekly Contest 402', startTime: 2000, finishTime: 2001, attended: true, ranking: 400, rating: 1680 }, // finalized target
-        { title: 'Weekly Contest 401', startTime: 1000, finishTime: 1001, attended: false, ranking: null, rating: null }
-      ];
+        { title: 'Weekly Contest 401', startTime: 1000, finishTime: 1001, attended: false, ranking: null, rating: null },
+      ]);
     }
   }
   return { LeetCode: LeetCodeMock };
@@ -34,8 +35,8 @@ const makeUserDoc = (id, name, handle, existingHistory = []) => ({
         lastContestFetch: null,
         lastContestName: '',
         lastContestParticipated: false,
-      }
-    }
+      },
+    },
   },
 });
 
@@ -43,18 +44,19 @@ const makeUserDoc = (id, name, handle, existingHistory = []) => ({
 jest.unstable_mockModule('../models/User.js', () => ({
   default: {
     // Used in controller: User.find, User.findById
+    // eslint-disable-next-line no-unused-vars
     find: jest.fn((query) => ({
-      select: async () => userDocs,
+      select: () => Promise.resolve(userDocs),
     })),
     findById: jest.fn((id) => ({
-      select: async () => {
+      select: () => {
         const base = userDocs.find(u => u._id === id);
         const doc = JSON.parse(JSON.stringify(base));
-        doc.save = async () => { savedUsers.push(doc); };
+        doc.save = () => { savedUsers.push(doc); return Promise.resolve(doc); };
         return doc;
-      }
+      },
     })),
-  }
+  },
 }));
 
 // Mock Contest model
@@ -63,7 +65,7 @@ const contestUpserts = [];
 
 jest.unstable_mockModule('../models/Contest.js', () => ({
   default: {
-    findOneAndUpdate: jest.fn(async (filter, update) => {
+    findOneAndUpdate: jest.fn((filter, update) => {
       contestUpserts.push({ filter, update });
       const doc = {
         participants: contestParticipants,
@@ -85,13 +87,19 @@ jest.unstable_mockModule('../models/Contest.js', () => ({
       };
       return doc;
     }),
-  }
+  },
 }));
 
 // Now import after setting up mocks
-const { default: User } = await import('../models/User.js');
-const { default: Contest } = await import('../models/Contest.js');
-const { syncLeetcodeContests } = await import('../controller/contestController.js');
+/* eslint-env jest */
+let syncLeetcodeContests;
+
+beforeAll(async () => {
+  const ControllerModule = await import('../controller/contestController.js');
+
+
+  syncLeetcodeContests = ControllerModule.syncLeetcodeContests;
+});
 
 describe('syncLeetcodeContests', () => {
   jest.setTimeout(20000);
@@ -117,7 +125,7 @@ describe('syncLeetcodeContests', () => {
     // Two verified users
     userDocs.push(
       makeUserDoc('u1', 'Alice', 'alice_lc'),
-      makeUserDoc('u2', 'Bob', 'bob_lc')
+      makeUserDoc('u2', 'Bob', 'bob_lc'),
     );
 
     const { req, res } = makeReqRes();
@@ -154,7 +162,7 @@ describe('syncLeetcodeContests', () => {
     expect(saved.platformVerification.leetcode.contestStats.contestHistory[0].contestName).toBe('Weekly Contest 402');
     // totalContests counts only participated entries
     expect(saved.platformVerification.leetcode.contestStats.totalContests).toBe(
-      saved.platformVerification.leetcode.contestStats.contestHistory.filter(h => h.participated).length
+      saved.platformVerification.leetcode.contestStats.contestHistory.filter(h => h.participated).length,
     );
   });
 });

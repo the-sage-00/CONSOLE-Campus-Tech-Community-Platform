@@ -167,14 +167,14 @@ class VerificationService {
         console.log(`🎯 Looking for problem ${targetContestId}${targetIndex}`);
 
         // Check if any submission matches the verification problem
-        let foundSubmission = null;
+        let _foundSubmission = null;
         const matched = submissions.some(sub => {
           const subContestId = sub.problem.contestId;
           const subIndex = sub.problem.index;
           const isMatch = subContestId == targetContestId && subIndex == targetIndex;
 
           if (isMatch) {
-            foundSubmission = sub;
+            _foundSubmission = sub;
             console.log(`✅ Found matching submission: ${subContestId}${subIndex}`);
             console.log(`   Submission ID: ${sub.id}, Status: ${sub.verdict}, Time: ${new Date(sub.creationTimeSeconds * 1000).toISOString()}`);
           }

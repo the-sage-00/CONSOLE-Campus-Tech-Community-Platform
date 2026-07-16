@@ -4,7 +4,7 @@ import Contest from '../models/Contest.js';
 import verificationService from '../services/verificationService.js';
 
 // Admin login
-const adminLogin = async (req, res) => {
+const adminLogin = (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -246,7 +246,7 @@ const getParticipationStats = async (req, res) => {
     // Get all verified LeetCode users
     const verifiedUsers = await User.find({
       'platformVerification.leetcode.isVerified': true,
-      'platformVerification.leetcode.handle': { $ne: null, $ne: '' },
+      'platformVerification.leetcode.handle': { $nin: [null, ''] },
     }).select('name email branch platformVerification.leetcode.handle platformVerification.leetcode.contestStats');
 
     // Get all contests sorted by date (most recent first) - get last 3 contests

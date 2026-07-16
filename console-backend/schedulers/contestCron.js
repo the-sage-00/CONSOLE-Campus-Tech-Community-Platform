@@ -2,7 +2,7 @@ import cron from 'node-cron';
 import { syncLeetcodeContests, syncCodeforcesContests } from '../controller/contestController.js';
 import { refreshAllUsersData } from '../controller/adminController.js';
 
-export const startContestScheduler = (app) => {
+export const startContestScheduler = (_app) => {
   // Every day at midnight
   cron.schedule('0 0 * * *', async () => {
     try {

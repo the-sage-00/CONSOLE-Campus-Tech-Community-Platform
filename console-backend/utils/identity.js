@@ -64,6 +64,7 @@ export const parseIdentityFromEmail = (email) => {
       }
       admissionYear = parseInt(match[1], 10);
       branchCode = match[2].toLowerCase();
+      // eslint-disable-next-line no-unused-vars
       rollSuffix = match[3];
     }
 

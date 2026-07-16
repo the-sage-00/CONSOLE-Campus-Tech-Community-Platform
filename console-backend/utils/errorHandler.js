@@ -70,7 +70,7 @@ const formatErrorResponse = (error, req) => {
 };
 
 // Global error handler middleware
-const globalErrorHandler = (error, req, res, next) => {
+const globalErrorHandler = (error, req, res, _next) => {
   let err = error;
 
   // Handle mongoose validation errors

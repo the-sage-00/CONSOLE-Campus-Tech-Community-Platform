@@ -1,3 +1,4 @@
+/* eslint-env browser */
 // API Base Configuration
 const API_BASE = 'http://localhost:5000/api/auth';
 
@@ -36,7 +37,7 @@ const apiCall = async (endpoint, options = {}) => {
 // Authentication API Functions
 export const authAPI = {
   // Register a new user
-  register: async (userData) => {
+  register: (userData) => {
     return apiCall('/register', {
       method: 'POST',
       body: JSON.stringify(userData),
@@ -44,7 +45,7 @@ export const authAPI = {
   },
 
   // Login user
-  login: async (credentials) => {
+  login: (credentials) => {
     return apiCall('/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
@@ -52,7 +53,7 @@ export const authAPI = {
   },
 
   // Verify email with OTP
-  verifyEmail: async (verificationData) => {
+  verifyEmail: (verificationData) => {
     return apiCall('/verify-email', {
       method: 'POST',
       body: JSON.stringify(verificationData),
@@ -60,7 +61,7 @@ export const authAPI = {
   },
 
   // Resend verification email
-  resendVerification: async (email) => {
+  resendVerification: (email) => {
     return apiCall('/resend-verification', {
       method: 'POST',
       body: JSON.stringify({ email }),
@@ -68,7 +69,7 @@ export const authAPI = {
   },
 
   // Forgot password
-  forgotPassword: async (email) => {
+  forgotPassword: (email) => {
     return apiCall('/forgot-password', {
       method: 'POST',
       body: JSON.stringify({ email }),
@@ -87,21 +88,21 @@ export const authAPI = {
   },
 
   // Get pending status
-  getPendingStatus: async (email) => {
+  getPendingStatus: (email) => {
     return apiCall(`/pending-status?email=${encodeURIComponent(email)}`, {
       method: 'GET',
     });
   },
 
   // Get system stats (for admin)
-  getStats: async () => {
+  getStats: () => {
     return apiCall('/stats', {
       method: 'GET',
     });
   },
 
   // Get user profile (requires auth token)
-  getProfile: async (token) => {
+  getProfile: (token) => {
     return apiCall('/profile', {
       method: 'GET',
       headers: {
