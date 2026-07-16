@@ -4,14 +4,13 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+
 
 // Configure dotenv FIRST
 dotenv.config();
 
 // Get __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 // Import security and error handling
 import { securityHeaders, validateJWTSecret } from './middleware/security.js';
@@ -64,7 +63,7 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
 
 // Cross-Origin headers for Google OAuth compatibility
@@ -118,7 +117,7 @@ app.get('/api/health', (req, res) => {
     status: 'OK',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
   });
 });
 
@@ -138,20 +137,20 @@ app.get('/api/network-test', async (req, res) => {
         const startTime = Date.now();
         const response = await fetch(url, {
           method: 'GET',
-          timeout: 5000
+          timeout: 5000,
         });
         const endTime = Date.now();
 
         results[url] = {
           status: 'success',
           responseTime: endTime - startTime,
-          statusCode: response.status
+          statusCode: response.status,
         };
       } catch (error) {
         results[url] = {
           status: 'error',
           error: error.message,
-          code: error.code
+          code: error.code,
         };
       }
     }
@@ -159,12 +158,12 @@ app.get('/api/network-test', async (req, res) => {
     res.json({
       status: 'OK',
       timestamp: new Date().toISOString(),
-      networkTest: results
+      networkTest: results,
     });
   } catch (error) {
     res.status(500).json({
       status: 'ERROR',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -179,13 +178,9 @@ app.get('/', (req, res) => {
       networkTest: '/api/network-test',
       auth: '/api/auth',
       leaderboard: '/api/leaderboard',
-      admin: '/api/admin'
-    }
+      admin: '/api/admin',
+    },
   });
-});
-app.get('/ping', (req, res) => {
-  res.status(200);
-  res.send('pong');
 });
 
 // Keep-alive endpoint (also available at /api/ping for compatibility)
@@ -244,7 +239,7 @@ const startServer = async () => {
     keepAlive();
     console.log(`✅ Backend running on http://localhost:${PORT}`);
     console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`🔗 CORS enabled for: http://localhost:5173`);
+    console.log('🔗 CORS enabled for: http://localhost:5173');
     // Start weekly contest sync scheduler
     startContestScheduler(app);
   });

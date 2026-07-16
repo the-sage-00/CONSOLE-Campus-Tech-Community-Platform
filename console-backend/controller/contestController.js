@@ -1,6 +1,6 @@
-import User from "../models/User.js";
-import Contest from "../models/Contest.js";
-import { LeetCode } from "leetcode-query";
+import User from '../models/User.js';
+import Contest from '../models/Contest.js';
+import { LeetCode } from 'leetcode-query';
 
 const leetcode = new LeetCode();
 
@@ -33,39 +33,39 @@ export const getContests = async (req, res) => {
   try {
     const contests = await Contest.find()
       .sort({ date: -1 })
-      .populate("participants.user", "name"); // Populate user's name
+      .populate('participants.user', 'name'); // Populate user's name
 
     res.status(200).json({ contests });
   } catch (error) {
-    console.error("Error fetching contests:", error);
+    console.error('Error fetching contests:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
 export const syncLeetcodeContests = async (req, res) => {
-  if (!req.user || req.user.role !== "admin") {
+  if (!req.user || req.user.role !== 'admin') {
     return res
       .status(403)
-      .json({ message: "Access denied. Admin privileges required." });
+      .json({ message: 'Access denied. Admin privileges required.' });
   }
 
   try {
     const leetcodeUsers = await User.find({
-      "platformVerification.leetcode.isVerified": true,
-      "platformVerification.leetcode.handle": { $ne: null, $ne: "" },
-    }).select("platformVerification.leetcode name");
+      'platformVerification.leetcode.isVerified': true,
+      'platformVerification.leetcode.handle': { $nin: [null, ''] },
+    }).select('platformVerification.leetcode name');
 
     if (leetcodeUsers.length === 0) {
       return res
         .status(200)
-        .json({ message: "No verified LeetCode users found to sync." });
+        .json({ message: 'No verified LeetCode users found to sync.' });
     }
 
     // Get trackable weekend (last Saturday & Sunday before last Thursday)
     const { lastSat, lastSun } = getTrackableWeekend();
 
     console.log(
-      `📅 Tracking contests from: ${lastSat.toDateString()} (Sat) & ${lastSun.toDateString()} (Sun)`
+      `📅 Tracking contests from: ${lastSat.toDateString()} (Sat) & ${lastSun.toDateString()} (Sun)`,
     );
 
     const MAX_HISTORY = 5;
@@ -101,7 +101,7 @@ export const syncLeetcodeContests = async (req, res) => {
         // Store full history for later stats update
         userHistoryMap.set(user._id.toString(), {
           user: user,
-          fullHistory: history
+          fullHistory: history,
         });
 
         // Filter contests that were held on the trackable weekend
@@ -126,7 +126,7 @@ export const syncLeetcodeContests = async (req, res) => {
           if (!contestParticipantsMap.has(contestTitle)) {
             contestParticipantsMap.set(contestTitle, {
               date: contestStartTime,
-              participants: []
+              participants: [],
             });
           }
 
@@ -143,7 +143,7 @@ export const syncLeetcodeContests = async (req, res) => {
           participatedCount++;
 
           console.log(
-            `✅ ${handle} participated: ${contestTitle} (Rank: ${latestWeekendContest.ranking}, Rating: ${latestWeekendContest.rating})`
+            `✅ ${handle} participated: ${contestTitle} (Rank: ${latestWeekendContest.ranking}, Rating: ${latestWeekendContest.rating})`,
           );
         } else {
           console.log(`❌ ${handle} did NOT participate in trackable weekend`);
@@ -151,7 +151,7 @@ export const syncLeetcodeContests = async (req, res) => {
       } catch (innerErr) {
         console.error(
           `❌ Error syncing contest for user ${user.name}:`,
-          innerErr.message
+          innerErr.message,
         );
         errors.push({
           user: user.name,
@@ -189,7 +189,7 @@ export const syncLeetcodeContests = async (req, res) => {
     }
 
     // Update user contest stats (using already fetched history)
-    for (const [userId, { user, fullHistory, weekendContest }] of userHistoryMap) {
+    for (const [_userId, { user, fullHistory, weekendContest }] of userHistoryMap) {
       try {
         // Update user's rolling contest history (store last 5)
         const allContests = (fullHistory || [])
@@ -198,7 +198,7 @@ export const syncLeetcodeContests = async (req, res) => {
           .slice(0, MAX_HISTORY)
           .map((h) => ({
             contestName: h.contest.title,
-            contestSlug: "",
+            contestSlug: '',
             date: new Date(h.contest.startTime * 1000),
             participated: h.attended,
             rank: h.ranking || null,
@@ -212,7 +212,7 @@ export const syncLeetcodeContests = async (req, res) => {
           totalContests,
           recentContests: allContests,
           lastContestFetch: new Date(),
-          lastContestName: mainContestName || "",
+          lastContestName: mainContestName || '',
           lastContestParticipated: !!weekendContest,
         };
         user.platformVerification.leetcode.lastSync = new Date();
@@ -227,7 +227,7 @@ export const syncLeetcodeContests = async (req, res) => {
     if (mainContestName && mainParticipantsData.length > 0) {
       let contestDoc = await Contest.findOne({ 
         name: mainContestName,
-        platform: 'leetcode'
+        platform: 'leetcode',
       });
 
       if (!contestDoc) {
@@ -247,26 +247,26 @@ export const syncLeetcodeContests = async (req, res) => {
       await contestDoc.save();
 
       console.log(
-        `✅ Contest "${mainContestName}" synced with ${mainParticipantsData.length} participants`
+        `✅ Contest "${mainContestName}" synced with ${mainParticipantsData.length} participants`,
       );
     } else {
-      console.log(`⚠️ No participants found in trackable weekend contests`);
+      console.log('⚠️ No participants found in trackable weekend contests');
     }
 
     // Response
     res.status(200).json({
       message:
         participatedCount > 0
-          ? "LeetCode contest sync completed successfully."
-          : "Contest sync complete but no campus participants found in trackable weekend.",
-      finalizedContest: mainContestName || "None",
+          ? 'LeetCode contest sync completed successfully.'
+          : 'Contest sync complete but no campus participants found in trackable weekend.',
+      finalizedContest: mainContestName || 'None',
       weekendTracked: `${lastSat.toDateString()} (Sat) & ${lastSun.toDateString()} (Sun)`,
       participants: mainParticipantsData.length || 0,
       totalUsersProcessed: leetcodeUsers.length,
       errors: errors.length > 0 ? errors : undefined,
     });
   } catch (error) {
-    console.error("❌ Error during LeetCode contest sync:", error);
+    console.error('❌ Error during LeetCode contest sync:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -279,15 +279,15 @@ export const getRecentContest = async (req, res) => {
     // Filter by platform and prefer contests with participants
     let latest = await Contest.find({ 
       platform: platform,
-      "participants.0": { $exists: true } 
+      'participants.0': { $exists: true }, 
     })
       .sort({ date: -1 })
       .limit(1)
       .populate(
-        "participants.user",
+        'participants.user',
         platform === 'leetcode' 
-          ? "name branch platformVerification.leetcode.handle"
-          : "name branch platformVerification.codeforces.handle"
+          ? 'name branch platformVerification.leetcode.handle'
+          : 'name branch platformVerification.codeforces.handle',
       );
 
     if (!latest || latest.length === 0) {
@@ -295,10 +295,10 @@ export const getRecentContest = async (req, res) => {
         .sort({ date: -1 })
         .limit(1)
         .populate(
-          "participants.user",
+          'participants.user',
           platform === 'leetcode' 
-            ? "name branch platformVerification.leetcode.handle"
-            : "name branch platformVerification.codeforces.handle"
+            ? 'name branch platformVerification.leetcode.handle'
+            : 'name branch platformVerification.codeforces.handle',
         );
     }
 
@@ -320,8 +320,8 @@ export const getRecentContest = async (req, res) => {
       name: p.user.name,
       branch: p.user.branch,
       handle: platform === 'leetcode' 
-        ? (p.user.platformVerification?.leetcode?.handle || "")
-        : (p.user.platformVerification?.codeforces?.handle || ""),
+        ? (p.user.platformVerification?.leetcode?.handle || '')
+        : (p.user.platformVerification?.codeforces?.handle || ''),
       ranking: p.ranking,
       rating: p.rating,
       problemsSolved: p.problemsSolved || 0,
@@ -330,7 +330,7 @@ export const getRecentContest = async (req, res) => {
     }));
 
     res.status(200).json({
-      contestId: contest._id,
+      _id: contest._id,
       contestName: contest.name,
       date: contest.date,
       platform: contest.platform,
@@ -339,20 +339,20 @@ export const getRecentContest = async (req, res) => {
       participants,
     });
   } catch (error) {
-    console.error("Error fetching recent contest data:", error);
+    console.error('Error fetching recent contest data:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
 export const getUserContestHistory = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const user = await User.findById(userId).select(
-      "platformVerification.leetcode.contestStats name"
+    const _userId = req.params.userId;
+    const user = await User.findById(_userId).select(
+      'platformVerification.leetcode.contestStats name',
     );
 
     if (!user) {
-      return res.status(404).json({ message: "User not found." });
+      return res.status(404).json({ message: 'User not found.' });
     }
 
     const contestStats = user.platformVerification?.leetcode?.contestStats || {
@@ -367,7 +367,7 @@ export const getUserContestHistory = async (req, res) => {
   } catch (error) {
     console.error(
       `Error fetching user ${req.params.userId} contest history:`,
-      error
+      error,
     );
     res.status(500).json({ error: error.message });
   }
@@ -375,10 +375,10 @@ export const getUserContestHistory = async (req, res) => {
 
 export const getNonParticipants = async (req, res) => {
   // Admin authentication/authorization
-  if (!req.user || req.user.role !== "admin") {
+  if (!req.user || req.user.role !== 'admin') {
     return res
       .status(403)
-      .json({ message: "Access denied. Admin privileges required." });
+      .json({ message: 'Access denied. Admin privileges required.' });
   }
 
   try {
@@ -387,24 +387,24 @@ export const getNonParticipants = async (req, res) => {
     if (!latest || latest.length === 0) {
       return res.status(404).json({
         message:
-          "No recent contest data available to determine non-participants.",
+          'No recent contest data available to determine non-participants.',
       });
     }
     const recentContestName = latest[0].name;
 
     const allVerified = await User.find({
-      "platformVerification.leetcode.isVerified": true,
-      "platformVerification.leetcode.handle": { $ne: null, $ne: "" },
+      'platformVerification.leetcode.isVerified': true,
+      'platformVerification.leetcode.handle': { $nin: [null, ''] },
     }).select(
-      "name email branch platformVerification.leetcode.handle platformVerification.leetcode.contestStats"
+      'name email branch platformVerification.leetcode.handle platformVerification.leetcode.contestStats',
     );
 
     const participantsSet = new Set(
-      (latest[0].participants || []).map((p) => String(p.user))
+      (latest[0].participants || []).map((p) => String(p.user)),
     );
 
     const nonParticipants = allVerified.filter(
-      (u) => !participantsSet.has(String(u._id))
+      (u) => !participantsSet.has(String(u._id)),
     );
 
     res.status(200).json({
@@ -417,7 +417,7 @@ export const getNonParticipants = async (req, res) => {
       })),
     });
   } catch (error) {
-    console.error("Error fetching non-participants:", error);
+    console.error('Error fetching non-participants:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -427,11 +427,11 @@ export const getContestLeaderboard = async (req, res) => {
   try {
     const { contestId } = req.params;
     const contest = await Contest.findById(contestId).populate(
-      "participants.user",
-      "name branch platformVerification.leetcode.handle platformVerification.codeforces.handle"
+      'participants.user',
+      'name branch platformVerification.leetcode.handle platformVerification.codeforces.handle',
     );
     if (!contest) {
-      return res.status(404).json({ message: "Contest not found" });
+      return res.status(404).json({ message: 'Contest not found' });
     }
 
     const participants = (contest.participants || []).map((p) => ({
@@ -439,8 +439,8 @@ export const getContestLeaderboard = async (req, res) => {
       name: p.user.name,
       branch: p.user.branch,
       handle: contest.platform === 'leetcode'
-        ? (p.user.platformVerification?.leetcode?.handle || "")
-        : (p.user.platformVerification?.codeforces?.handle || ""),
+        ? (p.user.platformVerification?.leetcode?.handle || '')
+        : (p.user.platformVerification?.codeforces?.handle || ''),
       ranking: p.ranking,
       rating: p.rating,
       problemsSolved: p.problemsSolved || 0,
@@ -449,7 +449,7 @@ export const getContestLeaderboard = async (req, res) => {
     }));
 
     res.status(200).json({
-      contestId: contest._id,
+      _id: contest._id,
       contestName: contest.name,
       date: contest.date,
       platform: contest.platform,
@@ -458,40 +458,40 @@ export const getContestLeaderboard = async (req, res) => {
       participants,
     });
   } catch (error) {
-    console.error("Error fetching contest leaderboard:", error);
+    console.error('Error fetching contest leaderboard:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
 // Sync Codeforces contests for all verified Codeforces users
 export const syncCodeforcesContests = async (req, res) => {
-  if (!req.user || req.user.role !== "admin") {
+  if (!req.user || req.user.role !== 'admin') {
     return res
       .status(403)
-      .json({ message: "Access denied. Admin privileges required." });
+      .json({ message: 'Access denied. Admin privileges required.' });
   }
 
   try {
     const codeforcesUsers = await User.find({
-      "platformVerification.codeforces.isVerified": true,
-      "platformVerification.codeforces.handle": { $ne: null, $ne: "" },
-    }).select("platformVerification.codeforces name");
+      'platformVerification.codeforces.isVerified': true,
+      'platformVerification.codeforces.handle': { $nin: [null, ''] },
+    }).select('platformVerification.codeforces name');
 
     if (codeforcesUsers.length === 0) {
       return res
         .status(200)
-        .json({ message: "No verified Codeforces users found to sync." });
+        .json({ message: 'No verified Codeforces users found to sync.' });
     }
 
     console.log(`📊 Found ${codeforcesUsers.length} verified Codeforces users`);
 
     // Step 1: Get the latest finished contest from Codeforces API
-    console.log("🔍 Fetching latest finished contest from Codeforces...");
-    const contestListUrl = "https://codeforces.com/api/contest.list?gym=false";
+    console.log('🔍 Fetching latest finished contest from Codeforces...');
+    const contestListUrl = 'https://codeforces.com/api/contest.list?gym=false';
     const contestListResponse = await fetch(contestListUrl, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-      }
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      },
     });
 
     if (!contestListResponse.ok) {
@@ -500,17 +500,17 @@ export const syncCodeforcesContests = async (req, res) => {
 
     const contestListData = await contestListResponse.json();
     
-    if (contestListData.status !== "OK" || !contestListData.result || contestListData.result.length === 0) {
-      throw new Error("No contests found in Codeforces API");
+    if (contestListData.status !== 'OK' || !contestListData.result || contestListData.result.length === 0) {
+      throw new Error('No contests found in Codeforces API');
     }
 
     // Find the first contest with phase = "FINISHED" (contests are sorted by start time descending)
     const latestFinishedContest = contestListData.result.find(
-      contest => contest.phase === "FINISHED"
+      contest => contest.phase === 'FINISHED',
     );
 
     if (!latestFinishedContest) {
-      throw new Error("No finished contests found in Codeforces API");
+      throw new Error('No finished contests found in Codeforces API');
     }
 
     const latestContestId = latestFinishedContest.id;
@@ -536,8 +536,8 @@ export const syncCodeforcesContests = async (req, res) => {
         const ratingUrl = `https://codeforces.com/api/user.rating?handle=${handle}`;
         const ratingResponse = await fetch(ratingUrl, {
           headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-          }
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          },
         });
 
         if (!ratingResponse.ok) {
@@ -546,7 +546,7 @@ export const syncCodeforcesContests = async (req, res) => {
 
         const ratingData = await ratingResponse.json();
         
-        if (ratingData.status !== "OK" || !ratingData.result || ratingData.result.length === 0) {
+        if (ratingData.status !== 'OK' || !ratingData.result || ratingData.result.length === 0) {
           console.log(`❌ ${handle} has no contest history`);
           continue;
         }
@@ -565,16 +565,16 @@ export const syncCodeforcesContests = async (req, res) => {
             oldRating: userLatestContest.oldRating || 0,
             newRating: userLatestContest.newRating || 0,
             rating: userLatestContest.newRating || userLatestContest.oldRating || 0,
-            problemsSolved: 0 // Will be updated from standings
+            problemsSolved: 0, // Will be updated from standings
           });
 
           participatedCount++;
           console.log(
-            `✅ ${handle} participated in latest contest (Rank: ${userLatestContest.rank}, Rating: ${userLatestContest.newRating || userLatestContest.oldRating})`
+            `✅ ${handle} participated in latest contest (Rank: ${userLatestContest.rank}, Rating: ${userLatestContest.newRating || userLatestContest.oldRating})`,
           );
         } else {
           console.log(
-            `❌ ${handle} did NOT participate in latest contest. Their latest: ${userLatestContestId}, Latest contest: ${latestContestId}`
+            `❌ ${handle} did NOT participate in latest contest. Their latest: ${userLatestContestId}, Latest contest: ${latestContestId}`,
           );
         }
       } catch (innerErr) {
@@ -596,14 +596,14 @@ export const syncCodeforcesContests = async (req, res) => {
         
         const standingsResponse = await fetch(standingsUrl, {
           headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-          }
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          },
         });
 
         if (standingsResponse.ok) {
           const standingsData = await standingsResponse.json();
           
-          if (standingsData.status === "OK" && standingsData.result && standingsData.result.rows) {
+          if (standingsData.status === 'OK' && standingsData.result && standingsData.result.rows) {
             // Create a map of handle -> problems solved
             const problemsMap = new Map();
             standingsData.result.rows.forEach(row => {
@@ -624,7 +624,7 @@ export const syncCodeforcesContests = async (req, res) => {
           }
         }
       } catch (standingsErr) {
-        console.error("⚠️ Error fetching standings:", standingsErr.message);
+        console.error('⚠️ Error fetching standings:', standingsErr.message);
         // Continue without problems solved data
       }
 
@@ -635,13 +635,13 @@ export const syncCodeforcesContests = async (req, res) => {
         rating: p.rating,
         problemsSolved: p.problemsSolved,
         oldRating: p.oldRating,
-        newRating: p.newRating
+        newRating: p.newRating,
       }));
 
       // Step 4: Create/update Contest document
       let contestDoc = await Contest.findOne({ 
         name: latestContestName,
-        platform: 'codeforces'
+        platform: 'codeforces',
       });
 
       if (!contestDoc) {
@@ -663,12 +663,12 @@ export const syncCodeforcesContests = async (req, res) => {
       await contestDoc.save();
 
       console.log(
-        `✅ Codeforces contest "${latestContestName}" synced with ${participatedCount} participants`
+        `✅ Codeforces contest "${latestContestName}" synced with ${participatedCount} participants`,
       );
 
       // Response
       res.status(200).json({
-        message: "Codeforces contest sync completed successfully.",
+        message: 'Codeforces contest sync completed successfully.',
         finalizedContest: latestContestName,
         contestId: latestContestId,
         contestDate: latestContestDate,
@@ -679,7 +679,7 @@ export const syncCodeforcesContests = async (req, res) => {
     } else {
       console.log(`⚠️ No users participated in the latest contest (ID: ${latestContestId})`);
       res.status(200).json({
-        message: "Contest sync complete but no campus participants found in the latest contest.",
+        message: 'Contest sync complete but no campus participants found in the latest contest.',
         finalizedContest: latestContestName,
         contestId: latestContestId,
         contestDate: latestContestDate,
@@ -689,7 +689,7 @@ export const syncCodeforcesContests = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("❌ Error during Codeforces contest sync:", error);
+    console.error('❌ Error during Codeforces contest sync:', error);
     res.status(500).json({ error: error.message });
   }
 };

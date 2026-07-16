@@ -6,10 +6,10 @@ import {
   getDashboardStats,
   deleteUser,
   getParticipationStats,
-  refreshAllUsersData
+  refreshAllUsersData,
 } from '../controller/adminController.js';
 import { getNonParticipants } from '../controller/contestController.js';
-import userAuth from '../middleware/userAuth.js';
+import _userAuth from '../middleware/userAuth.js';
 import adminAuth from '../middleware/adminAuth.js';
 
 const router = express.Router();

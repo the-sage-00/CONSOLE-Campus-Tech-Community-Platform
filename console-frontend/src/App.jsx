@@ -5,8 +5,6 @@ import ErrorBoundary from './components/ErrorBoundary';
 import NotFound from './components/NotFound';
 import LandingPage from './components/LandingPage';
 import LeaderboardPage from './components/LeaderboardPage';
-import LeaderboardTable from './components/LeaderboardTable';
-import LeaderboardAnalytics from './components/LeaderboardAnalytics';
 import TechGuide from './components/TechGuide';
 import ResourcesPage from './components/ResourcesPage';
 import AboutDeveloper from './components/AboutDeveloper';
@@ -59,8 +57,6 @@ function App() {
                   </LeaderboardProtected>
                 }
               />
-              <Route path="/leaderboard-table" element={<LeaderboardTable />} />
-              <Route path="/leaderboard-analytics" element={<LeaderboardAnalytics />} />
               <Route path="/tech-guide" element={<TechGuide />} />
               <Route path="/resources" element={<ResourcesPage />} />
               <Route path="/projects" element={<SummerProjects />} />
@@ -81,11 +77,6 @@ function App() {
               <Route path="/contact" element={<ContactUs />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
-
-              {/* Redirect old auth routes to login */}
-              <Route path="/register" element={<Navigate to="/login" replace />} />
-              <Route path="/forgot-password" element={<Navigate to="/login" replace />} />
-              <Route path="/verify-otp" element={<Navigate to="/login" replace />} />
 
               {/* Protected User Routes */}
               <Route

@@ -1,214 +1,13 @@
-import User from "../models/User.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import crypto from "crypto";
-import emailService from "../services/emailService.js";
-import verificationService from "../services/verificationService.js";
-import fetch from "node-fetch";
+import User from '../models/User.js';
 
-// Register new user and sent a otp through email to user
-const register = async (req, res) => {
-  try {
-    const { name, email, password, branch } = req.body;
+import verificationService from '../services/verificationService.js';
+import fetch from 'node-fetch';
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
-    
-    if (existingUser) {
-      // If user exists and is verified, redirect to login
-      if (existingUser.isEmailVerified) {
-        return res.status(400).json({ 
-          error: "User with this email already exists and is verified. Please login instead.",
-          redirectToLogin: true
-        });
-      } else {
-        // If user exists but is not verified, allow re-registration
-        // Delete the existing unverified user
-        await User.findByIdAndDelete(existingUser._id);
-        console.log(`Deleted unverified user: ${email}`);
-      }
-    }
-
-    // Generate OTP for email verification
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-    // Create new user
-    const user = new User({
-      name: name.trim(),
-      email: email.toLowerCase(),
-      password,
-      branch,
-      emailVerificationToken: otp,
-      emailVerificationExpires: otpExpires,
-    });
-
-    await user.save();
-
-    // Send OTP email
-    const emailSent = await emailService.sendOTPEmail(email, name, otp);
-
-    if (!emailSent) {
-      console.log("⚠  Email service failed, but user created. OTP:", otp);
-    }
-
-    res.status(201).json({
-      message: "Registration successful! Please check your email for verification code.",
-      data: {
-        userId: user._id,
-        email: user.email,
-      },
-    });
-  } catch (error) {
-    console.error("Registration error:", error);
-    res.status(500).json({ error: "Registration failed. Please try again." });
-  }
-};
-
-// Login user
-const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // Find user
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-
-    // Check password
-    const isPasswordValid = await user.comparePassword(password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-
-    // Check if email is verified
-    if (!user.isEmailVerified) {
-      return res.status(401).json({
-        error: "Please verify your email before logging in.",
-        needsVerification: true,
-        userId: user._id,
-      });
-    }
-
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: user._id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    res.json({
-      message: "Login successful",
-      data: {
-        token,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          branch: user.branch,
-          isEmailVerified: user.isEmailVerified,
-        },
-      },
-    });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ error: "Login failed. Please try again." });
-  }
-};
-
-// Verify email with OTP
-const verifyEmail = async (req, res) => {
-  try {
-    const { userId, otp } = req.body;
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    if (user.isEmailVerified) {
-      return res.status(400).json({ error: "Email is already verified" });
-    }
-
-    // Check if OTP is valid and not expired
-    if (user.emailVerificationToken !== otp) {
-      return res.status(400).json({ error: "Invalid verification code" });
-    }
-
-    if (new Date() > user.emailVerificationExpires) {
-      return res.status(400).json({ error: "Verification code has expired" });
-    }
-
-    // Mark email as verified
-    user.isEmailVerified = true;
-    user.emailVerificationToken = undefined;
-    user.emailVerificationExpires = undefined;
-    await user.save();
-
-    res.json({
-      message: "Email verified successfully! You can now login.",
-      data: {
-        userId: user._id,
-        email: user.email,
-      },
-    });
-  } catch (error) {
-    console.error("Email verification error:", error);
-    res
-      .status(500)
-      .json({ error: "Email verification failed. Please try again." });
-  }
-};
-
-// Resend verification OTP
-const resendVerificationEmail = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    if (user.isEmailVerified) {
-      return res.status(400).json({ error: "Email is already verified" });
-    }
-
-    // Generate new OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-    user.emailVerificationToken = otp;
-    user.emailVerificationExpires = otpExpires;
-    await user.save();
-
-    // Send new OTP email
-    const emailSent = await emailService.sendOTPEmail(email, user.name, otp);
-
-    if (!emailSent) {
-      console.log("⚠  Email service failed, but OTP generated. OTP:", otp);
-    }
-
-    res.json({
-      message: "Verification code sent successfully!",
-      data: {
-        userId: user._id,
-        email: user.email,
-      },
-    });
-  } catch (error) {
-    console.error("Resend verification error:", error);
-    res
-      .status(500)
-      .json({ error: "Failed to send verification code. Please try again." });
-  }
-};
 
 // Submit platform handle using new verification service
 const submitPlatformHandle = async (req, res) => {
   try {
-    console.log("Submit platform handle called with:", req.body);
+    console.log('Submit platform handle called with:', req.body);
     const { platform, handle } = req.body;
     const userId = req.user.id;
 
@@ -216,13 +15,13 @@ const submitPlatformHandle = async (req, res) => {
     if (!platform || !handle) {
       return res
         .status(400)
-        .json({ error: "Platform and handle are required" });
+        .json({ error: 'Platform and handle are required' });
     }
 
-    if (!["leetcode", "codeforces"].includes(platform)) {
+    if (!['leetcode', 'codeforces'].includes(platform)) {
       return res
         .status(400)
-        .json({ error: "Invalid platform. Supported: leetcode, codeforces" });
+        .json({ error: 'Invalid platform. Supported: leetcode, codeforces' });
     }
 
     // Validate handle format
@@ -232,16 +31,16 @@ const submitPlatformHandle = async (req, res) => {
     }
 
     const validatedHandle = validation.handle;
-      console.log(
-        `Processing ${platform} handle: ${validatedHandle} for user: ${userId}`
-      );
+    console.log(
+      `Processing ${platform} handle: ${validatedHandle} for user: ${userId}`,
+    );
 
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: 'User not found' });
     }
 
-    console.log("User found:", user.name);
+    console.log('User found:', user.name);
 
     // Check if platform handle already exists for this user
     if (
@@ -254,24 +53,24 @@ const submitPlatformHandle = async (req, res) => {
       });
     }
 
-    console.log("Fetching platform data...");
+    console.log('Fetching platform data...');
 
     // Fetch user data from the platform using verification service
     const platformData = await verificationService.fetchPlatformUserData(
       platform,
-      validatedHandle
+      validatedHandle,
     );
 
-    console.log("Platform data result:", platformData);
+    console.log('Platform data result:', platformData);
 
     if (!platformData.success) {
-      console.log("Platform data fetch failed:", platformData.error);
+      console.log('Platform data fetch failed:', platformData.error);
       return res.status(400).json({
         error: `Could not fetch data from ${platform}. ${platformData.error}`,
       });
     }
 
-    console.log("Generating verification code...");
+    console.log('Generating verification code...');
 
     // Initialize platformVerification if it doesn't exist
     if (!user.platformVerification) {
@@ -280,30 +79,30 @@ const submitPlatformHandle = async (req, res) => {
     if (!user.platformVerification[platform]) {
       // Initialize with schema-aligned defaults, including contestStats
       // Always ensure contestStats is a proper object to prevent Mongoose casting errors
-      const initialContestStats = platform === "leetcode"
+      const initialContestStats = platform === 'leetcode'
         ? {
-            totalContests: 0,
-            recentContests: [],
-            lastContestFetch: null,
-            lastContestName: "",
-            lastContestParticipated: false,
-          }
+          totalContests: 0,
+          recentContests: [],
+          lastContestFetch: null,
+          lastContestName: '',
+          lastContestParticipated: false,
+        }
         : {
-            totalContests: 0,
-            contestHistory: [],
-            lastContestParticipation: null,
-          };
+          totalContests: 0,
+          contestHistory: [],
+          lastContestParticipation: null,
+        };
       
       if (platform === 'leetcode') {
         user.platformVerification[platform] = {
-          handle: "",
+          handle: '',
           isVerified: false,
-          verificationCode: "",
+          verificationCode: '',
           verificationExpires: null,
           submittedAt: null,
           verifiedAt: null,
           verificationAttempts: 0,
-          platformId: "",
+          platformId: '',
           lastSync: null,
           platformData: {
             easySolved: 0,
@@ -319,9 +118,9 @@ const submitPlatformHandle = async (req, res) => {
         };
       } else {
         user.platformVerification[platform] = {
-          handle: "",
+          handle: '',
           isVerified: false,
-          verificationCode: "",
+          verificationCode: '',
           verificationExpires: null,
           submittedAt: null,
           verifiedAt: null,
@@ -337,42 +136,42 @@ const submitPlatformHandle = async (req, res) => {
       verificationService.generateVerificationCode(platform);
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-    console.log("Verification code generated:", verificationCode);
+    console.log('Verification code generated:', verificationCode);
 
     // Store the fetched platform data (preserve and/or initialize contestStats)
     // Ensure contestStats is always a valid object to prevent Mongoose casting errors
     let contestStatsToUse;
-    if (platform === "leetcode") {
+    if (platform === 'leetcode') {
       const existingContestStats = user.platformVerification[platform]?.contestStats;
       contestStatsToUse = existingContestStats && typeof existingContestStats === 'object' && !Array.isArray(existingContestStats)
         ? {
-            totalContests: existingContestStats.totalContests || 0,
-            recentContests: Array.isArray(existingContestStats.recentContests) ? existingContestStats.recentContests : [],
-            lastContestFetch: existingContestStats.lastContestFetch || null,
-            lastContestName: existingContestStats.lastContestName || "",
-            lastContestParticipated: existingContestStats.lastContestParticipated || false,
-          }
+          totalContests: existingContestStats.totalContests || 0,
+          recentContests: Array.isArray(existingContestStats.recentContests) ? existingContestStats.recentContests : [],
+          lastContestFetch: existingContestStats.lastContestFetch || null,
+          lastContestName: existingContestStats.lastContestName || '',
+          lastContestParticipated: existingContestStats.lastContestParticipated || false,
+        }
         : {
-            totalContests: 0,
-            recentContests: [],
-            lastContestFetch: null,
-            lastContestName: "",
-            lastContestParticipated: false,
-          };
+          totalContests: 0,
+          recentContests: [],
+          lastContestFetch: null,
+          lastContestName: '',
+          lastContestParticipated: false,
+        };
     } else {
       // Codeforces
       const existingContestStats = user.platformVerification[platform]?.contestStats;
       contestStatsToUse = existingContestStats && typeof existingContestStats === 'object' && !Array.isArray(existingContestStats)
         ? {
-            totalContests: existingContestStats.totalContests || 0,
-            contestHistory: Array.isArray(existingContestStats.contestHistory) ? existingContestStats.contestHistory : [],
-            lastContestParticipation: existingContestStats.lastContestParticipation || null,
-          }
+          totalContests: existingContestStats.totalContests || 0,
+          contestHistory: Array.isArray(existingContestStats.contestHistory) ? existingContestStats.contestHistory : [],
+          lastContestParticipation: existingContestStats.lastContestParticipation || null,
+        }
         : {
-            totalContests: 0,
-            contestHistory: [],
-            lastContestParticipation: null,
-          };
+          totalContests: 0,
+          contestHistory: [],
+          lastContestParticipation: null,
+        };
     }
     
     // Preserve existing fields that might be set
@@ -425,23 +224,23 @@ const submitPlatformHandle = async (req, res) => {
     user.markModified('platformVerification');
 
     // Debug logging to verify contestStats is properly set
-    console.log("Saving user data...");
-    console.log("Verification code before save:", user.platformVerification[platform].verificationCode);
-    console.log("ContestStats before save:", JSON.stringify(user.platformVerification[platform].contestStats));
-    console.log("ContestStats type:", typeof user.platformVerification[platform].contestStats);
+    console.log('Saving user data...');
+    console.log('Verification code before save:', user.platformVerification[platform].verificationCode);
+    console.log('ContestStats before save:', JSON.stringify(user.platformVerification[platform].contestStats));
+    console.log('ContestStats type:', typeof user.platformVerification[platform].contestStats);
     
     try {
       await user.save();
-      console.log("User data saved successfully");
+      console.log('User data saved successfully');
       
       // Verify the code was saved by reloading the user
       const savedUser = await User.findById(userId);
-      console.log("Verification code after save:", savedUser.platformVerification[platform]?.verificationCode);
-      console.log("ContestStats after save:", JSON.stringify(savedUser.platformVerification[platform]?.contestStats));
+      console.log('Verification code after save:', savedUser.platformVerification[platform]?.verificationCode);
+      console.log('ContestStats after save:', JSON.stringify(savedUser.platformVerification[platform]?.contestStats));
     } catch (saveError) {
-      console.error("Error saving user:", saveError);
-      console.error("Error details:", saveError.message);
-      console.error("Error stack:", saveError.stack);
+      console.error('Error saving user:', saveError);
+      console.error('Error details:', saveError.message);
+      console.error('Error stack:', saveError.stack);
       throw saveError;
     }
 
@@ -458,7 +257,7 @@ const submitPlatformHandle = async (req, res) => {
       verificationSteps,
     };
 
-    console.log("Sending response with verification code:", verificationCode);
+    console.log('Sending response with verification code:', verificationCode);
 
     // Also set a readable cookie with the verification code (non-HttpOnly so client can show it)
     try {
@@ -467,14 +266,14 @@ const submitPlatformHandle = async (req, res) => {
         verificationCode,
         {
           httpOnly: false,
-          sameSite: "Lax",
+          sameSite: 'Lax',
           secure: false,
           maxAge: 24 * 60 * 60 * 1000,
-          path: "/",
-        }
+          path: '/',
+        },
       );
     } catch (cookieErr) {
-      console.warn("Could not set verification code cookie:", cookieErr?.message || cookieErr);
+      console.warn('Could not set verification code cookie:', cookieErr?.message || cookieErr);
     }
 
     res.json({
@@ -482,11 +281,11 @@ const submitPlatformHandle = async (req, res) => {
       data: responseData,
     });
   } catch (error) {
-    console.error("Submit platform handle error:", error?.message || error);
-    console.error("Error stack:", error?.stack);
+    console.error('Submit platform handle error:', error?.message || error);
+    console.error('Error stack:', error?.stack);
     res.status(500).json({
       error: `Failed to submit platform handle: ${error?.message || 'unknown error'}`,
-      details: process.env.NODE_ENV === "development" ? (error?.stack || error?.message) : undefined,
+      details: process.env.NODE_ENV === 'development' ? (error?.stack || error?.message) : undefined,
     });
   }
 };
@@ -494,15 +293,15 @@ const submitPlatformHandle = async (req, res) => {
 // Verify platform handle using new verification service
 const verifyPlatformHandle = async (req, res) => {
   try {
-    const { platform, manualVerification = false } = req.body;
+    const { platform, manualVerification: _manualVerification = false } = req.body;
     const userId = req.user.id;
 
-    console.log(`🔍 === VERIFICATION START ===`);
+    console.log('🔍 === VERIFICATION START ===');
     console.log(`Platform: ${platform}, User ID: ${userId}`);
 
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     console.log(`👤 User found: ${user.name} (${user.email})`);
@@ -514,33 +313,33 @@ const verifyPlatformHandle = async (req, res) => {
         .status(400)
         .json({
           error:
-            "Platform handle not submitted. Please submit your handle first.",
+            'Platform handle not submitted. Please submit your handle first.',
         });
     }
 
     const platformData = user.platformVerification[platform];
-    console.log(`📊 Platform data:`, {
+    console.log('📊 Platform data:', {
       handle: platformData.handle,
       isVerified: platformData.isVerified,
       hasCode: !!platformData.verificationCode,
       codePreview: platformData.verificationCode
         ? `${platformData.verificationCode.substring(0, 4)}...`
-        : "none",
+        : 'none',
       expires: platformData.verificationExpires,
       submittedAt: platformData.submittedAt,
     });
 
     // Check if verification code exists
-    let verificationCode = user.platformVerification[platform].verificationCode;
+    const verificationCode = user.platformVerification[platform].verificationCode;
     if (!verificationCode) {
       console.log(`❌ No verification code found for ${platform}.`);
       return res.status(400).json({
-        error: "No verification code found. Please submit your handle again to generate a new code.",
+        error: 'No verification code found. Please submit your handle again to generate a new code.',
         data: {
           platform,
           handle: user.platformVerification[platform]?.handle || null,
           verificationSteps: verificationService.getVerificationSteps(platform),
-        }
+        },
       });
     }
 
@@ -551,13 +350,13 @@ const verifyPlatformHandle = async (req, res) => {
       console.log(
         `❌ Code expired. Expires: ${
           platformData.verificationExpires
-        }, Now: ${new Date()}`
+        }, Now: ${new Date()}`,
       );
       return res
         .status(400)
         .json({
           error:
-            "Verification code has expired. Please submit your handle again to get a new code.",
+            'Verification code has expired. Please submit your handle again to get a new code.',
         });
     }
 
@@ -566,21 +365,21 @@ const verifyPlatformHandle = async (req, res) => {
 
     // Always use automatic verification - no manual bypass
     console.log(
-      `🔍 Starting verification for ${platform} handle: ${handle} with code: ${verificationCode}`
+      `🔍 Starting verification for ${platform} handle: ${handle} with code: ${verificationCode}`,
     );
 
     try {
       isVerified = await verificationService.verifyProfile(
         platform,
         handle,
-        verificationCode
+        verificationCode,
       );
       console.log(`🔍 Verification result: ${isVerified}`);
     } catch (verificationError) {
-      console.error(`❌ Verification service error:`, verificationError);
+      console.error('❌ Verification service error:', verificationError);
       return res.status(500).json({
         error:
-          "Verification service is temporarily unavailable. Please try again later.",
+          'Verification service is temporarily unavailable. Please try again later.',
       });
     }
 
@@ -592,7 +391,7 @@ const verifyPlatformHandle = async (req, res) => {
       try {
         const freshData = await verificationService.fetchPlatformUserData(
           platform,
-          handle
+          handle,
         );
         if (freshData.success) {
           user.platformVerification[platform].platformData = freshData.data;
@@ -618,8 +417,8 @@ const verifyPlatformHandle = async (req, res) => {
         }
       } catch (fetchError) {
         console.error(
-          `⚠️ Failed to update platform data after verification:`,
-          fetchError
+          '⚠️ Failed to update platform data after verification:',
+          fetchError,
         );
         // Don't fail verification if data fetch fails
       }
@@ -645,10 +444,10 @@ const verifyPlatformHandle = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Verify platform handle error:", error);
+    console.error('Verify platform handle error:', error);
     res
       .status(500)
-      .json({ error: "Failed to verify platform handle. Please try again." });
+      .json({ error: 'Failed to verify platform handle. Please try again.' });
   }
 };
 
@@ -661,19 +460,19 @@ const validatePlatformHandle = async (req, res) => {
     if (!handle || !platform) {
       return res
         .status(400)
-        .json({ error: "Platform and handle are required" });
+        .json({ error: 'Platform and handle are required' });
     }
 
     // Validate platform
-    const validPlatforms = ["leetcode", "codeforces"];
+    const validPlatforms = ['leetcode', 'codeforces'];
     if (!validPlatforms.includes(platform)) {
-      return res.status(400).json({ error: "Invalid platform" });
+      return res.status(400).json({ error: 'Invalid platform' });
     }
 
     // Check if handle already exists for this user
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     if (user.platformVerification[platform]?.handle) {
@@ -700,70 +499,71 @@ const validatePlatformHandle = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Validate platform handle error:", error);
+    console.error('Validate platform handle error:', error);
     res
       .status(500)
-      .json({ error: "Failed to validate platform handle. Please try again." });
+      .json({ error: 'Failed to validate platform handle. Please try again.' });
   }
 };
 
 // Validate platform profile (check if account exists)
+// eslint-disable-next-line no-unused-vars
 const validatePlatformProfile = async (platform, handle) => {
   try {
     const options = {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
       },
       timeout: 10000, // 10 second timeout
     };
 
     switch (platform) {
-      case "leetcode":
-        try {
-          // Check LeetCode profile - they often redirect, so we check for 200 or 302
-          const leetcodeResponse = await fetch(
-            `https://leetcode.com/u/${handle}/`,
-            options
-          );
-          console.log(
-            `LeetCode validation for ${handle}: Status ${leetcodeResponse.status}`
-          );
-          return (
-            leetcodeResponse.status === 200 || leetcodeResponse.status === 302
-          );
-        } catch (error) {
-          console.error(
-            `LeetCode validation error for ${handle}:`,
-            error.message
-          );
-          // For now, assume valid if we can't reach the platform
-          return true;
-        }
+    case 'leetcode':
+      try {
+        // Check LeetCode profile - they often redirect, so we check for 200 or 302
+        const leetcodeResponse = await fetch(
+          `https://leetcode.com/u/${handle}/`,
+          options,
+        );
+        console.log(
+          `LeetCode validation for ${handle}: Status ${leetcodeResponse.status}`,
+        );
+        return (
+          leetcodeResponse.status === 200 || leetcodeResponse.status === 302
+        );
+      } catch (error) {
+        console.error(
+          `LeetCode validation error for ${handle}:`,
+          error.message,
+        );
+        // For now, assume valid if we can't reach the platform
+        return true;
+      }
 
-      case "codeforces":
-        try {
-          // Check CodeForces profile
-          const cfResponse = await fetch(
-            `https://codeforces.com/profile/${handle}`,
-            options
-          );
-          console.log(
-            `CodeForces validation for ${handle}: Status ${cfResponse.status}`
-          );
-          return cfResponse.status === 200 || cfResponse.status === 302;
-        } catch (error) {
-          console.error(
-            `CodeForces validation error for ${handle}:`,
-            error.message
-          );
-          // For now, assume valid if we can't reach the platform
-          return true;
-        }
+    case 'codeforces':
+      try {
+        // Check CodeForces profile
+        const cfResponse = await fetch(
+          `https://codeforces.com/profile/${handle}`,
+          options,
+        );
+        console.log(
+          `CodeForces validation for ${handle}: Status ${cfResponse.status}`,
+        );
+        return cfResponse.status === 200 || cfResponse.status === 302;
+      } catch (error) {
+        console.error(
+          `CodeForces validation error for ${handle}:`,
+          error.message,
+        );
+        // For now, assume valid if we can't reach the platform
+        return true;
+      }
 
-      default:
-        return false;
+    default:
+      return false;
     }
   } catch (error) {
     console.error(`Error validating ${platform} profile:`, error);
@@ -777,18 +577,18 @@ const getProfile = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const user = await User.findById(userId).select("-password");
+    const user = await User.findById(userId).select('-password');
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     res.json({
-      message: "Profile retrieved successfully",
+      message: 'Profile retrieved successfully',
       data: user,
     });
   } catch (error) {
-    console.error("Get profile error:", error);
-    res.status(500).json({ error: "Failed to get profile. Please try again." });
+    console.error('Get profile error:', error);
+    res.status(500).json({ error: 'Failed to get profile. Please try again.' });
   }
 };
 
@@ -800,7 +600,7 @@ const updateProfile = async (req, res) => {
 
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     if (name) user.name = name.trim();
@@ -809,7 +609,7 @@ const updateProfile = async (req, res) => {
     await user.save();
 
     res.json({
-      message: "Profile updated successfully",
+      message: 'Profile updated successfully',
       data: {
         id: user._id,
         name: user.name,
@@ -818,107 +618,87 @@ const updateProfile = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Update profile error:", error);
+    console.error('Update profile error:', error);
     res
       .status(500)
-      .json({ error: "Failed to update profile. Please try again." });
+      .json({ error: 'Failed to update profile. Please try again.' });
   }
 };
 
-// Get verification steps for platform
-const getVerificationSteps = (platform) => {
-  const steps = {
-    leetcode: [
-      "Go to your LeetCode profile",
-      'Click on "Edit Profile"',
-      'Add the verification code to your "Display Name"',
-      "Save the changes",
-      'Come back and click "Verify"',
-    ],
-    codeforces: [
-      "Go to your Codeforces profile",
-      'Click on "Settings"',
-      'Add the verification code to your "First Name"',
-      "Save the changes",
-      'Come back and click "Verify"',
-    ],
-  };
-  return steps[platform] || [];
-};
-
 // Verify platform profile by checking for verification code
+// eslint-disable-next-line no-unused-vars
 const verifyPlatformProfile = async (platform, handle, verificationCode) => {
   try {
     const options = {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
       },
       timeout: 15000, // 15 second timeout for verification
     };
 
     switch (platform) {
-      case "leetcode":
-        try {
-          // Check LeetCode profile for verification code in summary
-          const leetcodeResponse = await fetch(
-            `https://leetcode.com/u/${handle}/`,
-            options
-          );
-          if (leetcodeResponse.status === 200) {
-            const html = await leetcodeResponse.text();
-            console.log(
-              `LeetCode verification for ${handle}: Checking for code ${verificationCode}`
-            );
-            return {
-              isVerified: html.includes(verificationCode),
-              platformData: null,
-            };
-          }
+    case 'leetcode':
+      try {
+        // Check LeetCode profile for verification code in summary
+        const leetcodeResponse = await fetch(
+          `https://leetcode.com/u/${handle}/`,
+          options,
+        );
+        if (leetcodeResponse.status === 200) {
+          const html = await leetcodeResponse.text();
           console.log(
-            `LeetCode verification for ${handle}: Status ${leetcodeResponse.status}`
+            `LeetCode verification for ${handle}: Checking for code ${verificationCode}`,
           );
-          return { isVerified: false, platformData: null };
-        } catch (error) {
-          console.error(
-            `LeetCode verification error for ${handle}:`,
-            error.message
-          );
-          return { isVerified: false, platformData: null };
+          return {
+            isVerified: html.includes(verificationCode),
+            platformData: null,
+          };
         }
-
-      case "codeforces":
-        try {
-          // Check CodeForces profile for verification code in first name
-          const cfResponse = await fetch(
-            `https://codeforces.com/profile/${handle}`,
-            options
-          );
-          if (cfResponse.status === 200) {
-            const html = await cfResponse.text();
-            console.log(
-              `CodeForces verification for ${handle}: Checking for code ${verificationCode}`
-            );
-            return {
-              isVerified: html.includes(verificationCode),
-              platformData: null,
-            };
-          }
-          console.log(
-            `CodeForces verification for ${handle}: Status ${cfResponse.status}`
-          );
-          return { isVerified: false, platformData: null };
-        } catch (error) {
-          console.error(
-            `CodeForces verification error for ${handle}:`,
-            error.message
-          );
-          return { isVerified: false, platformData: null };
-        }
-
-      default:
+        console.log(
+          `LeetCode verification for ${handle}: Status ${leetcodeResponse.status}`,
+        );
         return { isVerified: false, platformData: null };
+      } catch (error) {
+        console.error(
+          `LeetCode verification error for ${handle}:`,
+          error.message,
+        );
+        return { isVerified: false, platformData: null };
+      }
+
+    case 'codeforces':
+      try {
+        // Check CodeForces profile for verification code in first name
+        const cfResponse = await fetch(
+          `https://codeforces.com/profile/${handle}`,
+          options,
+        );
+        if (cfResponse.status === 200) {
+          const html = await cfResponse.text();
+          console.log(
+            `CodeForces verification for ${handle}: Checking for code ${verificationCode}`,
+          );
+          return {
+            isVerified: html.includes(verificationCode),
+            platformData: null,
+          };
+        }
+        console.log(
+          `CodeForces verification for ${handle}: Status ${cfResponse.status}`,
+        );
+        return { isVerified: false, platformData: null };
+      } catch (error) {
+        console.error(
+          `CodeForces verification error for ${handle}:`,
+          error.message,
+        );
+        return { isVerified: false, platformData: null };
+      }
+
+    default:
+      return { isVerified: false, platformData: null };
     }
   } catch (error) {
     console.error(`Error verifying ${platform} profile:`, error);
@@ -932,14 +712,14 @@ const fetchPlatformUserData = async (platform, handle) => {
     console.log(`Fetching real data for ${platform} user: ${handle}`);
 
     switch (platform) {
-      case "leetcode":
-        return await fetchLeetCodeData(handle);
+    case 'leetcode':
+      return await fetchLeetCodeData(handle);
 
-      case "codeforces":
-        return await fetchCodeForcesData(handle);
+    case 'codeforces':
+      return await fetchCodeForcesData(handle);
 
-      default:
-        return { success: false, error: "Unsupported platform" };
+    default:
+      return { success: false, error: 'Unsupported platform' };
     }
   } catch (error) {
     console.error(`Error fetching ${platform} data:`, error);
@@ -976,14 +756,14 @@ const fetchLeetCodeData = async (username) => {
       `,
     };
 
-    const response = await fetch("https://leetcode.com/graphql", {
-      method: "POST",
+    const response = await fetch('https://leetcode.com/graphql', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-        Referer: "https://leetcode.com/",
-        Origin: "https://leetcode.com",
+        'Content-Type': 'application/json',
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        Referer: 'https://leetcode.com/',
+        Origin: 'https://leetcode.com',
       },
       body: JSON.stringify(query),
     });
@@ -992,9 +772,9 @@ const fetchLeetCodeData = async (username) => {
 
     if (response.status !== 200) {
       console.error(
-        "❌ LeetCode API error:",
+        '❌ LeetCode API error:',
         response.status,
-        response.statusText
+        response.statusText,
       );
       return {
         success: false,
@@ -1003,23 +783,23 @@ const fetchLeetCodeData = async (username) => {
     }
 
     const data = await response.json();
-    console.log("📄 LeetCode GraphQL response:", JSON.stringify(data, null, 2));
+    console.log('📄 LeetCode GraphQL response:', JSON.stringify(data, null, 2));
 
     // Check for GraphQL errors
     if (data.errors && data.errors.length > 0) {
-      console.error("❌ LeetCode GraphQL errors:", data.errors);
+      console.error('❌ LeetCode GraphQL errors:', data.errors);
       return {
         success: false,
-        error: "LeetCode API returned errors. Please check your username.",
+        error: 'LeetCode API returned errors. Please check your username.',
       };
     }
 
     if (!data.data?.matchedUser) {
-      console.log("❌ No matched user found for:", username);
+      console.log('❌ No matched user found for:', username);
       return {
         success: false,
         error:
-          "User not found. Please check your LeetCode username and ensure your profile is public.",
+          'User not found. Please check your LeetCode username and ensure your profile is public.',
       };
     }
 
@@ -1029,10 +809,10 @@ const fetchLeetCodeData = async (username) => {
     console.log(`📈 Processing stats for ${username}:`, stats);
 
     // Calculate totals
-    const easySolved = stats.find((s) => s.difficulty === "Easy")?.count || 0;
+    const easySolved = stats.find((s) => s.difficulty === 'Easy')?.count || 0;
     const mediumSolved =
-      stats.find((s) => s.difficulty === "Medium")?.count || 0;
-    const hardSolved = stats.find((s) => s.difficulty === "Hard")?.count || 0;
+      stats.find((s) => s.difficulty === 'Medium')?.count || 0;
+    const hardSolved = stats.find((s) => s.difficulty === 'Hard')?.count || 0;
     const totalSolved = easySolved + mediumSolved + hardSolved;
 
     const result = {
@@ -1043,13 +823,13 @@ const fetchLeetCodeData = async (username) => {
       mediumSolved,
       hardSolved,
       reputation: user.profile?.reputation || 0,
-      aboutMe: user.profile?.aboutMe || "",
-      realName: user.profile?.realName || "",
+      aboutMe: user.profile?.aboutMe || '',
+      realName: user.profile?.realName || '',
     };
 
     console.log(
       `✅ LeetCode data fetched successfully for ${username}:`,
-      result
+      result,
     );
 
     return {
@@ -1057,7 +837,7 @@ const fetchLeetCodeData = async (username) => {
       data: result,
     };
   } catch (error) {
-    console.error("❌ LeetCode fetch error for", username, ":", error);
+    console.error('❌ LeetCode fetch error for', username, ':', error);
     return {
       success: false,
       error: `Failed to fetch LeetCode data: ${error.message}`,
@@ -1073,8 +853,8 @@ const fetchCodeForcesData = async (username) => {
     const apiUrl = `https://codeforces.com/api/user.info?handles=${username}`;
     const response = await fetch(apiUrl, {
       headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
       },
       timeout: 10000, // 10 second timeout
     });
@@ -1083,9 +863,9 @@ const fetchCodeForcesData = async (username) => {
 
     if (response.status !== 200) {
       console.error(
-        "❌ CodeForces API error:",
+        '❌ CodeForces API error:',
         response.status,
-        response.statusText
+        response.statusText,
       );
       return {
         success: false,
@@ -1094,22 +874,22 @@ const fetchCodeForcesData = async (username) => {
     }
 
     const data = await response.json();
-    console.log("📄 CodeForces API response:", JSON.stringify(data, null, 2));
+    console.log('📄 CodeForces API response:', JSON.stringify(data, null, 2));
 
-    if (data.status !== "OK") {
-      console.log("❌ CodeForces API status not OK:", data.status);
+    if (data.status !== 'OK') {
+      console.log('❌ CodeForces API status not OK:', data.status);
       return {
         success: false,
-        error: "CodeForces API returned an error. Please check your handle.",
+        error: 'CodeForces API returned an error. Please check your handle.',
       };
     }
 
     if (!data.result || !data.result[0]) {
-      console.log("❌ No user data found for:", username);
+      console.log('❌ No user data found for:', username);
       return {
         success: false,
         error:
-          "CodeForces user not found. Please check your handle and ensure it exists.",
+          'CodeForces user not found. Please check your handle and ensure it exists.',
       };
     }
 
@@ -1123,8 +903,8 @@ const fetchCodeForcesData = async (username) => {
       const statusUrl = `https://codeforces.com/api/user.status?handle=${encodedUsername}&from=1&count=10000`;
       const statusResponse = await fetch(statusUrl, {
         headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
         },
         signal: AbortSignal.timeout(30000), // 30 second timeout
       });
@@ -1147,7 +927,7 @@ const fetchCodeForcesData = async (username) => {
         }
       }
     } catch (statusError) {
-      console.error(`⚠️ Error fetching problems solved count:`, statusError.message);
+      console.error('⚠️ Error fetching problems solved count:', statusError.message);
       // Continue without problems solved count - don't fail the entire request
     }
 
@@ -1155,7 +935,7 @@ const fetchCodeForcesData = async (username) => {
       username: user.handle,
       rating: user.rating || 0,
       maxRating: user.maxRating || 0,
-      rank: user.rank || "unrated",
+      rank: user.rank || 'unrated',
       contribution: user.contribution || 0,
       friendOfCount: user.friendOfCount || 0,
       registrationTime: user.registrationTimeSeconds || 0,
@@ -1165,7 +945,7 @@ const fetchCodeForcesData = async (username) => {
 
     console.log(
       `✅ CodeForces data fetched successfully for ${username}:`,
-      result
+      result,
     );
 
     return {
@@ -1173,7 +953,7 @@ const fetchCodeForcesData = async (username) => {
       data: result,
     };
   } catch (error) {
-    console.error("❌ CodeForces fetch error for", username, ":", error);
+    console.error('❌ CodeForces fetch error for', username, ':', error);
     return {
       success: false,
       error: `Failed to fetch CodeForces data: ${error.message}`,
@@ -1189,7 +969,7 @@ const refreshPlatformData = async (req, res) => {
 
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     if (!user.platformVerification[platform]?.handle) {
@@ -1199,7 +979,7 @@ const refreshPlatformData = async (req, res) => {
     // Fetch updated platform data
     const platformData = await fetchPlatformUserData(
       platform,
-      user.platformVerification[platform].handle
+      user.platformVerification[platform].handle,
     );
 
     if (!platformData.success) {
@@ -1238,10 +1018,10 @@ const refreshPlatformData = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Refresh platform data error:", error);
+    console.error('Refresh platform data error:', error);
     res
       .status(500)
-      .json({ error: "Failed to refresh platform data. Please try again." });
+      .json({ error: 'Failed to refresh platform data. Please try again.' });
   }
 };
 
@@ -1252,21 +1032,21 @@ const deletePlatformHandle = async (req, res) => {
     const userId = req.user.id;
 
     // Validate platform
-    if (!["leetcode", "codeforces"].includes(platform)) {
+    if (!['leetcode', 'codeforces'].includes(platform)) {
       return res.status(400).json({ 
-        error: "Invalid platform. Supported: leetcode, codeforces" 
+        error: 'Invalid platform. Supported: leetcode, codeforces', 
       });
     }
 
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     // Check if platform handle exists
     if (!user.platformVerification?.[platform]?.handle) {
       return res.status(400).json({ 
-        error: `${platform} handle not found` 
+        error: `${platform} handle not found`, 
       });
     }
 
@@ -1276,28 +1056,28 @@ const deletePlatformHandle = async (req, res) => {
     // Delete the platform verification data (reset with schema-aligned defaults)
     if (user.platformVerification[platform]) {
       user.platformVerification[platform] = {
-        handle: "",
+        handle: '',
         isVerified: false,
-        verificationCode: "",
+        verificationCode: '',
         verificationExpires: null,
         submittedAt: null,
         verifiedAt: null,
         platformData: {},
         lastFetched: null,
         contestStats:
-          platform === "leetcode"
+          platform === 'leetcode'
             ? {
-                totalContests: 0,
-                recentContests: [],
-                lastContestFetch: null,
-                lastContestName: "",
-                lastContestParticipated: false,
-              }
+              totalContests: 0,
+              recentContests: [],
+              lastContestFetch: null,
+              lastContestName: '',
+              lastContestParticipated: false,
+            }
             : {
-                totalContests: 0,
-                contestHistory: [],
-                lastContestParticipation: null,
-              },
+              totalContests: 0,
+              contestHistory: [],
+              lastContestParticipation: null,
+            },
       };
     }
 
@@ -1308,13 +1088,13 @@ const deletePlatformHandle = async (req, res) => {
       data: {
         platform,
         deletedHandle: handleToDelete,
-        deletedAt: new Date()
+        deletedAt: new Date(),
       },
     });
   } catch (error) {
-    console.error("Delete platform handle error:", error);
+    console.error('Delete platform handle error:', error);
     res.status(500).json({ 
-      error: "Failed to delete platform handle. Please try again." 
+      error: 'Failed to delete platform handle. Please try again.', 
     });
   }
 };
@@ -1327,7 +1107,7 @@ const debugPlatformProfile = async (req, res) => {
 
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     // Check if platform verification data exists
@@ -1336,7 +1116,7 @@ const debugPlatformProfile = async (req, res) => {
         .status(400)
         .json({
           error:
-            "Platform handle not submitted. Please submit your handle first.",
+            'Platform handle not submitted. Please submit your handle first.',
         });
     }
 
@@ -1350,7 +1130,7 @@ const debugPlatformProfile = async (req, res) => {
       // Get fresh profile data
       const result = await verificationService.fetchPlatformUserData(
         platform,
-        handle
+        handle,
       );
 
       if (!result.success) {
@@ -1363,11 +1143,11 @@ const debugPlatformProfile = async (req, res) => {
 
       // For LeetCode, also run verification check
       let verificationResult = null;
-      if (platform === "leetcode" && verificationCode) {
+      if (platform === 'leetcode' && verificationCode) {
         verificationResult = await verificationService.verifyProfile(
           platform,
           handle,
-          verificationCode
+          verificationCode,
         );
       }
 
@@ -1376,42 +1156,37 @@ const debugPlatformProfile = async (req, res) => {
         data: {
           platform,
           handle,
-          verificationCode: verificationCode || "No verification code found",
+          verificationCode: verificationCode || 'No verification code found',
           verificationExpires: platformData.verificationExpires,
           profileData: result.data,
           verificationResult:
-            verificationResult !== null ? verificationResult : "Not tested",
+            verificationResult !== null ? verificationResult : 'Not tested',
           lastFetched: new Date().toISOString(),
         },
       });
     } catch (error) {
       console.error(`❌ Debug error for ${platform}:`, error);
       res.status(500).json({
-        error: "Debug fetch failed",
+        error: 'Debug fetch failed',
         details: error.message,
         handle,
         verificationCode,
       });
     }
   } catch (error) {
-    console.error("Debug platform profile error:", error);
+    console.error('Debug platform profile error:', error);
     res
       .status(500)
-      .json({ error: "Failed to debug platform profile. Please try again." });
+      .json({ error: 'Failed to debug platform profile. Please try again.' });
   }
 };
 
 export {
-  register,
-  login,
-  verifyEmail,
-  resendVerificationEmail,
   submitPlatformHandle,
   verifyPlatformHandle,
   validatePlatformHandle,
   getProfile,
   updateProfile,
-  getVerificationSteps,
   refreshPlatformData,
   deletePlatformHandle,
   debugPlatformProfile,

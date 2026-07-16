@@ -47,8 +47,8 @@ const formatErrorResponse = (error, req) => {
     error: {
       message: error.message,
       statusCode: error.statusCode || 500,
-      status: error.status || 'error'
-    }
+      status: error.status || 'error',
+    },
   };
 
   // Add request ID for tracking
@@ -70,7 +70,7 @@ const formatErrorResponse = (error, req) => {
 };
 
 // Global error handler middleware
-const globalErrorHandler = (error, req, res, next) => {
+const globalErrorHandler = (error, req, res, _next) => {
   let err = error;
 
   // Handle mongoose validation errors
@@ -108,7 +108,7 @@ const globalErrorHandler = (error, req, res, next) => {
     url: req.url,
     method: req.method,
     ip: req.ip,
-    userAgent: req.get('User-Agent')
+    userAgent: req.get('User-Agent'),
   });
 
   // Send error response
@@ -139,5 +139,5 @@ export {
   globalErrorHandler,
   asyncHandler,
   notFoundHandler,
-  formatErrorResponse
+  formatErrorResponse,
 }; 

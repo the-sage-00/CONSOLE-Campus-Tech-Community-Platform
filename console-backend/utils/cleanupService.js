@@ -1,5 +1,5 @@
-import PendingUser from "../models/PendingUser.js";
-import PasswordReset from "../models/PasswordReset.js";
+import PendingUser from '../models/PendingUser.js';
+import PasswordReset from '../models/PasswordReset.js';
 
 /**
  * Clean up expired pending user registrations
@@ -14,7 +14,7 @@ class CleanupService {
   static async cleanupExpiredPending() {
     try {
       const result = await PendingUser.deleteMany({
-        otpExpires: { $lt: new Date() }
+        otpExpires: { $lt: new Date() },
       });
       
       if (result.deletedCount > 0) {
@@ -23,7 +23,7 @@ class CleanupService {
       
       return { deletedCount: result.deletedCount };
     } catch (error) {
-      console.error("❌ Error cleaning up expired pending users:", error);
+      console.error('❌ Error cleaning up expired pending users:', error);
       throw error;
     }
   }
@@ -35,7 +35,7 @@ class CleanupService {
   static async cleanupExceededAttempts() {
     try {
       const result = await PendingUser.deleteMany({
-        otpAttempts: { $gte: 5 }
+        otpAttempts: { $gte: 5 },
       });
       
       if (result.deletedCount > 0) {
@@ -44,7 +44,7 @@ class CleanupService {
       
       return { deletedCount: result.deletedCount };
     } catch (error) {
-      console.error("❌ Error cleaning up exceeded attempts:", error);
+      console.error('❌ Error cleaning up exceeded attempts:', error);
       throw error;
     }
   }
@@ -56,7 +56,7 @@ class CleanupService {
   static async cleanupExpiredPasswordResets() {
     try {
       const result = await PasswordReset.deleteMany({
-        otpExpires: { $lt: new Date() }
+        otpExpires: { $lt: new Date() },
       });
       
       if (result.deletedCount > 0) {
@@ -65,7 +65,7 @@ class CleanupService {
       
       return { deletedCount: result.deletedCount };
     } catch (error) {
-      console.error("❌ Error cleaning up expired password resets:", error);
+      console.error('❌ Error cleaning up expired password resets:', error);
       throw error;
     }
   }
@@ -81,7 +81,7 @@ class CleanupService {
       const [expiredResult, exceededResult, resetResult] = await Promise.all([
         this.cleanupExpiredPending(),
         this.cleanupExceededAttempts(),
-        this.cleanupExpiredPasswordResets()
+        this.cleanupExpiredPasswordResets(),
       ]);
       
       const totalCount = expiredResult.deletedCount + exceededResult.deletedCount + resetResult.deletedCount;
@@ -92,10 +92,10 @@ class CleanupService {
         expiredPendingCount: expiredResult.deletedCount,
         exceededPendingCount: exceededResult.deletedCount,
         expiredResetCount: resetResult.deletedCount,
-        totalCount
+        totalCount,
       };
     } catch (error) {
-      console.error("❌ Error during full cleanup:", error);
+      console.error('❌ Error during full cleanup:', error);
       throw error;
     }
   }
@@ -110,15 +110,15 @@ class CleanupService {
         totalPending,
         expiredCount,
         exceededCount,
-        validCount
+        validCount,
       ] = await Promise.all([
         PendingUser.countDocuments(),
         PendingUser.countDocuments({ otpExpires: { $lt: new Date() } }),
         PendingUser.countDocuments({ otpAttempts: { $gte: 5 } }),
         PendingUser.countDocuments({ 
           otpExpires: { $gte: new Date() }, 
-          otpAttempts: { $lt: 5 } 
-        })
+          otpAttempts: { $lt: 5 }, 
+        }),
       ]);
 
       return {
@@ -126,10 +126,10 @@ class CleanupService {
         expired: expiredCount,
         exceeded: exceededCount,
         valid: validCount,
-        needsCleanup: expiredCount + exceededCount
+        needsCleanup: expiredCount + exceededCount,
       };
     } catch (error) {
-      console.error("❌ Error getting pending user stats:", error);
+      console.error('❌ Error getting pending user stats:', error);
       throw error;
     }
   }
@@ -149,7 +149,7 @@ class CleanupService {
       try {
         await this.fullCleanup();
       } catch (error) {
-        console.error("❌ Periodic cleanup failed:", error);
+        console.error('❌ Periodic cleanup failed:', error);
       }
     }, 2 * 60 * 1000); // 2 minutes
   }

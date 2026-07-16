@@ -263,22 +263,6 @@ const UnifiedLeaderboard = ({ users: propUsers, platform: propPlatform, loading:
     );
   };
 
-  // New scoring formula:
-  // LeetCode score = sqrt(easy*1 + medium*2.5 + hard*4) * 22 + 700
-  // Codeforces score = rating
-  // Final score = max(Codeforces score, LeetCode score)
-
-  // Legacy function - kept for compatibility but not used in new views
-  const getPlatformScore = (user, platformKey) => {
-    if (platformKey === 'codeforces') {
-      return getCodeForcesRating(user);
-    }
-    if (platformKey === 'leetcode') {
-      return getLeetCodeContestRating(user);
-    }
-    return 0;
-  };
-
   const totalPages = propUsers ? Math.ceil(usersToDisplay.length / itemsPerPage) : Math.ceil(totalUsers / itemsPerPage);
 
   // Get paginated users
