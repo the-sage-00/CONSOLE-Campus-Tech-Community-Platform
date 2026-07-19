@@ -286,498 +286,509 @@ const Profile = () => {
     { id: 'lc-all-rounder', label: 'All Rounder', desc: 'Solved problems in all difficulties', earned: lcVerified && (lcData?.easySolved || 0) > 0 && (lcData?.mediumSolved || 0) > 0 && (lcData?.hardSolved || 0) > 0, icon: '💎' },
   ];
 
+  const earnedCount = achievements.filter(b => b.earned).length;
+
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-[#0a0a0f] text-white">
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_#ff3c5f08_0%,_transparent_50%),radial-gradient(ellipse_at_bottom_left,_#ffc22d05_0%,_transparent_50%)] pointer-events-none" />
       <SidebarNavbar />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto relative">
 
           {/* Flash Message */}
           {message.text && (
-            <div
-              className={`mb-6 p-4 rounded-lg text-sm sm:text-base ${message.type === "success"
-                  ? "bg-green-900/80 border border-green-700 text-green-300"
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`mb-6 p-4 rounded-xl text-sm sm:text-base backdrop-blur-sm ${
+                message.type === "success"
+                  ? "bg-green-950/60 border border-green-800/50 text-green-300 shadow-lg shadow-green-900/20"
                   : message.type === "error"
-                    ? "bg-red-900/80 border border-red-700 text-red-300"
-                    : "bg-blue-900/80 border border-blue-700 text-blue-300"
-                }`}
+                    ? "bg-red-950/60 border border-red-800/50 text-red-300 shadow-lg shadow-red-900/20"
+                    : "bg-blue-950/60 border border-blue-800/50 text-blue-300 shadow-lg shadow-blue-900/20"
+              }`}
             >
-              {message.text}
-            </div>
+              <div className="flex items-center gap-3">
+                <span className={`w-2 h-2 rounded-full shrink-0 ${
+                  message.type === "success" ? "bg-green-400" : message.type === "error" ? "bg-red-400" : "bg-blue-400"
+                }`} />
+                {message.text}
+              </div>
+            </motion.div>
           )}
 
-          {/* Profile Hero Banner */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="relative overflow-hidden rounded-2xl mb-8 bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 border border-gray-800 p-8"
-          >
-            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#FF3C5F]/10 to-[#FFC22D]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-6">
-              <div className="relative group">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#FF3C5F] to-[#FFC22D] blur-md opacity-75 group-hover:opacity-100 transition-opacity" />
-                {user.profilePicture ? (
-                  <img
-                    src={user.profilePicture}
-                    alt={user.name}
-                    className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-gray-900"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
-                  />
-                ) : null}
-                <div
-                  className={`relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-br from-[#FF3C5F] to-[#FFC22D] flex items-center justify-center text-4xl font-bold text-white ${user.profilePicture ? 'hidden' : ''}`}
-                >
-                  {user.name?.charAt(0)?.toUpperCase() || '?'}
-                </div>
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div>
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-[#FF3C5F] to-[#FFC22D] bg-clip-text text-transparent">
-                      {user.name}
-                    </h1>
-                    <p className="text-gray-400 mt-1">{user.email}</p>
-                    <div className="flex flex-wrap items-center gap-3 mt-3">
-                      {user.branch && (
-                        <span className="inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-gray-800 text-gray-300 border border-gray-700">
-                          {user.branch}
-                        </span>
-                      )}
-                      {user.admissionYear && (
-                        <span className="inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-gray-800 text-gray-300 border border-gray-700">
-                          {user.admissionYear} Batch
-                        </span>
-                      )}
-                      {user.rollNo && (
-                        <span className="inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-gray-800 text-gray-300 border border-gray-700 font-mono">
-                          {user.rollNo}
-                        </span>
-                      )}
-                      <span className={`inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full ${user.isEmailVerified ? 'bg-green-900/60 text-green-300 border border-green-700' : 'bg-red-900/60 text-red-300 border border-red-700'}`}>
-                        {user.isEmailVerified ? 'Verified' : 'Unverified'}
-                      </span>
+          {/* Two Column Layout */}
+          <div className="flex flex-col lg:flex-row gap-8">
+
+            {/* ===== LEFT COLUMN — Profile Info ===== */}
+            <div className="w-full lg:w-80 shrink-0 space-y-6">
+
+              {/* Profile Card */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="relative overflow-hidden rounded-2xl bg-[#0d0d14] border border-[#ffffff08]"
+              >
+                <div className="absolute inset-0 bg-gradient-to-b from-[#ff3c5f10] to-transparent opacity-50" />
+                <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-[#FF3C5F]/15 to-transparent rounded-full blur-3xl" />
+                <div className="relative z-10 p-6 sm:p-8 text-center">
+                  <div className="relative inline-block mb-5">
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#FF3C5F] to-[#FFC22D] blur-xl opacity-60 animate-pulse" />
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#FF3C5F] to-[#FFC22D] blur-sm" />
+                    {user.profilePicture ? (
+                      <img
+                        src={user.profilePicture}
+                        alt={user.name}
+                        className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-[3px] border-[#ffffff15] shadow-2xl mx-auto"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          const parent = e.target.parentElement;
+                          const fallback = parent.querySelector('.avatar-fallback');
+                          if (fallback) fallback.classList.remove('hidden');
+                        }}
+                      />
+                    ) : null}
+                    <div className={`avatar-fallback absolute inset-0 w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-[#FF3C5F] to-[#FFC22D] flex items-center justify-center text-4xl sm:text-5xl font-bold text-white shadow-2xl mx-auto ${user.profilePicture ? 'hidden' : ''}`}>
+                      {user.name?.charAt(0)?.toUpperCase() || '?'}
                     </div>
                   </div>
+
+                  <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-[#FF3C5F] via-[#FF8C5F] to-[#FFC22D] bg-clip-text text-transparent">
+                    {user.name}
+                  </h1>
+                  <p className="text-gray-500 text-sm mt-2 flex items-center justify-center gap-2">
+                    <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    {user.email}
+                  </p>
+
+                  <div className="flex flex-wrap justify-center gap-2 mt-4">
+                    {user.branch && (
+                      <span className="inline-flex items-center gap-1.5 text-[11px] px-3 py-1 rounded-full bg-white/[0.04] text-gray-400 border border-white/[0.06]">
+                        <svg className="w-3 h-3 text-[#FFC22D]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                        {user.branch}
+                      </span>
+                    )}
+                    {user.admissionYear && (
+                      <span className="inline-flex items-center gap-1.5 text-[11px] px-3 py-1 rounded-full bg-white/[0.04] text-gray-400 border border-white/[0.06]">
+                        <svg className="w-3 h-3 text-[#FF3C5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        {user.admissionYear} Batch
+                      </span>
+                    )}
+                    {user.rollNo && (
+                      <span className="inline-flex items-center gap-1.5 text-[11px] px-3 py-1 rounded-full bg-white/[0.04] text-gray-400 border border-white/[0.06] font-mono">
+                        <svg className="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.657 0 3-1.343 3-3m-3 3a2 2 0 002 2h1" />
+                        </svg>
+                        {user.rollNo}
+                      </span>
+                    )}
+                    <span className={`inline-flex items-center gap-1.5 text-[11px] px-3 py-1 rounded-full ${
+                      user.isEmailVerified
+                        ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-800/40'
+                        : 'bg-red-950/40 text-red-300 border border-red-800/40'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${user.isEmailVerified ? 'bg-emerald-400' : 'bg-red-400'}`} />
+                      {user.isEmailVerified ? 'Verified' : 'Unverified'}
+                    </span>
+                  </div>
+
+                  <div className="mt-6 pt-6 border-t border-white/[0.06] space-y-3">
+                    {[
+                      { label: 'Member Since', value: new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
+                      { label: 'Last Updated', value: new Date(user.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15' },
+                      { label: 'User ID', value: user._id, icon: 'M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0', mono: true },
+                    ].map(({ label, value, icon, mono }) => (
+                      <div key={label} className="text-left p-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+                        <div className="flex items-center gap-2 mb-1">
+                          <svg className="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d={icon} />
+                          </svg>
+                          <span className="text-[10px] text-gray-600 uppercase tracking-wider">{label}</span>
+                        </div>
+                        <span className={`text-xs text-gray-200 ${mono ? 'font-mono break-all' : 'font-medium'}`}>{value}</span>
+                      </div>
+                    ))}
+                  </div>
+
                   <button
                     onClick={handleLogout}
-                    className="px-4 py-2 bg-red-600/80 hover:bg-red-600 text-white rounded-lg transition-all text-sm self-start sm:self-auto border border-red-500/30"
+                    className="mt-6 w-full px-4 py-2.5 text-sm text-red-400 bg-red-950/30 border border-red-900/40 rounded-xl hover:bg-red-950/50 hover:border-red-700/50 transition-all flex items-center justify-center gap-2"
                   >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
                     Logout
                   </button>
                 </div>
-              </div>
-            </div>
-          </motion.div>
+              </motion.div>
 
-          {/* Quick Stats Cards */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8"
-          >
-            <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4 hover:border-[#FF3C5F]/30 transition-colors">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 rounded-lg bg-[#FF3C5F]/10">
-                  <svg className="w-4 h-4 text-[#FF3C5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
+              {/* Achievements (in left column) */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
+                className="relative overflow-hidden rounded-2xl bg-[#0d0d14] border border-[#ffffff08] p-5"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Achievements</h3>
+                  <span className="text-[10px] text-gray-600">{earnedCount}/{achievements.length}</span>
                 </div>
-                <span className="text-xs text-gray-400 font-medium uppercase tracking-wider">Total Score</span>
-              </div>
-              <p className="text-2xl font-bold text-white">{totalScore}</p>
-            </div>
-            <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4 hover:border-[#FFC22D]/30 transition-colors">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 rounded-lg bg-[#FFC22D]/10">
-                  <svg className="w-4 h-4 text-[#FFC22D]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                </div>
-                <span className="text-xs text-gray-400 font-medium uppercase tracking-wider">LC Solved</span>
-              </div>
-              <p className="text-2xl font-bold text-white">{lcTotal}</p>
-            </div>
-            <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4 hover:border-blue-500/30 transition-colors">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 rounded-lg bg-blue-500/10">
-                  <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                  </svg>
-                </div>
-                <span className="text-xs text-gray-400 font-medium uppercase tracking-wider">CF Rating</span>
-              </div>
-              <p className="text-2xl font-bold text-white">{cfRating || 'N/A'}</p>
-            </div>
-            <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4 hover:border-green-500/30 transition-colors">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 rounded-lg bg-green-500/10">
-                  <svg className="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <span className="text-xs text-gray-400 font-medium uppercase tracking-wider">LC Ranking</span>
-              </div>
-              <p className="text-2xl font-bold text-white">{lcData?.ranking ? `#${lcData.ranking.toLocaleString()}` : 'N/A'}</p>
-            </div>
-          </motion.div>
-
-          {/* Charts Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
-          >
-            {/* LeetCode Difficulty Pie Chart */}
-            <div className="bg-gray-900/40 border border-gray-800 rounded-xl p-6">
-              <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">LeetCode Difficulty Breakdown</h3>
-              {user.platformVerification?.leetcode?.isVerified && lcData ? (
-                <div className="flex items-center justify-center">
-                  <ResponsiveContainer width="100%" height={220}>
-                    <PieChart>
-                      <Pie
-                        data={[
-                          { name: 'Easy', value: lcData.easySolved || 0, color: '#4ade80' },
-                          { name: 'Medium', value: lcData.mediumSolved || 0, color: '#facc15' },
-                          { name: 'Hard', value: lcData.hardSolved || 0, color: '#f87171' },
-                        ]}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={55}
-                        outerRadius={90}
-                        paddingAngle={3}
-                        dataKey="value"
-                      >
-                        {[
-                          { color: '#4ade80' },
-                          { color: '#facc15' },
-                          { color: '#f87171' },
-                        ].map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: '#1f2937',
-                          border: '1px solid #374151',
-                          borderRadius: '8px',
-                          color: '#f3f4f6',
-                          fontSize: '13px',
-                        }}
-                        formatter={(value, name) => [`${value} solved`, name]}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="flex flex-col gap-2 ml-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-green-400" />
-                      <span className="text-xs text-gray-400">Easy <span className="text-white font-medium">{lcData.easySolved || 0}</span></span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                      <span className="text-xs text-gray-400">Medium <span className="text-white font-medium">{lcData.mediumSolved || 0}</span></span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-red-400" />
-                      <span className="text-xs text-gray-400">Hard <span className="text-white font-medium">{lcData.hardSolved || 0}</span></span>
-                    </div>
-                    <div className="border-t border-gray-700 pt-2 mt-1">
-                      <span className="text-xs text-gray-400">Total <span className="text-white font-bold">{lcTotal}</span></span>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center h-[220px] text-gray-500 text-sm">
-                  {user.platformVerification?.leetcode?.handle ? 'Verify your LeetCode handle to see stats' : 'Connect LeetCode to see breakdown'}
-                </div>
-              )}
-            </div>
-
-            {/* Codeforces Rating Progress */}
-            <div className="bg-gray-900/40 border border-gray-800 rounded-xl p-6">
-              <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Codeforces Progress</h3>
-              {user.platformVerification?.codeforces?.isVerified && cfData ? (
-                <div className="space-y-6">
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-xs text-gray-400">Rating Progress</span>
-                      <span className="text-xs text-gray-400">{cfData.rating || 0} / {cfData.maxRating || 0}</span>
-                    </div>
-                    <div className="w-full h-3 bg-gray-800 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
-                        style={{ width: `${cfData.maxRating ? Math.min((cfData.rating / cfData.maxRating) * 100, 100) : 0}%` }}
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-800/50 rounded-lg p-3 text-center">
-                      <div className="text-lg font-bold text-blue-400">{cfData.rating || 'Unrated'}</div>
-                      <div className="text-xs text-gray-500 mt-0.5">Current Rating</div>
-                    </div>
-                    <div className="bg-gray-800/50 rounded-lg p-3 text-center">
-                      <div className="text-lg font-bold text-purple-400">{cfData.maxRating || 0}</div>
-                      <div className="text-xs text-gray-500 mt-0.5">Peak Rating</div>
-                    </div>
-                    <div className="bg-gray-800/50 rounded-lg p-3 text-center">
-                      <div className="text-lg font-bold text-indigo-400 capitalize">{cfData.rank || 'Unrated'}</div>
-                      <div className="text-xs text-gray-500 mt-0.5">Rank</div>
-                    </div>
-                    <div className="bg-gray-800/50 rounded-lg p-3 text-center">
-                      <div className="text-lg font-bold text-teal-400">{cfData.totalSolved || 0}</div>
-                      <div className="text-xs text-gray-500 mt-0.5">Problems Solved</div>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center h-[220px] text-gray-500 text-sm">
-                  {user.platformVerification?.codeforces?.handle ? 'Verify your Codeforces handle to see stats' : 'Connect Codeforces to see progress'}
-                </div>
-              )}
-            </div>
-          </motion.div>
-
-          {/* Platform Connections */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="space-y-6 mb-8"
-          >
-            <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-[#FF3C5F] to-[#FFC22D] bg-clip-text text-transparent">
-              Platform Connections
-            </h2>
-
-            {/* LeetCode */}
-            <div className="bg-gray-900/40 border border-gray-800 rounded-xl overflow-hidden hover:border-gray-700 transition-colors">
-              <div className="flex items-center justify-between px-6 py-4 bg-gray-900/80 border-b border-gray-800">
-                <div className="flex items-center gap-3">
-                  <img src="/LeetCode_Logo.png" alt="LeetCode" className="w-7 h-7" />
-                  <div>
-                    <h3 className="font-semibold">LeetCode</h3>
-                    {user.platformVerification?.leetcode?.isVerified && (
-                      <p className="text-xs text-gray-400">@{user.platformVerification.leetcode.handle}</p>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {user.platformVerification?.leetcode?.isVerified ? (
-                    <span className="text-xs px-3 py-1 rounded-full bg-green-900/60 text-green-300 border border-green-700">Verified</span>
-                  ) : user.platformVerification?.leetcode?.handle ? (
-                    <span className="text-xs px-3 py-1 rounded-full bg-yellow-900/60 text-yellow-300 border border-yellow-700">Pending</span>
-                  ) : (
-                    <span className="text-xs px-3 py-1 rounded-full bg-gray-800 text-gray-400 border border-gray-700">Not Connected</span>
-                  )}
-                </div>
-              </div>
-
-              <div className="p-6">
-                {user.platformVerification?.leetcode?.isVerified ? (
-                  <div className="space-y-5">
-                    {lcData && (
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="text-center p-3 rounded-lg bg-green-500/5 border border-green-500/10">
-                          <div className="text-xl font-bold text-green-400">{lcData.easySolved || 0}</div>
-                          <div className="text-xs text-gray-400 mt-1">Easy</div>
+                <div className="grid grid-cols-2 gap-2">
+                  {achievements.map((badge) => (
+                    <div
+                      key={badge.id}
+                      className={`relative p-2.5 rounded-lg border text-center transition-all duration-300 ${
+                        badge.earned
+                          ? 'bg-gradient-to-br from-[#ffc22d08] to-transparent border-[#ffc22d20]'
+                          : 'bg-white/[0.02] border-white/[0.04] opacity-30'
+                      }`}
+                    >
+                      <div className={`text-lg mb-0.5 ${badge.earned ? '' : 'grayscale'}`}>{badge.icon}</div>
+                      <div className={`text-[10px] font-semibold ${badge.earned ? 'text-gray-300' : 'text-gray-600'}`}>{badge.label}</div>
+                      {!badge.earned && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-[#0a0a0f]/60 rounded-lg backdrop-blur-[1px]">
+                          <svg className="w-3 h-3 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
                         </div>
-                        <div className="text-center p-3 rounded-lg bg-yellow-500/5 border border-yellow-500/10">
-                          <div className="text-xl font-bold text-yellow-400">{lcData.mediumSolved || 0}</div>
-                          <div className="text-xs text-gray-400 mt-1">Medium</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+
+            {/* ===== RIGHT COLUMN — Stats & Content ===== */}
+            <div className="flex-1 min-w-0 space-y-6">
+
+              {/* Quick Stats Cards */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+                className="grid grid-cols-2 xl:grid-cols-4 gap-3"
+              >
+                {[
+                  { label: 'Total Score', value: totalScore, color: '#FF3C5F', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
+                  { label: 'LC Solved', value: lcTotal, color: '#FFC22D', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+                  { label: 'CF Rating', value: cfRating || 'N/A', color: '#60a5fa', icon: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z' },
+                  { label: 'LC Ranking', value: lcData?.ranking ? `#${lcData.ranking.toLocaleString()}` : 'N/A', color: '#4ade80', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="group relative overflow-hidden rounded-xl bg-[#0d0d14] border border-[#ffffff08] hover:border-[#ffffff15] transition-all duration-300 p-4"
+                  >
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="p-2 rounded-lg" style={{ backgroundColor: `${stat.color}10` }}>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke={stat.color} strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d={stat.icon} />
+                          </svg>
                         </div>
-                        <div className="text-center p-3 rounded-lg bg-red-500/5 border border-red-500/10">
-                          <div className="text-xl font-bold text-red-400">{lcData.hardSolved || 0}</div>
-                          <div className="text-xs text-gray-400 mt-1">Hard</div>
+                        <span className="text-[11px] text-gray-500 font-medium uppercase tracking-widest">{stat.label}</span>
+                      </div>
+                      <p className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ color: stat.color }}>
+                        {stat.value}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+
+              {/* Charts */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
+              >
+                {/* LC Chart */}
+                <div className="relative overflow-hidden rounded-xl bg-[#0d0d14] border border-[#ffffff08] p-5">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#FFC22D]/5 to-transparent rounded-bl-full" />
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 rounded-lg bg-[#FFC22D]/10">
+                        <svg className="w-4 h-4 text-[#FFC22D]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-sm font-semibold text-gray-300">LeetCode Breakdown</h3>
+                    </div>
+                    {lcVerified && lcData ? (
+                      <div className="flex items-center justify-center">
+                        <ResponsiveContainer width="100%" height={200}>
+                          <PieChart>
+                            <Pie data={[
+                              { name: 'Easy', value: lcData.easySolved || 0 },
+                              { name: 'Medium', value: lcData.mediumSolved || 0 },
+                              { name: 'Hard', value: lcData.hardSolved || 0 },
+                            ]} cx="50%" cy="50%" innerRadius={48} outerRadius={80} paddingAngle={4} dataKey="value">
+                              {['#4ade80', '#facc15', '#f87171'].map((c, i) => (
+                                <Cell key={i} fill={c} />
+                              ))}
+                            </Pie>
+                            <Tooltip contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: '10px', color: '#e5e7eb', fontSize: '12px' }}
+                              formatter={(v, n) => [`${v} solved`, n]} />
+                          </PieChart>
+                        </ResponsiveContainer>
+                        <div className="flex flex-col gap-2 ml-1">
+                          {[
+                            { label: 'Easy', value: lcData.easySolved || 0, color: 'bg-green-400' },
+                            { label: 'Medium', value: lcData.mediumSolved || 0, color: 'bg-yellow-400' },
+                            { label: 'Hard', value: lcData.hardSolved || 0, color: 'bg-red-400' },
+                          ].map(({ label, value, color }) => (
+                            <div key={label} className="flex items-center gap-2.5">
+                              <div className={`w-2.5 h-2.5 rounded-full ${color}`} />
+                              <span className="text-xs text-gray-500">{label}</span>
+                              <span className="text-xs font-semibold text-gray-200 ml-auto">{value}</span>
+                            </div>
+                          ))}
+                          <div className="border-t border-white/[0.06] pt-2 mt-1">
+                            <span className="text-xs text-gray-500">Total <span className="text-sm font-bold text-white">{lcTotal}</span></span>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-[200px]">
+                        <div className="text-center">
+                          <div className="text-3xl mb-2 opacity-30">📊</div>
+                          <p className="text-xs text-gray-600">{lcVerified ? 'Verify to see stats' : 'Connect LeetCode'}</p>
                         </div>
                       </div>
                     )}
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        onClick={() => handleRefreshPlatform("leetcode")}
-                        className="px-4 py-2 text-sm bg-blue-600/80 hover:bg-blue-600 rounded-lg transition-colors"
-                      >
-                        Refresh Data
-                      </button>
-                      <button
-                        onClick={() => handleDeletePlatform("leetcode")}
-                        className="px-4 py-2 text-sm bg-red-600/80 hover:bg-red-600 rounded-lg transition-colors"
-                      >
-                        Delete Handle
-                      </button>
+                  </div>
+                </div>
+
+                {/* CF Chart */}
+                <div className="relative overflow-hidden rounded-xl bg-[#0d0d14] border border-[#ffffff08] p-5">
+                  <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-blue-500/5 to-transparent rounded-br-full" />
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 rounded-lg bg-blue-500/10">
+                        <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-sm font-semibold text-gray-300">Codeforces Progress</h3>
                     </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <input
-                      type="text"
-                      placeholder="Enter LeetCode username"
-                      value={platformHandles.leetcode}
-                      onChange={(e) =>
-                        setPlatformHandles((prev) => ({
-                          ...prev,
-                          leetcode: e.target.value,
-                        }))
-                      }
-                      className="flex-1 px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF3C5F] focus:border-transparent text-sm"
-                    />
-                    <button
-                      onClick={() => handlePlatformSubmit("leetcode")}
-                      className="px-6 py-2.5 bg-gradient-to-r from-[#FF3C5F] to-[#FFC22D] text-white rounded-lg font-medium text-sm hover:opacity-90 transition-opacity"
-                    >
-                      Connect
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Codeforces */}
-            <div className="bg-gray-900/40 border border-gray-800 rounded-xl overflow-hidden hover:border-gray-700 transition-colors">
-              <div className="flex items-center justify-between px-6 py-4 bg-gray-900/80 border-b border-gray-800">
-                <div className="flex items-center gap-3">
-                  <img src="/codeforces_logo.png" alt="Codeforces" className="w-7 h-7" />
-                  <div>
-                    <h3 className="font-semibold">Codeforces</h3>
-                    {user.platformVerification?.codeforces?.isVerified && (
-                      <p className="text-xs text-gray-400">@{user.platformVerification.codeforces.handle}</p>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {user.platformVerification?.codeforces?.isVerified ? (
-                    <span className="text-xs px-3 py-1 rounded-full bg-green-900/60 text-green-300 border border-green-700">Verified</span>
-                  ) : user.platformVerification?.codeforces?.handle ? (
-                    <span className="text-xs px-3 py-1 rounded-full bg-yellow-900/60 text-yellow-300 border border-yellow-700">Pending</span>
-                  ) : (
-                    <span className="text-xs px-3 py-1 rounded-full bg-gray-800 text-gray-400 border border-gray-700">Not Connected</span>
-                  )}
-                </div>
-              </div>
-
-              <div className="p-6">
-                {user.platformVerification?.codeforces?.isVerified ? (
-                  <div className="space-y-5">
-                    {cfData && (
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        <div className="text-center p-3 rounded-lg bg-blue-500/5 border border-blue-500/10">
-                          <div className="text-lg font-bold text-blue-400">{cfData.rating || 'Unrated'}</div>
-                          <div className="text-xs text-gray-400 mt-1">Rating</div>
+                    {cfVerified && cfData ? (
+                      <div className="space-y-4">
+                        <div>
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-xs text-gray-500">Rating</span>
+                            <span className="text-xs text-gray-400 font-mono">{cfData.rating || 0} / {cfData.maxRating || 0}</span>
+                          </div>
+                          <div className="w-full h-2.5 bg-white/[0.04] rounded-full overflow-hidden">
+                            <div className="h-full rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-700"
+                              style={{ width: `${cfData.maxRating ? Math.min((cfData.rating / cfData.maxRating) * 100, 100) : 0}%` }} />
+                          </div>
                         </div>
-                        <div className="text-center p-3 rounded-lg bg-purple-500/5 border border-purple-500/10">
-                          <div className="text-lg font-bold text-purple-400">{cfData.maxRating || 0}</div>
-                          <div className="text-xs text-gray-400 mt-1">Max Rating</div>
+                        <div className="grid grid-cols-2 gap-2">
+                          {[
+                            { label: 'Rating', value: cfData.rating || 'Unrated', color: 'text-blue-400' },
+                            { label: 'Peak', value: cfData.maxRating || 0, color: 'text-purple-400' },
+                            { label: 'Rank', value: cfData.rank || 'Unrated', color: 'text-indigo-400 capitalize' },
+                            { label: 'Solved', value: cfData.totalSolved || 0, color: 'text-teal-400' },
+                          ].map(({ label, value, color }) => (
+                            <div key={label} className="bg-white/[0.02] border border-white/[0.04] rounded-lg p-3 text-center hover:bg-white/[0.04] transition-colors">
+                              <div className={`text-base sm:text-lg font-bold ${color}`}>{value}</div>
+                              <div className="text-[11px] text-gray-600 mt-0.5">{label}</div>
+                            </div>
+                          ))}
                         </div>
-                        <div className="text-center p-3 rounded-lg bg-indigo-500/5 border border-indigo-500/10">
-                          <div className="text-lg font-bold text-indigo-400">{cfData.rank || 'Unrated'}</div>
-                          <div className="text-xs text-gray-400 mt-1">Rank</div>
-                        </div>
-                        <div className="text-center p-3 rounded-lg bg-teal-500/5 border border-teal-500/10">
-                          <div className="text-lg font-bold text-teal-400">{cfData.totalSolved || 0}</div>
-                          <div className="text-xs text-gray-400 mt-1">Solved</div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-[200px]">
+                        <div className="text-center">
+                          <div className="text-3xl mb-2 opacity-30">⚡</div>
+                          <p className="text-xs text-gray-600">{cfVerified ? 'Verify to see stats' : 'Connect Codeforces'}</p>
                         </div>
                       </div>
                     )}
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        onClick={() => handleRefreshPlatform("codeforces")}
-                        className="px-4 py-2 text-sm bg-blue-600/80 hover:bg-blue-600 rounded-lg transition-colors"
-                      >
-                        Refresh Data
-                      </button>
-                      <button
-                        onClick={() => handleDeletePlatform("codeforces")}
-                        className="px-4 py-2 text-sm bg-red-600/80 hover:bg-red-600 rounded-lg transition-colors"
-                      >
-                        Delete Handle
-                      </button>
-                    </div>
                   </div>
-                ) : (
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <input
-                      type="text"
-                      placeholder="Enter Codeforces username"
-                      value={platformHandles.codeforces}
-                      onChange={(e) =>
-                        setPlatformHandles((prev) => ({
-                          ...prev,
-                          codeforces: e.target.value,
-                        }))
-                      }
-                      className="flex-1 px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF3C5F] focus:border-transparent text-sm"
-                    />
-                    <button
-                      onClick={() => handlePlatformSubmit("codeforces")}
-                      className="px-6 py-2.5 bg-gradient-to-r from-[#FF3C5F] to-[#FFC22D] text-white rounded-lg font-medium text-sm hover:opacity-90 transition-opacity"
-                    >
-                      Connect
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Achievements / Badges */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.35 }}
-            className="bg-gray-900/40 border border-gray-800 rounded-xl p-6 mb-8"
-          >
-            <h3 className="text-lg font-semibold mb-1 text-gray-300">Achievements</h3>
-            <p className="text-xs text-gray-500 mb-5">Badges earned based on your activity</p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {achievements.map((badge) => (
-                <div
-                  key={badge.id}
-                  className={`relative p-3 rounded-xl border text-center transition-all ${
-                    badge.earned
-                      ? 'bg-gray-800/60 border-gray-700 hover:border-[#FFC22D]/40 hover:bg-gray-800'
-                      : 'bg-gray-900/40 border-gray-800/50 opacity-40'
-                  }`}
-                >
-                  <div className={`text-2xl mb-1 ${badge.earned ? '' : 'grayscale'}`}>{badge.icon}</div>
-                  <div className={`text-xs font-semibold ${badge.earned ? 'text-gray-200' : 'text-gray-500'}`}>{badge.label}</div>
-                  <div className="text-[10px] text-gray-500 mt-0.5 leading-tight">{badge.desc}</div>
-                  {!badge.earned && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-900/60 rounded-xl">
-                      <span className="text-xs text-gray-500">Locked</span>
-                    </div>
-                  )}
                 </div>
-              ))}
-            </div>
-          </motion.div>
+              </motion.div>
 
-          {/* Account Info */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="bg-gray-900/40 border border-gray-800 rounded-xl p-6"
-          >
-            <h3 className="text-lg font-semibold mb-4 text-gray-300">Account Information</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-              <div className="p-3 rounded-lg bg-gray-800/40">
-                <span className="text-gray-500 block text-xs uppercase tracking-wider mb-1">Member Since</span>
-                <span className="text-gray-200 font-medium">{new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-              </div>
-              <div className="p-3 rounded-lg bg-gray-800/40">
-                <span className="text-gray-500 block text-xs uppercase tracking-wider mb-1">Last Updated</span>
-                <span className="text-gray-200 font-medium">{new Date(user.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-              </div>
-              <div className="p-3 rounded-lg bg-gray-800/40 sm:col-span-2 lg:col-span-1">
-                <span className="text-gray-500 block text-xs uppercase tracking-wider mb-1">User ID</span>
-                <span className="text-gray-200 font-mono text-xs">{user._id}</span>
-              </div>
+              {/* Platform Connections */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
+                className="space-y-4"
+              >
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Platform Connections</h2>
+                  <div className="text-xs text-gray-600">
+                    {lcVerified && cfVerified ? '2/2' : lcVerified || cfVerified ? '1/2' : '0/2'}
+                  </div>
+                </div>
+
+                {/* LeetCode */}
+                <div className={`relative overflow-hidden rounded-xl border transition-all duration-300 ${
+                  lcVerified ? 'bg-[#0d0d14] border-[#ffc22d20]' : 'bg-[#0d0d14] border-[#ffffff08]'
+                }`}>
+                  {lcVerified && <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#FFC22D] to-[#FFC22D]/30" />}
+                  <div className={`flex items-center justify-between px-5 py-3.5 border-b ${lcVerified ? 'border-[#ffc22d10]' : 'border-white/[0.04]'}`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-lg ${lcVerified ? 'bg-[#FFC22D]/10' : 'bg-white/[0.03]'}`}>
+                        <img src="/LeetCode_Logo.png" alt="LeetCode" className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-sm">LeetCode</h3>
+                        {lcVerified && <p className="text-xs text-gray-500">@{user.platformVerification.leetcode.handle}</p>}
+                      </div>
+                    </div>
+                    <span className={`inline-flex items-center gap-1.5 text-[11px] px-3 py-1 rounded-full ${
+                      lcVerified
+                        ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-800/40'
+                        : user.platformVerification?.leetcode?.handle
+                          ? 'bg-yellow-950/40 text-yellow-300 border border-yellow-800/40'
+                          : 'bg-white/[0.03] text-gray-500 border border-white/[0.06]'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        lcVerified ? 'bg-emerald-400' : user.platformVerification?.leetcode?.handle ? 'bg-yellow-400' : 'bg-gray-600'
+                      }`} />
+                      {lcVerified ? 'Verified' : user.platformVerification?.leetcode?.handle ? 'Pending' : 'Not Connected'}
+                    </span>
+                  </div>
+                  <div className="p-5">
+                    {lcVerified ? (
+                      <div className="space-y-4">
+                        {lcData && (
+                          <div className="grid grid-cols-3 gap-3">
+                            {[
+                              { label: 'Easy', value: lcData.easySolved || 0, color: 'text-green-400', bg: 'bg-green-500/5' },
+                              { label: 'Medium', value: lcData.mediumSolved || 0, color: 'text-yellow-400', bg: 'bg-yellow-500/5' },
+                              { label: 'Hard', value: lcData.hardSolved || 0, color: 'text-red-400', bg: 'bg-red-500/5' },
+                            ].map(({ label, value, color, bg }) => (
+                              <div key={label} className={`text-center p-3 rounded-lg ${bg} border border-white/[0.04]`}>
+                                <div className={`text-lg font-bold ${color}`}>{value}</div>
+                                <div className="text-[11px] text-gray-500 mt-0.5">{label}</div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        <div className="flex gap-2">
+                          <button onClick={() => handleRefreshPlatform("leetcode")}
+                            className="px-3.5 py-2 text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-lg hover:bg-blue-500/20 transition-all flex items-center gap-1.5">
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Refresh
+                          </button>
+                          <button onClick={() => handleDeletePlatform("leetcode")}
+                            className="px-3.5 py-2 text-xs bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-all flex items-center gap-1.5">
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <input type="text" placeholder="Enter LeetCode username"
+                          value={platformHandles.leetcode}
+                          onChange={(e) => setPlatformHandles(p => ({ ...p, leetcode: e.target.value }))}
+                          className="flex-1 px-4 py-2.5 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#FF3C5F]/40 focus:ring-1 focus:ring-[#FF3C5F]/20 transition-all" />
+                        <button onClick={() => handlePlatformSubmit("leetcode")}
+                          className="px-6 py-2.5 bg-gradient-to-r from-[#FF3C5F] to-[#FFC22D] text-white rounded-lg font-medium text-sm hover:opacity-90 transition-all shadow-lg shadow-[#FF3C5F]/10">
+                          Connect
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Codeforces */}
+                <div className={`relative overflow-hidden rounded-xl border transition-all duration-300 ${
+                  cfVerified ? 'bg-[#0d0d14] border-[#60a5fa20]' : 'bg-[#0d0d14] border-[#ffffff08]'
+                }`}>
+                  {cfVerified && <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-400 to-blue-400/30" />}
+                  <div className={`flex items-center justify-between px-5 py-3.5 border-b ${cfVerified ? 'border-[#60a5fa10]' : 'border-white/[0.04]'}`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-lg ${cfVerified ? 'bg-blue-500/10' : 'bg-white/[0.03]'}`}>
+                        <img src="/codeforces_logo.png" alt="Codeforces" className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-sm">Codeforces</h3>
+                        {cfVerified && <p className="text-xs text-gray-500">@{user.platformVerification.codeforces.handle}</p>}
+                      </div>
+                    </div>
+                    <span className={`inline-flex items-center gap-1.5 text-[11px] px-3 py-1 rounded-full ${
+                      cfVerified
+                        ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-800/40'
+                        : user.platformVerification?.codeforces?.handle
+                          ? 'bg-yellow-950/40 text-yellow-300 border border-yellow-800/40'
+                          : 'bg-white/[0.03] text-gray-500 border border-white/[0.06]'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        cfVerified ? 'bg-emerald-400' : user.platformVerification?.codeforces?.handle ? 'bg-yellow-400' : 'bg-gray-600'
+                      }`} />
+                      {cfVerified ? 'Verified' : user.platformVerification?.codeforces?.handle ? 'Pending' : 'Not Connected'}
+                    </span>
+                  </div>
+                  <div className="p-5">
+                    {cfVerified ? (
+                      <div className="space-y-4">
+                        {cfData && (
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            {[
+                              { label: 'Rating', value: cfData.rating || 'Unrated', color: 'text-blue-400', bg: 'bg-blue-500/5' },
+                              { label: 'Max Rating', value: cfData.maxRating || 0, color: 'text-purple-400', bg: 'bg-purple-500/5' },
+                              { label: 'Rank', value: cfData.rank || 'Unrated', color: 'text-indigo-400 capitalize', bg: 'bg-indigo-500/5' },
+                              { label: 'Solved', value: cfData.totalSolved || 0, color: 'text-teal-400', bg: 'bg-teal-500/5' },
+                            ].map(({ label, value, color, bg }) => (
+                              <div key={label} className={`text-center p-3 rounded-lg ${bg} border border-white/[0.04]`}>
+                                <div className={`text-sm sm:text-base font-bold ${color}`}>{value}</div>
+                                <div className="text-[11px] text-gray-500 mt-0.5">{label}</div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        <div className="flex gap-2">
+                          <button onClick={() => handleRefreshPlatform("codeforces")}
+                            className="px-3.5 py-2 text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-lg hover:bg-blue-500/20 transition-all flex items-center gap-1.5">
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Refresh
+                          </button>
+                          <button onClick={() => handleDeletePlatform("codeforces")}
+                            className="px-3.5 py-2 text-xs bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-all flex items-center gap-1.5">
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <input type="text" placeholder="Enter Codeforces username"
+                          value={platformHandles.codeforces}
+                          onChange={(e) => setPlatformHandles(p => ({ ...p, codeforces: e.target.value }))}
+                          className="flex-1 px-4 py-2.5 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#FF3C5F]/40 focus:ring-1 focus:ring-[#FF3C5F]/20 transition-all" />
+                        <button onClick={() => handlePlatformSubmit("codeforces")}
+                          className="px-6 py-2.5 bg-gradient-to-r from-[#FF3C5F] to-[#FFC22D] text-white rounded-lg font-medium text-sm hover:opacity-90 transition-all shadow-lg shadow-[#FF3C5F]/10">
+                          Connect
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 
