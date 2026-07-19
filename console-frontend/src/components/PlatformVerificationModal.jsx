@@ -4,6 +4,16 @@ const PlatformVerificationModal = ({ platform, data, onVerify, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const cfProblemUrl = platform === 'codeforces' && data.verificationCode
+    ? (() => {
+        const match = data.verificationCode.match(/^(\d+)([A-Z])$/);
+        if (match) {
+          return `https://codeforces.com/problemset/problem/${match[1]}/${match[2]}`;
+        }
+        return null;
+      })()
+    : null;
+
   const handleCopy = () => {
     navigator.clipboard.writeText(data.verificationCode);
     setCopied(true);
@@ -110,20 +120,33 @@ const PlatformVerificationModal = ({ platform, data, onVerify, onClose }) => {
                 <>
                   <div className="flex items-start space-x-2">
                     <span className="text-[#FF3C5F] font-bold">1.</span>
-                    <span>Go to <a href="https://codeforces.com/problemset" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">Codeforces Problemset</a></span>
+                    <span>Go to this problem:</span>
+                  </div>
+                  <div className="ml-7 mb-2">
+                    {cfProblemUrl ? (
+                      <a
+                        href={cfProblemUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-3 py-2 bg-gray-800 rounded-lg border border-gray-700 hover:border-blue-500/50 transition-colors"
+                      >
+                        <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        <span className="text-[#FFC22D] font-mono font-bold text-sm">{data.verificationCode}</span>
+                        <span className="text-xs text-gray-400">→ Open in Codeforces</span>
+                      </a>
+                    ) : (
+                      <span className="text-[#FFC22D] font-mono text-sm font-bold">{data.verificationCode}</span>
+                    )}
                   </div>
                   <div className="flex items-start space-x-2">
                     <span className="text-[#FF3C5F] font-bold">2.</span>
-                    <span>Submit <strong>any problem</strong> with this code in your solution:</span>
-                  </div>
-                  <div className="bg-gray-700 rounded p-2 mt-2 overflow-x-auto">
-                    <code className="text-[#FFC22D] font-mono text-xs sm:text-sm">
-                      {data.verificationCode}
-                    </code>
+                    <span>Submit <strong>any solution</strong> to that problem (even if it's wrong)</span>
                   </div>
                   <div className="flex items-start space-x-2">
                     <span className="text-[#FF3C5F] font-bold">3.</span>
-                    <span>Click "Verify" below to complete verification</span>
+                    <span>Wait 2-3 minutes, then click "Verify" below</span>
                   </div>
                 </>
               )}
