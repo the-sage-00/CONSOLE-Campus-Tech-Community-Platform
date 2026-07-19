@@ -110,11 +110,11 @@ const PlatformVerificationModal = ({ platform, data, onVerify, onClose }) => {
                 <>
                   <div className="flex items-start space-x-2">
                     <span className="text-[#FF3C5F] font-bold">1.</span>
-                    <span>Go to Codeforces</span>
+                    <span>Go to <a href="https://codeforces.com/problemset" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">Codeforces Problemset</a></span>
                   </div>
                   <div className="flex items-start space-x-2">
                     <span className="text-[#FF3C5F] font-bold">2.</span>
-                    <span>Submit the problem {data.verificationCode}</span>
+                    <span>Submit <strong>any problem</strong> with this code in your solution:</span>
                   </div>
                   <div className="bg-gray-700 rounded p-2 mt-2 overflow-x-auto">
                     <code className="text-[#FFC22D] font-mono text-xs sm:text-sm">
