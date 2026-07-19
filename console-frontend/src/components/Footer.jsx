@@ -89,7 +89,7 @@ function LandingFooter() {
                 © {new Date().getFullYear()} Console — The Tech Community
               </p>
               <p className="text-gray-500 text-[9px] sm:text-xs mt-1">
-                Built with ❤️ by the team CONSOLE
+                Built with ❤️ by the CONSOLE Team
               </p>
             </div>
             <div className="flex flex-wrap justify-center md:justify-end gap-3 sm:gap-6 text-[9px] sm:text-xs">
