@@ -19,6 +19,7 @@ const Profile = () => {
     leetcode: '',
     codeforces: ''
   });
+  const [showAchievements, setShowAchievements] = useState(false);
   const [verificationModal, setVerificationModal] = useState({
     show: false,
     platform: '',
@@ -280,9 +281,11 @@ const Profile = () => {
     { id: 'lc-hard', label: 'Hard Hitter', desc: 'Solved 10+ hard problems', earned: lcVerified && (lcData?.hardSolved || 0) >= 10, icon: '🔥' },
     { id: 'cf-rated', label: 'Rising Star', desc: 'Achieved a Codeforces rating', earned: cfVerified && cfRating > 0, icon: '🌟' },
     { id: 'cf-expert', label: 'Codeforces Expert', desc: 'Rating above 1600', earned: cfVerified && cfRating >= 1600, icon: '💠' },
-    { id: 'both-platforms', label: 'Double Threat', desc: 'Verified both platforms', earned: lcVerified && cfVerified, icon: '🏆' },
+    { id: 'both-platforms', label: 'Double Throttle', desc: 'Verified both platforms', earned: lcVerified && cfVerified, icon: '🏆' },
     { id: 'member', label: 'Community Member', desc: 'Joined the platform', earned: true, icon: '🎓' },
     { id: 'lc-all-rounder', label: 'All Rounder', desc: 'Solved problems in all difficulties', earned: lcVerified && (lcData?.easySolved || 0) > 0 && (lcData?.mediumSolved || 0) > 0 && (lcData?.hardSolved || 0) > 0, icon: '💎' },
+    { id: 'lc-500', label: '500 Club', desc: 'Solved 500+ LeetCode problems', earned: lcVerified && lcTotal >= 500, icon: '🏅' },
+    { id: 'lc-75-hard', label: '75 Hard', desc: 'Solved 75+ hard problems', earned: lcVerified && (lcData?.hardSolved || 0) >= 75, icon: '💪' },
   ];
 
   const earnedCount = achievements.filter(b => b.earned).length;
@@ -321,7 +324,7 @@ const Profile = () => {
           <div className="flex flex-col lg:flex-row gap-8">
 
             {/* ===== LEFT COLUMN — Profile Info ===== */}
-            <div className="w-full lg:w-80 shrink-0 space-y-6">
+            <div className="w-full lg:w-80 shrink-0">
 
               {/* Profile Card */}
               <motion.div
@@ -418,8 +421,19 @@ const Profile = () => {
                   </div>
 
                   <button
+                    onClick={() => setShowAchievements(true)}
+                    className="mt-5 w-full px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-[#FF3C5F] to-[#FFC22D] rounded-xl hover:opacity-90 transition-all shadow-lg shadow-[#FF3C5F]/20 flex items-center justify-center gap-2"
+                  >
+                    <span className="text-base">🏅</span>
+                    Achievements ({earnedCount}/{achievements.length})
+                    <svg className="w-3.5 h-3.5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+
+                  <button
                     onClick={handleLogout}
-                    className="mt-6 w-full px-4 py-2.5 text-sm text-red-400 bg-red-950/30 border border-red-900/40 rounded-xl hover:bg-red-950/50 hover:border-red-700/50 transition-all flex items-center justify-center gap-2"
+                    className="mt-3 w-full px-4 py-2.5 text-sm text-red-400 bg-red-950/30 border border-red-900/40 rounded-xl hover:bg-red-950/50 hover:border-red-700/50 transition-all flex items-center justify-center gap-2"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -429,40 +443,7 @@ const Profile = () => {
                 </div>
               </motion.div>
 
-              {/* Achievements (in left column) */}
-              <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
-                className="relative overflow-hidden rounded-2xl bg-[#0d0d14] border border-[#ffffff08] p-5"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Achievements</h3>
-                  <span className="text-[10px] text-gray-600">{earnedCount}/{achievements.length}</span>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  {achievements.map((badge) => (
-                    <div
-                      key={badge.id}
-                      className={`relative p-2.5 rounded-lg border text-center transition-all duration-300 ${
-                        badge.earned
-                          ? 'bg-gradient-to-br from-[#ffc22d08] to-transparent border-[#ffc22d20]'
-                          : 'bg-white/[0.02] border-white/[0.04] opacity-30'
-                      }`}
-                    >
-                      <div className={`text-lg mb-0.5 ${badge.earned ? '' : 'grayscale'}`}>{badge.icon}</div>
-                      <div className={`text-[10px] font-semibold ${badge.earned ? 'text-gray-300' : 'text-gray-600'}`}>{badge.label}</div>
-                      {!badge.earned && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-[#0a0a0f]/60 rounded-lg backdrop-blur-[1px]">
-                          <svg className="w-3 h-3 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                          </svg>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
+
             </div>
 
             {/* ===== RIGHT COLUMN — Stats & Content ===== */}
@@ -800,6 +781,67 @@ const Profile = () => {
             setVerificationModal({ show: false, platform: "", data: null })
           }
         />
+      )}
+
+      {/* Achievements Modal */}
+      {showAchievements && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowAchievements(false)} />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl bg-[#0d0d14] border border-[#ffffff10] shadow-2xl shadow-black/50"
+          >
+            <div className="sticky top-0 z-10 flex items-center justify-between p-5 border-b border-white/[0.06] bg-[#0d0d14]/90 backdrop-blur-sm">
+              <div>
+                <h2 className="text-sm font-bold text-gray-200">Achievements</h2>
+                <p className="text-[11px] text-gray-600 mt-0.5">{earnedCount} / {achievements.length} unlocked</p>
+              </div>
+              <button onClick={() => setShowAchievements(false)} className="p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors">
+                <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="p-5">
+              <div className="flex items-center gap-3 mb-5 p-3 rounded-lg bg-gradient-to-r from-[#ffc22d08] to-transparent border border-[#ffc22d15]">
+                <div className="text-2xl">🏅</div>
+                <div>
+                  <p className="text-xs text-gray-400"><span className="text-[#FFC22D] font-bold">{earnedCount}</span> achievements earned</p>
+                  <p className="text-[10px] text-gray-600 mt-0.5">Keep coding to unlock more!</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {achievements.map((badge) => (
+                  <div
+                    key={badge.id}
+                    className={`relative p-4 rounded-xl border text-center transition-all duration-300 ${
+                      badge.earned
+                        ? 'bg-gradient-to-br from-[#ffc22d08] to-transparent border-[#ffc22d20]'
+                        : 'bg-white/[0.02] border-white/[0.04] opacity-40'
+                    }`}
+                  >
+                    <div className={`text-2xl mb-2 ${badge.earned ? '' : 'grayscale'}`}>{badge.icon}</div>
+                    <div className={`text-xs font-semibold mb-1 ${badge.earned ? 'text-gray-200' : 'text-gray-500'}`}>{badge.label}</div>
+                    <div className="text-[10px] text-gray-600 leading-relaxed">{badge.desc}</div>
+                    {badge.earned && (
+                      <div className="mt-2 inline-flex items-center gap-1 text-[9px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                        <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Earned
+                      </div>
+                    )}
+                    {!badge.earned && (
+                      <div className="mt-2 text-[9px] text-gray-600">Locked</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </div>
       )}
     </div>
   );
