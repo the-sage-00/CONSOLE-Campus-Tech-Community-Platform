@@ -14,10 +14,10 @@ class VerificationService {
   generateVerificationCode(platform) {
     switch (platform) {
     case 'codeforces': {
-      // Use a set of well-known existing problems to avoid verification failures
-      const knownProblems = ['1A', '4A', '71A', '158A', '231A', '339A'];
-      const idx = Math.floor(Math.random() * knownProblems.length);
-      return knownProblems[idx];
+      const contestId = Math.floor(Math.random() * 300) + 1;
+      const letters = ['A', 'B', 'C'];
+      const index = letters[Math.floor(Math.random() * letters.length)];
+      return `${contestId}${index}`;
     }
     case 'leetcode': {
       // Generate a readable code like console-1234
