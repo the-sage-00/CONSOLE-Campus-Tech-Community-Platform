@@ -94,7 +94,7 @@ const PlatformVerificationModal = ({ platform, data, onVerify, onClose }) => {
                   </div>
                   <div className="flex items-start space-x-2">
                     <span className="text-[#FF3C5F] font-bold">2.</span>
-                    <span>Add this code to your summary:</span>
+                    <span>Add this code to your ReadMe:</span>
                   </div>
                   <div className="bg-gray-700 rounded p-2 mt-2 overflow-x-auto">
                     <code className="text-[#FFC22D] font-mono text-xs sm:text-sm">

@@ -113,13 +113,23 @@ Contributing to a real open source project is where you learn:
 | 🏆 **Leaderboard** | Live rankings — Codeforces rating, LeetCode contest rating, total problems solved |
 | ✅ **Platform Verification** | Verify your CF and LC handles with a unique code challenge |
 | 📅 **Contest Tracker** | Auto-synced weekly LeetCode and Codeforces contests |
-| 👤 **User Profiles** | Personal dashboard with verified platform stats |
+| 👤 **User Profiles** | Rich dashboard — Google avatar, stats cards, charts, achievements, badges |
 | 🗺️ **Tech Roadmaps** | Curated paths for DSA, Web Dev, ML, CP, InfoSec, Web3, C++, Python |
 | 📚 **DSA Sheet** | Structured problem tracker with progress |
 | 🔐 **Google OAuth** | Institutional email login only |
 | 👨‍💼 **Admin Panel** | User management, contest sync, participation stats |
 | ⚡ **Caching** | In-memory caching for fast leaderboard loads |
 | 🔄 **Auto Sync** | Weekly cron job syncs contest data automatically |
+
+### Recent Updates — July 2025
+
+| Change | Description |
+|--------|-------------|
+| 🎨 **Profile Redesign** | New hero banner with Google avatar, quick stats cards, charts section, achievements/badges, framer-motion animations |
+| 📊 **Stats Charts** | LeetCode difficulty donut chart (PieChart) + Codeforces rating progress bar + stats grid |
+| 🏅 **Achievement Badges** | 8 auto-computed badges (Century Club, Double Threat, Rising Star, etc.) with locked/unlocked states |
+| 🖼️ **Google Profile Picture** | Avatar now displays the Google profile image with initials fallback |
+| ✏️ **LeetCode Verification UX** | Updated instruction text in the verification modal — clearer guidance for adding code to ReadMe section |
 
 ---
 
