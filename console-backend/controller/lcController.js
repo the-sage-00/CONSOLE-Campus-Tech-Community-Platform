@@ -8,7 +8,7 @@ const getUserData = async (req, res) => {
     // Find user with this LeetCode handle
     const user = await User.findOne({
       'platformVerification.leetcode.handle': username,
-      'platformVerification.leetcode.isVerified': true
+      'platformVerification.leetcode.isVerified': true,
     });
 
     if (!user) {
@@ -20,8 +20,8 @@ const getUserData = async (req, res) => {
       data: {
         name: user.name,
         email: user.email,
-        leetcode: user.platformVerification.leetcode.platformData
-      }
+        leetcode: user.platformVerification.leetcode.platformData,
+      },
     });
   } catch (error) {
     console.error('Error getting LeetCode user data:', error);
@@ -36,7 +36,7 @@ const getUserStats = async (req, res) => {
     
     const user = await User.findOne({
       'platformVerification.leetcode.handle': username,
-      'platformVerification.leetcode.isVerified': true
+      'platformVerification.leetcode.isVerified': true,
     });
 
     if (!user) {
@@ -47,7 +47,7 @@ const getUserStats = async (req, res) => {
     
     res.json({
       message: 'LeetCode stats retrieved successfully',
-      data: stats
+      data: stats,
     });
   } catch (error) {
     console.error('Error getting LeetCode stats:', error);
@@ -57,5 +57,5 @@ const getUserStats = async (req, res) => {
 
 export {
   getUserData,
-  getUserStats
+  getUserStats,
 };

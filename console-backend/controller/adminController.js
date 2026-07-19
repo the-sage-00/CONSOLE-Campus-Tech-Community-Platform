@@ -4,7 +4,7 @@ import Contest from '../models/Contest.js';
 import verificationService from '../services/verificationService.js';
 
 // Admin login
-const adminLogin = async (req, res) => {
+const adminLogin = (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -14,28 +14,28 @@ const adminLogin = async (req, res) => {
 
     if (email !== adminEmail || password !== adminPassword) {
       return res.status(401).json({ 
-        error: 'Invalid admin credentials' 
+        error: 'Invalid admin credentials', 
       });
     }
 
     // Generate JWT for admin session
     const payload = {
       email: adminEmail,
-      role: 'admin'
+      role: 'admin',
     };
 
     const adminToken = jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: '1h' } // Token expires in 1 hour
+      { expiresIn: '1h' }, // Token expires in 1 hour
     );
 
     res.json({
       message: 'Admin login successful',
       data: {
         token: adminToken,
-        email: email
-      }
+        email: email,
+      },
     });
   } catch (error) {
     console.error('Admin login error:', error);
@@ -91,14 +91,14 @@ const getAllUsers = async (req, res) => {
           lastContestName,
           currentRating,
           currentRanking,
-          contestHistory
-        }
+          contestHistory,
+        },
       };
     });
 
     res.json({
       message: 'Users retrieved successfully',
-      data: usersWithHandles
+      data: usersWithHandles,
     });
   } catch (error) {
     console.error('Get all users error:', error);
@@ -118,7 +118,7 @@ const refreshUserData = async (req, res) => {
 
     const refreshResults = {
       leetcode: { success: false, error: null },
-      codeforces: { success: false, error: null }
+      codeforces: { success: false, error: null },
     };
 
     // Refresh LeetCode data if verified
@@ -126,7 +126,7 @@ const refreshUserData = async (req, res) => {
       try {
         const leetcodeData = await verificationService.fetchPlatformUserData(
           'leetcode',
-          user.platformVerification.leetcode.handle
+          user.platformVerification.leetcode.handle,
         );
         
         if (leetcodeData.success) {
@@ -146,7 +146,7 @@ const refreshUserData = async (req, res) => {
       try {
         const codeforcesData = await verificationService.fetchPlatformUserData(
           'codeforces',
-          user.platformVerification.codeforces.handle
+          user.platformVerification.codeforces.handle,
         );
         
         if (codeforcesData.success) {
@@ -170,8 +170,8 @@ const refreshUserData = async (req, res) => {
         name: user.name,
         email: user.email,
         refreshResults,
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     });
   } catch (error) {
     console.error('Refresh user data error:', error);
@@ -185,10 +185,10 @@ const getDashboardStats = async (req, res) => {
     const totalUsers = await User.countDocuments();
     const verifiedUsers = await User.countDocuments({ isEmailVerified: true });
     const leetcodeUsers = await User.countDocuments({ 
-      'platformVerification.leetcode.isVerified': true 
+      'platformVerification.leetcode.isVerified': true, 
     });
     const codeforcesUsers = await User.countDocuments({ 
-      'platformVerification.codeforces.isVerified': true 
+      'platformVerification.codeforces.isVerified': true, 
     });
 
     res.json({
@@ -198,8 +198,8 @@ const getDashboardStats = async (req, res) => {
         verifiedUsers,
         leetcodeUsers,
         codeforcesUsers,
-        unverifiedUsers: totalUsers - verifiedUsers
-      }
+        unverifiedUsers: totalUsers - verifiedUsers,
+      },
     });
   } catch (error) {
     console.error('Get dashboard stats error:', error);
@@ -221,7 +221,7 @@ const deleteUser = async (req, res) => {
     const userInfo = {
       name: user.name,
       email: user.email,
-      _id: user._id
+      _id: user._id,
     };
 
     // Delete the user
@@ -231,8 +231,8 @@ const deleteUser = async (req, res) => {
       message: 'User deleted successfully',
       data: {
         deletedUser: userInfo,
-        deletedAt: new Date()
-      }
+        deletedAt: new Date(),
+      },
     });
   } catch (error) {
     console.error('Delete user error:', error);
@@ -246,7 +246,7 @@ const getParticipationStats = async (req, res) => {
     // Get all verified LeetCode users
     const verifiedUsers = await User.find({
       'platformVerification.leetcode.isVerified': true,
-      'platformVerification.leetcode.handle': { $ne: null, $ne: '' }
+      'platformVerification.leetcode.handle': { $nin: [null, ''] },
     }).select('name email branch platformVerification.leetcode.handle platformVerification.leetcode.contestStats');
 
     // Get all contests sorted by date (most recent first) - get last 3 contests
@@ -255,8 +255,8 @@ const getParticipationStats = async (req, res) => {
       $or: [
         { platform: 'leetcode' },
         { platform: { $exists: false } },
-        { platform: null }
-      ]
+        { platform: null },
+      ],
     })
       .sort({ date: -1 })
       .limit(3)
@@ -295,11 +295,11 @@ const getParticipationStats = async (req, res) => {
           if (!p || !p.user) return null;
           const userId = p.user?._id ? String(p.user._id) : String(p.user);
           return userId;
-        }).filter(id => id && id !== 'null' && id !== 'undefined')
+        }).filter(id => id && id !== 'null' && id !== 'undefined'),
       );
       contestParticipantsMap.set(String(contest._id), {
         participants: participantIds,
-        contestData: contest
+        contestData: contest,
       });
     });
 
@@ -330,7 +330,7 @@ const getParticipationStats = async (req, res) => {
             date: null,
             participated: false,
             rank: null,
-            rating: null
+            rating: null,
           };
         }
 
@@ -340,9 +340,9 @@ const getParticipationStats = async (req, res) => {
         // Find user's participation data if they participated
         const userParticipantData = userParticipated 
           ? contest.participants.find(p => {
-              const pUserId = p.user?._id ? String(p.user._id) : String(p.user);
-              return pUserId === userId;
-            })
+            const pUserId = p.user?._id ? String(p.user._id) : String(p.user);
+            return pUserId === userId;
+          })
           : null;
 
         return {
@@ -350,7 +350,7 @@ const getParticipationStats = async (req, res) => {
           date: contest.date ? new Date(contest.date).toISOString() : null,
           participated: userParticipated,
           rank: userParticipantData?.ranking || null,
-          rating: userParticipantData?.rating || null
+          rating: userParticipantData?.rating || null,
         };
       });
 
@@ -361,7 +361,7 @@ const getParticipationStats = async (req, res) => {
           date: null,
           participated: false,
           rank: null,
-          rating: null
+          rating: null,
         });
       }
 
@@ -374,7 +374,7 @@ const getParticipationStats = async (req, res) => {
         branch: user.branch,
         leetcodeHandle: user.platformVerification.leetcode.handle,
         totalContestsParticipated,
-        contestHistory: last3Contests
+        contestHistory: last3Contests,
       };
     });
 
@@ -386,10 +386,10 @@ const getParticipationStats = async (req, res) => {
           participants: totalParticipants,
           nonParticipants: totalNonParticipants,
           latestContestName: latestContest ? latestContest.name : 'No contests available',
-          totalContestsFound: allContests.length
+          totalContestsFound: allContests.length,
         },
-        users: userStats
-      }
+        users: userStats,
+      },
     });
   } catch (error) {
     console.error('Get participation stats error:', error);
@@ -403,8 +403,8 @@ const refreshAllUsersData = async (req, res) => {
     const users = await User.find({
       $or: [
         { 'platformVerification.leetcode.isVerified': true },
-        { 'platformVerification.codeforces.isVerified': true }
-      ]
+        { 'platformVerification.codeforces.isVerified': true },
+      ],
     });
 
     if (!users || users.length === 0) {
@@ -456,8 +456,8 @@ const refreshAllUsersData = async (req, res) => {
       data: {
         totalUsers: users.length,
         refreshedCount,
-        errors
-      }
+        errors,
+      },
     });
   } catch (error) {
     console.error('Refresh all users data error:', error);
@@ -473,5 +473,5 @@ export {
   getDashboardStats,
   deleteUser,
   getParticipationStats,
-  refreshAllUsersData
+  refreshAllUsersData,
 };

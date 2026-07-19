@@ -20,24 +20,24 @@ class PlatformService {
 
     // Platform-specific validation
     switch (platform) {
-      case 'leetcode':
-        if (trimmedHandle.length < 3 || trimmedHandle.length > 20) {
-          return { valid: false, error: 'LeetCode handle must be 3-20 characters' };
-        }
+    case 'leetcode':
+      if (trimmedHandle.length < 3 || trimmedHandle.length > 20) {
+        return { valid: false, error: 'LeetCode handle must be 3-20 characters' };
+      }
         
-        break;
+      break;
 
-      case 'codeforces':
-        if (trimmedHandle.length < 3 || trimmedHandle.length > 24) {
-          return { valid: false, error: 'CodeForces handle must be 3-24 characters' };
-        }
+    case 'codeforces':
+      if (trimmedHandle.length < 3 || trimmedHandle.length > 24) {
+        return { valid: false, error: 'CodeForces handle must be 3-24 characters' };
+      }
         
-        break;
+      break;
 
 
 
-      default:
-        return { valid: false, error: 'Unsupported platform' };
+    default:
+      return { valid: false, error: 'Unsupported platform' };
     }
 
     return { valid: true, handle: trimmedHandle };
@@ -64,12 +64,12 @@ class PlatformService {
         hardSolved: data.hardSolved || 0,
         reputation: data.reputation || 0,
         aboutMe: data.aboutMe || '',
-        realName: data.realName || ''
+        realName: data.realName || '',
       };
 
       this.cache.set(cacheKey, {
         data: result,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return result;
@@ -105,7 +105,7 @@ class PlatformService {
         
         // Use Promise.race for timeout compatibility
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Request timeout')), 30000)
+          setTimeout(() => reject(new Error('Request timeout')), 30000),
         );
         
         const fetchPromise = fetch(statusUrl);
@@ -141,12 +141,12 @@ class PlatformService {
         friendOfCount: user.friendOfCount || 0,
         registrationTime: user.registrationTimeSeconds || 0,
         lastOnlineTime: user.lastOnlineTimeSeconds || 0,
-        totalSolved: problemsSolved
+        totalSolved: problemsSolved,
       };
 
       this.cache.set(cacheKey, {
         data: result,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return result;
@@ -169,7 +169,7 @@ class PlatformService {
         updates['platforms.leetcode'] = {
           ...user.platforms.leetcode,
           ...data,
-          lastUpdated: new Date()
+          lastUpdated: new Date(),
         };
       } catch (error) {
         errors.push(`LeetCode: ${error.message}`);
@@ -182,7 +182,7 @@ class PlatformService {
         updates['platforms.codeforces'] = {
           ...user.platforms.codeforces,
           ...data,
-          lastUpdated: new Date()
+          lastUpdated: new Date(),
         };
       } catch (error) {
         errors.push(`CodeForces: ${error.message}`);
@@ -209,14 +209,14 @@ class PlatformService {
           results.push({
             userId: user._id,
             updates,
-            success: true
+            success: true,
           });
         }
       } catch (error) {
         results.push({
           userId: user._id,
           error: error.message,
-          success: false
+          success: false,
         });
       }
     }
