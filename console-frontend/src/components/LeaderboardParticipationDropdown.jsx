@@ -14,7 +14,7 @@ const LeaderboardParticipationDropdown = () => {
       >
         <div className="flex items-center space-x-3">
           <Globe className="w-5 h-5 text-[#FF3C5F]" />
-          <span className="font-bold text-lg">How The Unified Leaderboard Works</span>
+          <span className="font-bold text-lg">How The Leaderboard Works</span>
         </div>
         {isOpen ? (
           <ChevronUp className="w-5 h-5 text-gray-400" />
@@ -27,8 +27,8 @@ const LeaderboardParticipationDropdown = () => {
         <div className="px-5 py-4 border-t border-gray-800/50 space-y-6 animate-fadeIn transition-all duration-500 transform">
           <div className="text-gray-300 text-sm space-y-3">
             <p>
-              The unified leaderboard tracks your verified performance across LeetCode, Codeforces, and total
-              questions solved. It surfaces active profiles so you can see who is putting in consistent effort across
+              The leaderboard tracks your verified performance across LeetCode and Codeforces.
+              It surfaces active profiles so you can see who is putting in consistent effort across
               the campus.
             </p>
             <p>
