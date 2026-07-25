@@ -201,7 +201,7 @@ const UnifiedLeaderboard = ({ users: propUsers, platform: propPlatform, loading:
     return <BarChart3 className="w-5 h-5 text-gray-400" />;
   };
 
-  const getScoreColor = (rating) => {
+  const getRatingColor = (rating) => {
     // Match Codeforces color scheme
     if (rating >= 3000) return 'text-red-600'; // Legendary Grandmaster
     if (rating >= 2600) return 'text-red-500'; // International Grandmaster
@@ -243,13 +243,13 @@ const UnifiedLeaderboard = ({ users: propUsers, platform: propPlatform, loading:
 
       // Fallbacks
       if (platformData.ranking) return `Rank: ${platformData.ranking.toLocaleString()}`;
-      if (platformData.score) return `Score: ${platformData.score}`;
+
       if (platformData.problemsSolved) return `Solved: ${platformData.problemsSolved}`;
       return 'N/A';
     };
 
     const hasData = platformData && Object.keys(platformData).length > 0 &&
-      (platformData.ranking || platformData.totalSolved || platformData.score || platformData.problemsSolved || platformData.rating);
+      (platformData.ranking || platformData.totalSolved || platformData.problemsSolved || platformData.rating);
 
     const badgeClass = hasData
       ? `${platformInfo.bgColor} ${platformInfo.borderColor} border`
@@ -405,12 +405,12 @@ const UnifiedLeaderboard = ({ users: propUsers, platform: propPlatform, loading:
                               )}
                               {activePlatform === 'codeforces' && (
                                 <span className="text-xs text-gray-400">
-                                  Rating: <span className={getScoreColor(user._cfRating)}>{user._cfRating || 'N/A'}</span>
+                                  Rating: <span className={getRatingColor(user._cfRating)}>{user._cfRating || 'N/A'}</span>
                                 </span>
                               )}
                               {activePlatform === 'leetcode' && (
                                 <span className="text-xs text-gray-400">
-                                  Rating: <span className={getScoreColor(user._lcContestRating)}>{user._lcContestRating || 'N/A'}</span>
+                                  Rating: <span className={getRatingColor(user._lcContestRating)}>{user._lcContestRating || 'N/A'}</span>
                                 </span>
                               )}
                             </div>
@@ -433,7 +433,7 @@ const UnifiedLeaderboard = ({ users: propUsers, platform: propPlatform, loading:
                       {activePlatform === 'codeforces' && (
                         <td className="hidden md:table-cell px-4 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <div className={`font-bold ${getScoreColor(user._cfRating)} text-base md:text-lg`}>
+                            <div className={`font-bold ${getRatingColor(user._cfRating)} text-base md:text-lg`}>
                               {user._cfRating > 0 ? Math.round(user._cfRating).toLocaleString() : 'N/A'}
                             </div>
                           </div>
@@ -444,7 +444,7 @@ const UnifiedLeaderboard = ({ users: propUsers, platform: propPlatform, loading:
                       {activePlatform === 'leetcode' && (
                         <td className="hidden md:table-cell px-4 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <div className={`font-bold ${getScoreColor(user._lcContestRating)} text-base md:text-lg`}>
+                            <div className={`font-bold ${getRatingColor(user._lcContestRating)} text-base md:text-lg`}>
                               {user._lcContestRating > 0 ? Math.round(user._lcContestRating).toLocaleString() : 'N/A'}
                             </div>
                           </div>
